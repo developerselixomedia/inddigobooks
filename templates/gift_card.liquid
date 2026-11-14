@@ -1,0 +1,35 @@
+{% layout none %}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Your {{ shop.name }} Gift Card</title>
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ 'template-giftcard.css' | asset_url | stylesheet_tag }}
+  </head>
+  <body class="gift-card-body">
+    <div class="page-width page-width--narrow text-center" style="padding: 60px 20px;">
+      <div class="gift-card-box">
+        <h1>{{ shop.name }} Reading Gift Card</h1>
+        <p>Give the gift of thousands of books!</p>
+
+        <div class="gift-card__image-wrapper" style="margin: 30px 0;">
+          <img src="{{ 'gift-card/card.svg' | shopify_asset_url }}" alt="Gift card illustration" width="300" height="200" style="margin: 0 auto;">
+        </div>
+
+        <div class="gift-card__amount" style="font-size: 32px; font-weight: 800; color: #1e3a8a; margin-bottom: 20px;">
+          {{ gift_card.initial_value | money }}
+        </div>
+
+        <div class="gift-card__code-box" style="background: #f1f5f9; padding: 15px; border-radius: 8px; display: inline-block; font-size: 20px; font-family: monospace; letter-spacing: 2px;">
+          {{ gift_card.code | format_code }}
+        </div>
+
+        <p style="margin-top: 25px;">Use this code at checkout to redeem your gift card on any of our 2,000+ books.</p>
+        <a href="{{ shop.url }}" class="btn btn--primary" style="margin-top: 15px;">Start Browsing Books &rarr;</a>
+      </div>
+    </div>
+  </body>
+</html>
+

@@ -1,0 +1,204 @@
+{% comment %}
+  Indigo Books India - Sticky Navigation Bar
+  Spec: h-20, Sticky, bg-[#FAF8F5], z-50
+  - Brand Logo: Official "INDIGO BOOKS" (Royal Blue #0066B3 geometric knot emblem + all-caps serif wordmark)
+  - Center Nav Links: Home, Shop by Category, Best Sellers, Bundles, Pre-Order, Law Books
+  - Right: Indian flag circular badge icon + "Indian centric" + WhatsApp Order
+{% endcomment %}
+
+<style>
+  .site-header-sticky {
+    position: sticky;
+    top: 0;
+    height: 80px;
+    background-color: #FAF8F5;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    z-index: 50;
+    transition: box-shadow 0.2s ease;
+  }
+  .site-header-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .site-header-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .site-header-logo-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .site-header-logo-icon svg,
+  .indigo-emblem-svg {
+    width: 40px !important;
+    height: 40px !important;
+    max-width: 40px !important;
+    max-height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+    flex-shrink: 0 !important;
+  }
+  .site-header-brand-text {
+    font-family: 'Merriweather', Georgia, serif;
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: 0.12em;
+    font-weight: 400;
+    color: #000000;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .site-nav-list {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .site-nav-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: #334155;
+    padding: 8px 0;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .site-nav-link.active,
+  .site-nav-link:hover {
+    color: #D99B26;
+    border-bottom-color: #D99B26;
+  }
+  @media (max-width: 900px) {
+    .site-nav-list {
+      display: none;
+    }
+  }
+</style>
+
+<header class="site-header-sticky sticky top-0 h-20 bg-[#FAF8F5] border-b border-slate-200/80 z-50 transition-shadow duration-200" id="SiteHeader-{{ section.id }}">
+  <div class="site-header-container max-w-7xl mx-auto px-6 lg:px-8 h-full flex justify-between items-center">
+    
+    <!-- Mobile Hamburger Toggle -->
+    <button type="button" class="mobile-menu-toggle lg:hidden flex flex-col gap-1.5 p-2" id="MobileMenuToggle" aria-label="Toggle Navigation">
+      <span class="w-6 h-0.5 bg-[#0A1128] block"></span>
+      <span class="w-6 h-0.5 bg-[#0A1128] block"></span>
+      <span class="w-6 h-0.5 bg-[#0A1128] block"></span>
+    </button>
+
+    <!-- Brand Logo: Official INDIGO BOOKS -->
+    <a href="/" class="site-header-brand flex items-center gap-3 cursor-pointer group select-none" style="display: inline-flex; align-items: center; gap: 12px; text-decoration: none;">
+      <span class="site-header-logo-icon" style="width: 40px; height: 40px; min-width: 40px; max-width: 40px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        {% render 'icon-indigo-emblem', class: 'w-10 h-10 shrink-0 group-hover:scale-105 transition-transform' %}
+      </span>
+      <span class="site-header-brand-text font-serif text-xl lg:text-2xl tracking-[0.12em] font-normal text-black uppercase" style="font-family: 'Merriweather', Georgia, serif; font-size: 22px; letter-spacing: 0.12em; color: #000; font-weight: normal; text-transform: uppercase; white-space: nowrap;">
+        INDIGO BOOKS
+      </span>
+    </a>
+
+    <!-- Center Nav Links -->
+    <nav class="site-nav-list hidden md:flex items-center gap-8" id="SiteNav">
+      <a href="/" class="site-nav-link active text-sm font-semibold text-[#0A1128] py-2 border-b-2 border-[#D99B26] transition-all">
+        Home
+      </a>
+      <a href="/collections/all" class="site-nav-link text-sm font-medium text-slate-700 hover:text-[#D99B26] py-2 border-b-2 border-transparent hover:border-[#D99B26] transition-all">
+        Shop by Category
+      </a>
+      <a href="/collections/all?filter.p.m.custom.genre=Bestsellers" class="site-nav-link text-sm font-medium text-slate-700 hover:text-[#D99B26] py-2 border-b-2 border-transparent hover:border-[#D99B26] transition-all">
+        Best Sellers
+      </a>
+      <a href="/collections/all?filter.p.m.custom.genre=Bundles" class="site-nav-link text-sm font-medium text-slate-700 hover:text-[#D99B26] py-2 border-b-2 border-transparent hover:border-[#D99B26] transition-all">
+        Bundles
+      </a>
+      <a href="/collections/all?filter.p.m.custom.genre=Pre-Order" class="site-nav-link text-sm font-medium text-slate-700 hover:text-[#D99B26] py-2 border-b-2 border-transparent hover:border-[#D99B26] transition-all">
+        Pre-Order
+      </a>
+      <a href="/collections/all?filter.p.m.custom.genre=Law" class="site-nav-link text-sm font-medium text-slate-700 hover:text-[#D99B26] py-2 border-b-2 border-transparent hover:border-[#D99B26] transition-all">
+        Law Books
+      </a>
+    </nav>
+
+    <!-- Right: Indian Flag Circular Badge + "Indian centric" -->
+    <div class="flex items-center gap-3">
+      <!-- Indian Centric Badge -->
+      <div class="flex items-center gap-2.5 bg-white border border-slate-200/90 rounded-full px-3.5 py-1.5 shadow-sm">
+        <!-- Circular Indian Flag Badge -->
+        <div class="w-7 h-7 rounded-full overflow-hidden border border-slate-300 shadow-inner flex flex-col justify-between shrink-0 relative">
+          <div class="h-1/3 w-full bg-[#FF9933]"></div>
+          <div class="h-1/3 w-full bg-white flex items-center justify-center relative">
+            <!-- Ashoka Chakra Navy Blue wheel -->
+            <svg class="w-2.5 h-2.5 text-[#000080]" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+              <circle cx="12" cy="12" r="3" fill="currentColor"/>
+              <path d="M12 2v20M2 12h20M5 5l14 14M5 19L19 5" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="h-1/3 w-full bg-[#128807]"></div>
+        </div>
+        <!-- Clean two-line stack -->
+        <div class="flex flex-col text-left">
+          <span class="text-[11px] font-bold text-slate-900 leading-tight">Indian</span>
+          <span class="text-[10px] font-medium text-slate-500 leading-tight">centric</span>
+        </div>
+      </div>
+
+      <!-- Cart Trigger Button -->
+      <button
+        type="button"
+        class="w-10 h-10 rounded-full bg-white border border-slate-200/90 flex items-center justify-center text-slate-800 hover:text-[#D99B26] transition-colors relative shadow-sm"
+        id="HeaderCartTrigger"
+        data-action="open-cart-drawer"
+        aria-label="Open Cart"
+      >
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        <span class="absolute -top-1 -right-1 bg-[#D99B26] text-slate-950 font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow">
+          {{ cart.item_count }}
+        </span>
+      </button>
+
+      <!-- WhatsApp Quick Order -->
+      <a href="https://wa.me/{{ settings.whatsapp_number | default: '918933063306' | remove: '+' | remove: ' ' }}" target="_blank" class="hidden sm:flex items-center gap-1.5 bg-[#25D366] hover:bg-[#1eb856] text-white px-3.5 py-2 rounded-md font-semibold text-xs transition-colors shadow-sm">
+        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
+        <span>Order</span>
+      </a>
+    </div>
+
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "text",
+      "id": "help_phone",
+      "label": "Support Phone",
+      "default": "+91 8933063306"
+    }
+  ]
+}
+{% endschema %}

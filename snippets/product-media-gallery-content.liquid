@@ -1,0 +1,5 @@
+<div class="product-media-gallery-content">
+  {%- if product.featured_media -%}
+    <img src="{{ product.featured_media | image_url: width: 800 }}" alt="{{ product.title | escape }}">
+  {%- endif -%}
+</div>

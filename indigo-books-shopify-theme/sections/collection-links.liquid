@@ -1,0 +1,95 @@
+{% comment %}
+  Pill / Tag Navigation matching Indigo Books India Collections
+  (Rekhta Publications, Sudha Murty, Ruskin Bond, McGraw Hill, Law Books, Bestsellers, Bundles)
+{% endcomment %}
+
+<section class="section section-collection-links" id="CollectionLinks-{{ section.id }}">
+  <div class="page-width">
+    {%- if section.settings.title != blank -%}
+      <div class="section-header text-center">
+        <h2 class="section-header__title">{{ section.settings.title | escape }}</h2>
+        {%- if section.settings.subtitle != blank -%}
+          <p class="section-header__subheading">{{ section.settings.subtitle | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="collection-pills-wrap">
+      <div class="collection-pills-scroll">
+        {%- for block in section.blocks -%}
+          {%- assign col = block.settings.collection -%}
+          <a
+            href="{% if block.settings.link != blank %}{{ block.settings.link }}{% elsif col != blank %}{{ col.url }}{% else %}#{% endif %}"
+            class="collection-pill {% if block.settings.is_highlighted %}collection-pill--highlight{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            {%- if block.settings.icon_emoji != blank -%}
+              <span class="collection-pill__emoji">{{ block.settings.icon_emoji }}</span>
+            {%- endif -%}
+            <span class="collection-pill__label">
+              {%- if block.settings.label != blank -%}
+                {{ block.settings.label }}
+              {%- elsif col != blank -%}
+                {{ col.title }}
+              {%- else -%}
+                Genre {{ forloop.index }}
+              {%- endif -%}
+            </span>
+            {%- if block.settings.show_count and col != blank -%}
+              <span class="collection-pill__count">{{ col.products_count }}</span>
+            {%- endif -%}
+          </a>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Genre Quick Links",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Explore by Top Categories & Authors"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Featured publications and curated authors at Indigo Books India"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "genre_link",
+      "name": "Genre Link",
+      "settings": [
+        { "type": "text", "id": "icon_emoji", "label": "Emoji Icon", "default": "<i data-lucide="book-open"></i>" },
+        { "type": "text", "id": "label", "label": "Custom Label (optional)" },
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "url", "id": "link", "label": "Custom Link (optional)" },
+        { "type": "checkbox", "id": "is_highlighted", "label": "Highlight as Trending", "default": false },
+        { "type": "checkbox", "id": "show_count", "label": "Show Book Count", "default": true }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Genre Quick Links",
+      "blocks": [
+        { "type": "genre_link", "settings": { "icon_emoji": "<i data-lucide="trending-up"></i>", "label": "Best Sellers", "is_highlighted": true } },
+        { "type": "genre_link", "settings": { "icon_emoji": "<i data-lucide="feather"></i>", "label": "Rekhta Publications" } },
+        { "type": "genre_link", "settings": { "icon_emoji": "<i data-lucide="heart"></i>", "label": "Sudha Murty" } },
+        { "type": "genre_link", "settings": { "icon_emoji": "<i data-lucide="trees"></i>", "label": "Ruskin Bond" } },
+        { "type": "genre_link", "settings": { "icon_emoji": "<i data-lucide="scale"></i>", "label": "Law Books" } },
+        { "type": "genre_link", "settings": { "icon_emoji": "<i data-lucide="graduation-cap"></i>", "label": "McGraw Hill" } },
+        { "type": "genre_link", "settings": { "icon_emoji": "<i data-lucide="package"></i>", "label": "Book Bundles" } },
+        { "type": "genre_link", "settings": { "icon_emoji": "<i data-lucide="palette"></i>", "label": "Manga for Children" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

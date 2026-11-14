@@ -1,0 +1,15 @@
+<div class="accordion-block" {{ block.shopify_attributes }}>
+  <details>
+    <summary><strong>{{ block.settings.title | default: 'Reading Guide & Overview' }}</strong></summary>
+    <div class="rte">{{ block.settings.content | default: '<p>Detailed synopsis, key takeaways, and review highlights.</p>' }}</div>
+  </details>
+</div>
+{% schema %}
+{
+  "name": "Accordion",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Book Highlights" },
+    { "type": "richtext", "id": "content", "label": "Content" }
+  ]
+}
+{% endschema %}

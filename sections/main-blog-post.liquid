@@ -1,0 +1,48 @@
+{% comment %}
+  Main Blog Post / Book Article Section
+{% endcomment %}
+
+<article class="section section-blog-post">
+  <div class="page-width page-width--narrow">
+    <header class="blog-post-header text-center">
+      <span class="blog-post-date">{{ article.published_at | date: '%B %d, %Y' }}</span>
+      <h1 class="blog-post-title">{{ article.title | escape }}</h1>
+      {%- if article.author != blank -%}
+        <p class="blog-post-author">Written by {{ article.author }}</p>
+      {%- endif -%}
+    </header>
+
+    {%- if article.image -%}
+      <div class="blog-post-featured-media">
+        <img src="{{ article.image | image_url: width: 1000 }}" alt="{{ article.title | escape }}" loading="lazy">
+      </div>
+    {%- endif -%}
+
+    <div class="blog-post-body rte">
+      {{ article.content }}
+    </div>
+
+    <!-- WhatsApp Share / Reading Club CTA -->
+    <div class="blog-post-footer">
+      <div class="blog-post-share">
+        <span>Share this review on WhatsApp:</span>
+        <a
+          href="https://api.whatsapp.com/send?text={{ article.title | url_encode }}%20{{ shop.url }}{{ article.url }}"
+          target="_blank"
+          rel="noopener"
+          class="btn btn--whatsapp btn--sm"
+        >
+          {% render 'icon', name: 'whatsapp' %} Share
+        </a>
+      </div>
+    </div>
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "Blog Post",
+  "settings": []
+}
+{% endschema %}
+

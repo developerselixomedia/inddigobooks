@@ -1,0 +1,259 @@
+{% comment %}
+  Indigo Books India - Lower Content Area: Bestsellers & Exclusive Bundles
+  12-Column Asymmetric Split:
+  - Left 8 cols: Bestsellers & New Arrivals (5 uniform book cards with review stars, price & carousel nav)
+  - Right 4 cols: Exclusive Bundles & Academic Reads Promo Card with 3 fanned sub-cards
+{% endcomment %}
+
+<section class="py-12 bg-[#FAF8F5]" id="BestsellersBundles-{{ section.id }}">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    
+    <!-- 12-Column Asymmetric Split -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+      
+      <!-- ================= Left Side — Bestsellers & New Arrivals (lg:col-span-8) ================= -->
+      <div class="lg:col-span-8 flex flex-col justify-between">
+        
+        <!-- Header Row -->
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h2 class="text-2xl lg:text-3xl font-serif font-bold text-slate-900 tracking-tight">
+              {{ section.settings.title | default: 'Bestsellers & New Arrivals' }}
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">Handpicked literary gems & acclaimed Indian authors</p>
+          </div>
+          
+          <!-- Circular Chevron Navigation Buttons -->
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              onclick="document.getElementById('carouselRow-{{ section.id }}').scrollBy({left: -240, behavior: 'smooth'})"
+              class="w-9 h-9 rounded-full bg-white border border-slate-200 text-slate-700 flex items-center justify-center hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm active:scale-95"
+              aria-label="Previous Books"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button
+              type="button"
+              onclick="document.getElementById('carouselRow-{{ section.id }}').scrollBy({left: 240, behavior: 'smooth'})"
+              class="w-9 h-9 rounded-full bg-white border border-slate-200 text-slate-700 flex items-center justify-center hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm active:scale-95"
+              aria-label="Next Books"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Book Carousel Grid (5 Uniform Book Cards) -->
+        <div class="relative">
+          <div
+            id="carouselRow-{{ section.id }}"
+            class="grid grid-cols-2 sm:grid-cols-5 gap-4 overflow-x-auto pb-4 scroll-smooth"
+            style="scrollbar-width: none; -ms-overflow-style: none;"
+          >
+            {%- assign collection = collections[section.settings.collection] | default: collections.all -%}
+            {%- if collection != blank and collection.products_count > 0 -%}
+              {%- for product in collection.products limit: 5 -%}
+                <div class="group flex flex-col justify-between">
+                  <div>
+                    <a href="{{ product.url }}" class="block aspect-[2/3] rounded-lg overflow-hidden shadow-md bg-slate-200 relative">
+                      {%- if product.featured_media -%}
+                        <img src="{{ product.featured_media | image_url: width: 400 }}" alt="{{ product.title | escape }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                      {%- else -%}
+                        <img src="{{ 'hero-book-arundhati.jpg' | asset_url }}" alt="{{ product.title }}" class="w-full h-full object-cover">
+                      {%- endif -%}
+                      <span class="absolute top-2 right-2 bg-[#D99B26] text-slate-950 font-bold text-[10px] px-1.5 py-0.5 rounded shadow">Bestseller</span>
+                    </a>
+                    <h3 class="text-sm font-semibold text-slate-900 truncate mt-2 group-hover:text-[#D99B26] transition-colors">
+                      <a href="{{ product.url }}">{{ product.title }}</a>
+                    </h3>
+                    <p class="text-xs text-slate-500 truncate">{{ product.vendor | default: 'Author' }}</p>
+                  </div>
+                  <div class="mt-2">
+                    <div class="flex items-center gap-1 text-[#D99B26] text-xs">
+                      <span><span class="rating-stars" style="color: #f59e0b; display: inline-flex; align-items: center; gap: 1px;"><i data-lucide="star" style="width: 13px; height: 13px; fill: #f59e0b;"></i><i data-lucide="star" style="width: 13px; height: 13px; fill: #f59e0b;"></i><i data-lucide="star" style="width: 13px; height: 13px; fill: #f59e0b;"></i><i data-lucide="star" style="width: 13px; height: 13px; fill: #f59e0b;"></i><i data-lucide="star" style="width: 13px; height: 13px; fill: #f59e0b;"></i></span></span>
+                      <span class="text-slate-400 text-[10px]">(120+)</span>
+                    </div>
+                    <span class="text-sm font-bold text-slate-900 block mt-0.5">{{ product.price | money }}</span>
+                  </div>
+                </div>
+              {%- endfor -%}
+            {%- else -%}
+              <!-- Static 5 Bestseller Cards from Scraped Inventory with Mini Overview Trigger -->
+              {% render 'curated-book-item',
+                title: "Arundhati Roy (1998-2016)",
+                author: "Arundhati Roy",
+                price: "₹499.00",
+                original: "₹699.00",
+                discount: "Bestseller",
+                stars: "5",
+                reviews: "128",
+                image_name: "hero-book-arundhati.jpg",
+                isbn: "978-0670087457",
+                publisher: "Penguin Hamish Hamilton",
+                language: "English",
+                pages: "480 pp",
+                binding: "Paperback",
+                desc: "Two decades of Arundhati Roy's visionary political essays, speeches, and meditations on democracy, justice, and memory."
+              %}
+
+              {% render 'curated-book-item',
+                title: "Kasaibada",
+                author: "Manoj Rajan Tripathi",
+                price: "₹299.00",
+                original: "₹350.00",
+                discount: "15% OFF",
+                stars: "5",
+                reviews: "94",
+                image_name: "hero-book-kasaibada.jpg",
+                isbn: "978-9390315895",
+                publisher: "Vani Prakashan",
+                language: "Hindi",
+                pages: "210 pp",
+                binding: "Paperback",
+                desc: "A gripping literary masterpiece set across Northern India exploring rural socio-politics, caste, and redemption."
+              %}
+
+              {% render 'curated-book-item',
+                title: "The Gift of Rumi",
+                author: "Maryam Mafi",
+                price: "₹399.00",
+                original: "₹499.00",
+                discount: "Classic",
+                stars: "5",
+                reviews: "215",
+                image_name: "hero-book-rumi.png",
+                isbn: "978-1846045585",
+                publisher: "Rider Books",
+                language: "English",
+                pages: "304 pp",
+                binding: "Hardcover",
+                desc: "The sublime spiritual verses and profound allegories of Jalal al-Din Rumi beautifully translated for modern seekers."
+              %}
+
+              {% render 'curated-book-item',
+                title: "Dozakhnama",
+                author: "Rekhta Publications",
+                price: "₹350.00",
+                original: "₹450.00",
+                discount: "Popular",
+                stars: "5",
+                reviews: "180",
+                image_name: "hero-book-dozakh.jpg",
+                isbn: "978-8184003055",
+                publisher: "Penguin Vintage",
+                language: "Hindi / Urdu",
+                pages: "528 pp",
+                binding: "Hardcover",
+                desc: "Conversations in hell between Mirza Ghalib and Saadat Hasan Manto—a transcendent literary dialogue."
+              %}
+
+              {% render 'curated-book-item',
+                title: "Best of Murakami Set",
+                author: "Haruki Murakami",
+                price: "₹1,299.00",
+                original: "₹1,799.00",
+                discount: "Set",
+                stars: "5",
+                reviews: "310",
+                image_name: "hero-book-murakami.jpg",
+                isbn: "978-0099511649",
+                publisher: "Vintage Classics",
+                language: "English",
+                pages: "980 pp",
+                binding: "Boxset",
+                desc: "A collector set containing Norwegian Wood, Kafka on the Shore, and The Wind-Up Bird Chronicle in uniform vintage design."
+              %}
+            {%- endif -%}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= Right Side — Exclusive Bundles Promo Card (lg:col-span-4) ================= -->
+      <div class="lg:col-span-4">
+        <div class="rounded-2xl bg-gradient-to-br from-[#3A2D1E] via-[#2A2118] to-[#1E170F] p-6 text-white flex flex-col justify-between relative overflow-hidden shadow-2xl h-full border border-amber-900/40">
+          
+          <!-- Top Text Stack -->
+          <div>
+            <span class="text-[10px] font-bold tracking-widest uppercase text-amber-400 bg-amber-950/60 border border-amber-700/50 px-2.5 py-1 rounded-full inline-block mb-3">
+              Curated Savings
+            </span>
+            <h3 class="text-2xl font-serif font-bold text-white leading-tight">
+              Exclusive Bundles &amp; <br>Academic Reads
+            </h3>
+            <p class="text-xs text-amber-200/80 mt-1.5 leading-relaxed">
+              Explore India's largest online collection with express doorstep delivery &amp; COD across India.
+            </p>
+          </div>
+
+          <!-- Bottom Visual: Three Angled/Fanned Sub-Cards Rising from Bottom -->
+          <div class="relative h-44 mt-6 flex items-end justify-center">
+            
+            <!-- Left Sub-Card (Red/Pink #E11D48) -->
+            <a href="/collections/all?filter.p.tag=exclusive" class="absolute left-1 bottom-1 w-28 h-36 rounded-xl bg-gradient-to-br from-[#E11D48] to-[#9F1239] p-3 text-white shadow-xl transform -rotate-12 hover:-translate-y-2 transition-transform cursor-pointer border border-rose-400/30 flex flex-col justify-between">
+              <span class="text-[9px] font-bold tracking-wide uppercase opacity-80">Call-Out</span>
+              <div>
+                <div class="text-[10px] font-bold leading-tight">Exclusive Cards</div>
+                <div class="text-[8px] opacity-75 mt-0.5">Up to 40% Off</div>
+              </div>
+            </a>
+
+            <!-- Center Sub-Card (Marigold #F59E0B) -->
+            <a href="/collections/all?filter.p.m.custom.genre=Bundles" class="absolute left-1/2 -translate-x-1/2 bottom-3 w-32 h-40 rounded-xl bg-gradient-to-br from-[#F59E0B] via-[#D97706] to-[#B45309] p-3.5 text-slate-950 shadow-2xl z-10 transform hover:-translate-y-3 transition-transform cursor-pointer border border-amber-300/50 flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-extrabold tracking-wider uppercase bg-black/10 px-1.5 py-0.5 rounded">Featured</span>
+                <svg class="w-4 h-4 text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="text-xs font-black uppercase tracking-tight">Call-out Bundles</div>
+                <div class="text-[9px] font-bold text-amber-950 mt-0.5">Complete Box Sets</div>
+              </div>
+            </a>
+
+            <!-- Right Sub-Card (Teal/Emerald #0D9488) -->
+            <a href="/collections/all?filter.p.m.custom.genre=Law" class="absolute right-1 bottom-1 w-28 h-36 rounded-xl bg-gradient-to-br from-[#0D9488] to-[#115E59] p-3 text-white shadow-xl transform rotate-12 hover:-translate-y-2 transition-transform cursor-pointer border border-teal-300/30 flex flex-col justify-between">
+              <span class="text-[9px] font-bold tracking-wide uppercase opacity-80">Academic</span>
+              <div>
+                <div class="text-[10px] font-bold leading-tight">Academic Reads</div>
+                <div class="text-[8px] opacity-75 mt-0.5">McGraw &amp; Law</div>
+              </div>
+            </a>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bestsellers & Bundles",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Bestsellers & New Arrivals"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bestsellers & Bundles"
+    }
+  ]
+}
+{% endschema %}
+

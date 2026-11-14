@@ -1,0 +1,165 @@
+{% comment %}
+  Best Seller Books Carousel - Matching Video Showcase
+  Features discount badge, teal pricing, clean book frame & animated line slider
+{% endcomment %}
+
+<section class="section section-bestseller-carousel {% if section.settings.bg_cream %}section--cream-bg{% endif %}" id="Carousel-{{ section.id }}">
+  <div class="page-width">
+    <div class="bestseller-header text-center">
+      <h2 class="bestseller-title">{{ section.settings.title | default: 'Best Seller Books' }}</h2>
+      {%- if section.settings.subheading != blank -%}
+        <p class="bestseller-sub">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="bestseller-carousel-container">
+      <div class="bestseller-track" id="BestsellerTrack-{{ section.id }}">
+        {%- assign collection = collections[section.settings.collection] | default: collections.all -%}
+        {%- if collection != blank and collection.products_count > 0 -%}
+          {%- for product in collection.products limit: section.settings.products_to_show -%}
+            <div class="bestseller-card-item">
+              <div class="bestseller-card-frame">
+                {%- if product.compare_at_price > product.price -%}
+                  {%- assign discount = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+                  <span class="bestseller-discount-badge">{{ discount }}% Off</span>
+                {%- else -%}
+                  <span class="bestseller-discount-badge">Hot</span>
+                {%- endif -%}
+
+                <a href="{{ product.url }}" class="bestseller-cover-link">
+                  {%- if product.featured_media -%}
+                    <img src="{{ product.featured_media | image_url: width: 500 }}" alt="{{ product.title | escape }}" loading="lazy">
+                  {%- else -%}
+                    <div class="bestseller-mock-cover">
+                      <span>{{ product.title | truncate: 25 }}</span>
+                    </div>
+                  {%- endif -%}
+                </a>
+              </div>
+
+              <div class="bestseller-meta-row">
+                <h3 class="bestseller-book-title">
+                  <a href="{{ product.url }}">{{ product.title | truncate: 24 }}</a>
+                </h3>
+                <span class="bestseller-book-price">{{ product.price | money }}</span>
+              </div>
+              <p class="bestseller-book-author">{{ product.vendor | default: 'Author' }}</p>
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          <!-- Clean Preview Mock Items matching the video -->
+          <div class="bestseller-card-item">
+            <div class="bestseller-card-frame">
+              <span class="bestseller-discount-badge">15% Off</span>
+              <div class="bestseller-mock-cover bestseller-mock-cover--1">
+                <h4>Bovary Made</h4>
+              </div>
+            </div>
+            <div class="bestseller-meta-row">
+              <h3 class="bestseller-book-title">Bovary Made</h3>
+              <span class="bestseller-book-price">₹499.00</span>
+            </div>
+            <p class="bestseller-book-author">Floyd Miles</p>
+          </div>
+
+          <div class="bestseller-card-item">
+            <div class="bestseller-card-frame">
+              <span class="bestseller-discount-badge">10% Off</span>
+              <div class="bestseller-mock-cover bestseller-mock-cover--2">
+                <h4>Gurur Nyar I</h4>
+              </div>
+            </div>
+            <div class="bestseller-meta-row">
+              <h3 class="bestseller-book-title">Gurur Nyar I</h3>
+              <span class="bestseller-book-price">₹399.00</span>
+            </div>
+            <p class="bestseller-book-author">Arlene McCoy</p>
+          </div>
+
+          <div class="bestseller-card-item">
+            <div class="bestseller-card-frame">
+              <span class="bestseller-discount-badge">5% Off</span>
+              <div class="bestseller-mock-cover bestseller-mock-cover--3">
+                <h4>Beyaz Düş I</h4>
+              </div>
+            </div>
+            <div class="bestseller-meta-row">
+              <h3 class="bestseller-book-title">Beyaz Düş I</h3>
+              <span class="bestseller-book-price">₹650.00</span>
+            </div>
+            <p class="bestseller-book-author">Theresa Webb</p>
+          </div>
+
+          <div class="bestseller-card-item">
+            <div class="bestseller-card-frame">
+              <span class="bestseller-discount-badge">12% Off</span>
+              <div class="bestseller-mock-cover bestseller-mock-cover--4">
+                <h4>Suç ve Ceza</h4>
+              </div>
+            </div>
+            <div class="bestseller-meta-row">
+              <h3 class="bestseller-book-title">Suç ve Ceza</h3>
+              <span class="bestseller-book-price">₹550.00</span>
+            </div>
+            <p class="bestseller-book-author">Kathryn Murphy</p>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Slider Progress Bar & Navigation Arrow from Video -->
+      <div class="bestseller-slider-nav">
+        <div class="bestseller-nav-line">
+          <div class="bestseller-nav-progress"></div>
+        </div>
+        <button type="button" class="bestseller-next-arrow" onclick="document.getElementById('BestsellerTrack-{{ section.id }}').scrollBy({left: 320, behavior: 'smooth'})" aria-label="Next Books">
+          &rarr;
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Best Seller Carousel",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "bg_cream",
+      "label": "Warm Cream Background (Indigo Classic)",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Best Seller Books"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Most popular choices among readers across India"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "default": 8,
+      "label": "Books to show"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Best Seller Carousel"
+    }
+  ]
+}
+{% endschema %}

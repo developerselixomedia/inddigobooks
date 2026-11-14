@@ -1,0 +1,4 @@
+/* Horizon Base Stylesheet */
+:root { --font-body-scale: 1; }
+html { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font-sans, sans-serif); }

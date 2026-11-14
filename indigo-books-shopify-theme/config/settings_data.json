@@ -1,0 +1,27 @@
+{
+  "current": {
+    "color_primary": "#2e7d32",
+    "color_accent": "#ea580c",
+    "color_whatsapp": "#25D366",
+    "color_bg": "#ffffff",
+    "color_text": "#1e293b",
+    "whatsapp_number": "918933063306",
+    "whatsapp_agent_name": "Indigo Books India",
+    "whatsapp_floating_tooltip": "Need book recommendations? Chat with Indigo Books Prayagraj!",
+    "enable_floating_whatsapp": true,
+    "enable_product_whatsapp_btn": true,
+    "enable_cart_whatsapp_checkout": true,
+    "whatsapp_default_message": "Hello Indigo Books India!  I am looking for books from your online store.",
+    "meta_pixel_id": "",
+    "enable_custom_meta_events": true,
+    "show_author_on_cards": true,
+    "show_format_badge": true,
+    "enable_quick_view": true,
+    "enable_sticky_add_to_cart": true,
+    "color_secondary": "#0073bb",
+    "color_bg_cream": "#fcf8f2",
+    "color_hero_sage": "#d8e8e4",
+    "color_hero_sand": "#f5e6cb",
+    "support_phone": "+91 8933063306"
+  }
+}

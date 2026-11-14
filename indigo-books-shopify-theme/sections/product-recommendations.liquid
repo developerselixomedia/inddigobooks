@@ -1,0 +1,65 @@
+{% comment %}
+  Dynamic Book Recommendations Section ("Readers Also Bought")
+{% endcomment %}
+
+<section
+  class="section section-product-recommendations"
+  id="ProductRecommendations-{{ section.id }}"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=4&intent=related"
+>
+  {%- if recommendations.performed and recommendations.products_count > 0 -%}
+    <div class="page-width">
+      <div class="section-header text-center">
+        <h2 class="section-header__title">{{ section.settings.title | default: 'Readers Also Loved These Books' }}</h2>
+        <p class="section-header__subheading">Frequently bought together with this title</p>
+      </div>
+
+      <div class="grid grid--4-col grid--2-col-tablet grid--1-col-mobile">
+        {%- for recommendation in recommendations.products -%}
+          <div class="grid__item">
+            {% render 'product-card', product: recommendation, section_id: section.id %}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const section = document.getElementById('ProductRecommendations-{{ section.id }}');
+    if (!section) return;
+    const url = section.dataset.url;
+    fetch(url)
+      .then(response => response.text())
+      .then(text => {
+        const html = document.createElement('div');
+        html.innerHTML = text;
+        const recommendations = html.querySelector('.section-product-recommendations');
+        if (recommendations && recommendations.innerHTML.trim().length) {
+          section.innerHTML = recommendations.innerHTML;
+        }
+      })
+      .catch(e => console.error('Error fetching recommendations:', e));
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Book Recommendations",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Readers Also Loved These Books"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Book Recommendations"
+    }
+  ]
+}
+{% endschema %}
+

@@ -1,0 +1,37 @@
+{% comment %}
+  Volume Pricing & Bulk Book Discount Info Modal
+{% endcomment %}
+
+<div class="volume-pricing-info-container" id="VolumePricingInfo">
+  <button type="button" class="volume-pricing-trigger-btn" data-action="toggle-volume-pricing">
+    {% render 'icon', name: 'info' %}
+    <span>Bulk / Institutional Discount Tiers</span>
+  </button>
+
+  <div class="volume-pricing-table-wrap">
+    <table class="volume-pricing-table">
+      <thead>
+        <tr>
+          <th>Quantity</th>
+          <th>Discount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>5 - 9 copies</td>
+          <td>10% OFF</td>
+        </tr>
+        <tr>
+          <td>10 - 24 copies</td>
+          <td>15% OFF</td>
+        </tr>
+        <tr>
+          <td>25+ copies</td>
+          <td>20% OFF</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="volume-pricing-note">Ideal for schools, libraries, and book clubs. Discounts applied automatically at checkout or via WhatsApp bulk order.</p>
+  </div>
+</div>
+

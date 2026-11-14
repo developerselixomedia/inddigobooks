@@ -1,0 +1,250 @@
+{% comment %}
+  Main Product Information Section - High Conversion Bookstore PDP
+  Optimized for Meta Ads traffic & WhatsApp 1-Click Ordering
+{% endcomment %}
+
+<section class="section section-product-info" id="ProductInfo-{{ section.id }}" data-product-id="{{ product.id }}">
+  <div class="page-width">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a> &rsaquo;
+      {%- if product.collections.first -%}
+        <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a> &rsaquo;
+      {%- endif -%}
+      <span>{{ product.title | escape }}</span>
+    </nav>
+
+    <div class="product-pdp-grid">
+      <!-- Left Column: Book Cover Gallery -->
+      <div class="product-pdp-media-area">
+        <div class="product-main-image-wrap">
+          {%- if product.featured_media -%}
+            <img
+              src="{{ product.featured_media | image_url: width: 800 }}"
+              alt="{{ product.featured_media.alt | default: product.title | escape }}"
+              class="product-main-cover"
+              id="ProductMainImage"
+              loading="eager"
+            >
+          {%- else -%}
+            <div class="product-cover-placeholder">{% render 'icon', name: 'book' %}</div>
+          {%- endif -%}
+
+          {%- if product.compare_at_price > product.price -%}
+            {%- assign discount = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+            <span class="badge badge--pdp-sale">{{ discount }}% OFF</span>
+          {%- endif -%}
+        </div>
+
+        {%- if product.media.size > 1 -%}
+          <div class="product-thumb-strip">
+            {%- for media in product.media -%}
+              <button
+                type="button"
+                class="thumb-btn {% if forloop.first %}thumb-btn--active{% endif %}"
+                data-full-src="{{ media | image_url: width: 800 }}"
+                aria-label="View media {{ forloop.index }}"
+              >
+                <img src="{{ media | image_url: width: 140 }}" alt="{{ media.alt | default: product.title | escape }}" loading="lazy">
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        <!-- Perks Box under Cover -->
+        <div class="product-perks-box">
+          <div class="perk-row">
+            {% render 'icon', name: 'shield-check' %}
+            <div>
+              <strong>100% Genuine Edition</strong>
+              <p>Direct from authorized publishers with crisp binding.</p>
+            </div>
+          </div>
+          <div class="perk-row">
+            {% render 'icon', name: 'truck' %}
+            <div>
+              <strong>COD & Express Dispatch</strong>
+              <p>Dispatched within 24 hours. Free shipping over ₹999.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Book Details & High-Conversion Buy Stack -->
+      <div class="product-pdp-details-area">
+        <span class="product-genre-tag">{{ product.collections.first.title | default: 'Curated Edition' }}</span>
+
+        <h1 class="product-pdp-title">{{ product.title | escape }}</h1>
+
+        <!-- Author Spotlight -->
+        <div class="product-author-badge">
+          <span>Author:</span>
+          <strong>{{ product.metafields.custom.author.value | default: product.vendor }}</strong>
+        </div>
+
+        <!-- Rating & Social Proof -->
+        <div class="product-pdp-social-proof">
+          <div class="rating-stars">
+            {% for i in (1..5) %}
+              {% render 'icon', name: 'star' %}
+            {% endfor %}
+          </div>
+          <span class="rating-score">4.9/5</span>
+          <span class="reviews-count">(Over 1,240 verified readers)</span>
+        </div>
+
+        <!-- Price Section -->
+        <div class="product-pdp-price">
+          {% render 'price', product: product, use_variant: true %}
+          <span class="taxes-label">(Inclusive of all taxes)</span>
+        </div>
+
+        <!-- Book Variant Selector (Format: Paperback, Hardcover, E-Book) -->
+        {%- assign current_variant = product.selected_or_first_available_variant -%}
+        <div class="product-format-selector">
+          {%- unless product.has_only_default_variant -%}
+            <label class="format-label">Select Book Format / Edition:</label>
+            <div class="format-options">
+              {%- for variant in product.variants -%}
+                <label class="format-option-card {% if variant.id == current_variant.id %}format-option-card--selected{% endif %} {% unless variant.available %}format-option-card--soldout{% endunless %}">
+                  <input
+                    type="radio"
+                    name="id"
+                    value="{{ variant.id }}"
+                    data-price="{{ variant.price | money }}"
+                    data-available="{{ variant.available }}"
+                    {% if variant.id == current_variant.id %}checked{% endif %}
+                    {% unless variant.available %}disabled{% endunless %}
+                    class="visually-hidden variant-selector-radio"
+                  >
+                  <span class="format-name">{{ variant.title }}</span>
+                  <span class="format-price">{{ variant.price | money }}</span>
+                  {% unless variant.available %}
+                    <span class="format-sold-tag">Sold Out</span>
+                  {% endunless %}
+                </label>
+              {%- endfor -%}
+            </div>
+          {%- endunless -%}
+        </div>
+
+        <!-- Quantity & Order Actions -->
+        <div class="product-pdp-actions">
+          <form action="/cart/add" method="post" enctype="multipart/form-data" id="ProductPdpForm" class="pdp-form">
+            <input type="hidden" name="id" id="SelectedVariantId" value="{{ current_variant.id }}">
+
+            <div class="quantity-add-row">
+              <div class="qty-control">
+                <button type="button" class="qty-btn" id="QtyDecrease">-</button>
+                <input type="number" name="quantity" id="ProductQuantity" value="1" min="1" max="99" class="qty-input">
+                <button type="button" class="qty-btn" id="QtyIncrease">+</button>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn--primary btn--lg btn--add-to-cart"
+                id="AddToCartBtn"
+                {% unless current_variant.available %}disabled{% endunless %}
+              >
+                {% if current_variant.available %}Add to Reading Cart{% else %}Out of Stock{% endif %}
+              </button>
+            </div>
+
+            <!-- Fast Buy Now button (Straight to checkout for Meta Ads) -->
+            {%- if current_variant.available -%}
+              <button type="button" class="btn btn--dark btn--full-width btn--buy-now" id="InstantBuyNowBtn">
+                <i data-lucide="zap"></i> Instant Buy Now (Skip Cart)
+              </button>
+            {%- endif -%}
+          </form>
+
+          <!-- High-Intent WhatsApp Order Button -->
+          <div class="pdp-whatsapp-block">
+            {% render 'whatsapp-button', mode: 'product', product: product %}
+            <p class="wa-helper-text">
+              <i data-lucide="message-circle"></i> <em>Prefer Cash on Delivery or want bulk discounts? Tap above to order on WhatsApp with instant confirmation.</em>
+            </p>
+          </div>
+        </div>
+
+        <!-- Book Specifications Accordion -->
+        <div class="product-specs-accordion">
+          <details class="spec-accordion-item" open>
+            <summary class="spec-accordion-title">
+              <span>Book Specifications & Details</span>
+              {% render 'icon', name: 'chevron-down' %}
+            </summary>
+            <div class="spec-accordion-content">
+              <table class="specs-table">
+                <tbody>
+                  <tr>
+                    <th>Author:</th>
+                    <td>{{ product.metafields.custom.author.value | default: product.vendor }}</td>
+                  </tr>
+                  <tr>
+                    <th>Language:</th>
+                    <td>{{ product.metafields.custom.language.value | default: 'English' }}</td>
+                  </tr>
+                  <tr>
+                    <th>Binding:</th>
+                    <td>{{ current_variant.title }}</td>
+                  </tr>
+                  <tr>
+                    <th>Publisher:</th>
+                    <td>{{ product.metafields.custom.publisher.value | default: 'Original Publisher' }}</td>
+                  </tr>
+                  <tr>
+                    <th>ISBN-13:</th>
+                    <td>{{ product.metafields.custom.isbn.value | default: product.selected_or_first_available_variant.barcode | default: '978-0143453' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+
+          <details class="spec-accordion-item" open>
+            <summary class="spec-accordion-title">
+              <span>Synopsis & Description</span>
+              {% render 'icon', name: 'chevron-down' %}
+            </summary>
+            <div class="spec-accordion-content rte">
+              {{ product.description }}
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Sticky Buy / WhatsApp Bar (Crucial for Meta Ads Conversions) -->
+  {%- if settings.enable_sticky_add_to_cart -%}
+    <div class="sticky-mobile-pdp-bar" id="StickyMobileBar">
+      <div class="sticky-bar__info">
+        <span class="sticky-bar__title">{{ product.title | truncate: 25 }}</span>
+        <span class="sticky-bar__price">{{ current_variant.price | money }}</span>
+      </div>
+      <div class="sticky-bar__actions">
+        <button type="button" class="btn btn--primary btn--sm" id="StickyAddToCartBtn">
+          Add to Cart
+        </button>
+        <a
+          href="https://wa.me/{{ settings.whatsapp_number | remove: '+' | remove: ' ' }}?text=Hi%20Indigo%20Books,%20I%20want%20to%20order%20{{ product.title | url_encode }}%20({{ current_variant.price | money }})"
+          target="_blank"
+          rel="noopener"
+          class="btn btn--whatsapp btn--sm"
+          data-whatsapp-track="Sticky Bar WhatsApp Order"
+        >
+          {% render 'icon', name: 'whatsapp' %} WhatsApp
+        </a>
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Product Information",
+  "settings": []
+}
+{% endschema %}
+

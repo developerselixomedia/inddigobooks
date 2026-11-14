@@ -1,0 +1,62 @@
+{% comment %}
+  Publishers & Brand Partners Logo Showcase
+{% endcomment %}
+
+<section class="section section-logo-list" id="LogoList-{{ section.id }}">
+  <div class="page-width">
+    {%- if section.settings.title != blank -%}
+      <div class="section-header text-center">
+        <h3 class="section-header__subheading text-uppercase">{{ section.settings.title | escape }}</h3>
+      </div>
+    {%- endif -%}
+
+    <div class="logo-list-grid">
+      {%- for block in section.blocks -%}
+        <div class="logo-list__item" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            <img src="{{ block.settings.image | image_url: width: 200 }}" alt="{{ block.settings.title | default: 'Publisher' }}" loading="lazy">
+          {%- else -%}
+            <span class="logo-list__text-badge">{{ block.settings.title | default: 'Publisher' }}</span>
+          {%- endif -%}
+        </div>
+      {%- else -%}
+        <div class="logo-list__item"><span class="logo-list__text-badge">Penguin Random House</span></div>
+        <div class="logo-list__item"><span class="logo-list__text-badge">HarperCollins</span></div>
+        <div class="logo-list__item"><span class="logo-list__text-badge">Simon & Schuster</span></div>
+        <div class="logo-list__item"><span class="logo-list__text-badge">Bloomsbury</span></div>
+        <div class="logo-list__item"><span class="logo-list__text-badge">Oxford Press</span></div>
+        <div class="logo-list__item"><span class="logo-list__text-badge">Hachette Book Group</span></div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Publisher Logos",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Official Editions From Top Global Publishers"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Publisher Logo",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Logo Image" },
+        { "type": "text", "id": "title", "label": "Publisher Name", "default": "Publisher Name" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Publisher Logos"
+    }
+  ]
+}
+{% endschema %}
+

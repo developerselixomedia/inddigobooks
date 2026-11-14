@@ -1,0 +1,229 @@
+<USER_REQUEST>
+/goal ### MASTER REBUILD & CSV DATA SYNC: (1) Parse 100% Real Data from `shopify_products_import.csv` (Zero Assumed ISBNs/Pages/Prices), (2) Build Exact `indigobooksindia.com` Solo Product Page + Category Shelves + Search Bar with Category Dropdown, (3) Add 3D Hover Book-Opening Animation on Every Book Card Across the Site, (4) Fix Overview Modal & Section Padding (`image_76d31e.png` & `image_76d243.jpg`), and (5) Fix Cart Items Display (`image_767126.png`) + Add Direct Phone-Only & GPS Auto-Location Express Checkout + Payment Gateway UI
+
+Look at our reference images from `indigobooksindia.com` (`image_76d5ff.jpg`, `image_76d5e0.jpg`, `image_76cf1e.png`, `image_76cefb.jpg`, `image_76cedc.png`) and the bugs on our current site (`image_76d31e.png`, `image_76d243.jpg`, `image_767126.png`). Execute all 7 of these mandatory upgrades across `preview.html` and the Shopify `.zip` (`layout/theme.liquid`, `sections/main-indigo-store.liquid`, `sections/main-product.liquid`) right now:
+
+---
+
+#### 1. PARSE 100% REAL DATA FROM `shopify_products_import.csv` (NEVER ASSUME OR INVENT ISBN, PAGES, AUTHOR, LANGUAGE, OR PRICE!)
+In `shopify_products_import.csv` (7,532 rows, 5,559 unique books):
+- **How the CSV is structured:**
+  - Multi-variant books (like `Hardcover`, `Paperback`, `Text Book`) share the same `Handle`. The first row of each `Handle` contains `Title`, `Body (HTML)`, `Vendor` (Publisher), `Type` (Category), and `Tags`, while subsequent variant rows for the same `Handle` have empty (`NaN`) `Title`/`Body (HTML)` and contain that specific binding's `Option1 Value` (`Hardcover` / `Paperback` / `Text Book`), `Variant SKU` (**the exact 13-digit ISBN!**), `Variant Grams` (weight in grams), `Variant Inventory Qty` (exact stock count), `Variant Price` (exact price), and `Image Src`.
+  - Inside `Body (HTML)`, `<div class="indigo-book-specs">` contains the exact fields:
+    - `<p><strong>Title:</strong> ...</p>`
+    - `<p><strong>Author:</strong> ...</p>` (Extract the real Author from here—NEVER put the Publisher/Vendor as the Author!)
+    - `<p><strong>Publisher:</strong> ...</p>`
+    - `<p><strong>Language:</strong> ...</p>`
+    - `<p><strong>Binding:</strong> ...</p>`
+    - `<p><strong>Pages:</strong> ...</p>` (e.g., `312p`, `147p`, `324p`, `423p`)
+    - `<p><strong>Edition / Year:</strong> ...</p>` (e.g., `4th (1936)`, `5th (2016)`)
+    - `<p><strong>Subject / Category:</strong> ...</p>`
+    - `<p><strong>ISBN:</strong> ...</p>` (Matches `Variant SKU`)
+
+- **Exact Verified CSV Records You MUST Use for Featured Store Books (Zero Fake Data):**
+  1. **Godan** (`godan-premchand`):
+     - **Author:** `Premchand` | **Publisher:** `Lokbharti Prakashan` | **Category:** `Fiction : Novel` | **Language:** `Hindi` | **Pages:** `312p` | **Edition/Year:** `4th (1936)`
+     - **Paperback:** Price `₹299.00` | ISBN/SKU: `9789389742152` | Weight: `270 g` | Stock: `2927` | Cover: `https://images.rajkamalprakashan.com/products/2026/08/07/d18d896b-e17d-4c03-b26c-0525c9675e05-godan-text-book.jpg`
+     - **Hardcover:** Price `₹950.00` | ISBN/SKU: `9789389742145` | Weight: `490 g` | Stock: `143` | Cover: `https://images.rajkamalprakashan.com/products/2026/08/07/0aecec84-e77e-45b8-95f1-609248054617-godan-front.jpg`
+  2. **Raag Darbari** (`raag-darbari-shrilal-shukla`):
+     - **Author:** `Shrilal Shukla` | **Publisher:** `Rajkamal Prakashan` | **Category:** `Fiction : Novel` | **Language:** `Hindi` | **Pages:** `423p` | **Edition/Year:** `55th (1983)` | Cover: `https://images.rajkamalprakashan.com/products/--1776279294489.jpg`
+     - **Paperback:** Price `₹499.00` | ISBN/SKU: `9788126713967` | Weight: `490 g` | Stock: `2522`
+     - **Hardcover:** Price `₹1295.00` | ISBN/SKU: `9788126713882` | Weight: `600 g` | Stock: `733`
+  3. **Chitralekha** (`chitralekha-bhagwaticharan-verma`):
+     - **Author:** `Bhagwaticharan Verma` | **Publisher:** `Rajkamal Prakashan` | **Category:** `Fiction : Novel` | **Language:** `Hindi` | **Pages:** `200p` | **Edition/Year:** `32nd (1993)` | Cover: `https://images.rajkamalprakashan.com/products/--1776278166396.jpg`
+     - **Paperback:** Price `₹299.00` | ISBN/SKU: `9788126715855` | Weight: `225 g` | Stock: `4010`
+     - **Hardcover:** Price `₹695.00` | ISBN/SKU: `9788126715831` | Weight: `360 g` | Stock: `463`
+  4. **Rashmirathi : Dinkar Granthmala** (`rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar`):
+     - **Author:** `Ramdhari Singh 'Dinkar'` | **Publisher:** `Lokbharti Prakashan` | **Category:** `Poetry` | **Language:** `Hindi` | **Pages:** `192p` | **Edition/Year:** `46th (1952)` | Cover: `https://images.rajkamalprakashan.com/products/--1776278887188.jpg`
+     - **Paperback:** Price `₹299.00` | ISBN/SKU: `9788180313639` | Weight: `216 g` | Stock: `3641`
+     - **Hardcover:** Price `₹795.00` | ISBN/SKU: `9788180313622` | Weight: `290 g` | Stock: `551`
+  5. **Kuchh Ishq Kiya Kuchh Kaam Kiya** (`kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra`):
+     - **Author:** `Piyush Mishra` | **Publisher:** `Rajkamal Prakashan` | **Category:** `Poetry/Shayari` | **Language:** `Hindi` | **Pages:** `147p` | **Edition/Year:** `5th (2016)` | Cover: `https://images.rajkamalprakashan.com/products/--1776279062739.jpg`
+     - **Paperback:** Price `₹250.00` | ISBN/SKU: `9788126728435` | Weight: `160 g` | Stock: `4005`
+     - **Hardcover:** Price `₹495.00` | ISBN/SKU: `9788126728428` | Weight: `300 g` | Stock: `82`
+  6. **Other Piyush Mishra Books in CSV (For Same-Author Carousel on Solo Page — `image_76d5e0.jpg`):**
+     - *Tumhari Auqat Kya Hai Piyush Mishra* — Paperback `₹299.00` (`9789395737821`, `248p`, `300g`) / Hardcover `₹795.00` (`9789395737838`, `390g`) | Cover: `https://images.rajkamalprakashan.com/products/--1776286039394.jpg`
+     - *Jab Shahar Hamara Sota Hai* — Paperback `₹199.00` (`9788126726486`, `120p`, `160g`) / Hardcover `₹395.00` (`9788126726448`, `280g`) | Cover: `https://images.rajkamalprakashan.com/products/--1776279060609.jpg`
+     - *Mere Manch Ki Sargam* — Paperback `₹250.00` (`9788126726479`, `192p`, `232g`) / Hardcover `₹450.00` (`9788126726462`, `400g`) | Cover: `https://images.rajkamalprakashan.com/products/--1776279064803.jpg`
+     - *Arambh Hai Prachand* — Paperback `₹199.00` (`9789387462908`, `96p`, `800g`) | Cover: `https://images.rajkamalprakashan.com/products/arambh-hai-prachand-1776283699927.jpg`
+     - *Tum Meri Jaan Ho Raziya B* — Paperback `₹199.00` (`9789387462892`, `78p`, `100g`) | Cover: `https://images.rajkamalprakashan.com/products/--1776279066800.jpg`
+  7. **Tarkash** (`tarkash-javed-akhtar`):
+     - **Author:** `Javed Akhtar` | **Publisher:** `Rajkamal Prakashan` | **Category:** `Shayari` | **Language:** `Hindi` | **Pages:** `167p` | **Edition/Year:** `17th (1995)` | Cover: `https://images.rajkamalprakashan.com/products/--1776279218568.jpg`
+     - **Paperback:** Price `₹299.00` (`9788126707263`, `180g`, Stock `2496`) | **Hardcover:** Price `₹495.00` (`9788126707270`, `340g`, Stock `12`)
+  8. **Gypsy** (`gypsy-ila-chandra-joshi`):
+     - **Author:** `Ila Chandra Joshi` | **Publisher:** `Lokbharti Prakashan` | **Category:** `Fiction : Novel` | **Language:** `Hindi` | **Pages:** `375p` | **Edition/Year:** `1st (2015)` | Cover: `https://images.rajkamalprakashan.com/products/--1776282566523.jpeg`
+     - **Paperback:** Price `₹499.00` (`9789352210053`, `400g`) | **Hardcover:** Price `₹995.00` (`9789352210046`, `506g`)
+  9. **Aacharya Ramchandra Shukla Aur Hindi Aalochana** (`aacharya-ramchandra-shukla-aur-hindi-aalochana-ramvilas-sharma` — Fix Image 4!):
+     - **Author:** `Ramvilas Sharma` | **Publisher:** `Rajkamal Prakashan` | **Category:** `Literary Criticism` | **Language:** `Hindi` | **Pages:** `324p` | **Edition/Year:** `10th (2009)` | Cover: `https://images.rajkamalprakashan.com/products/--1776277446317.jpg`
+     - **Text Book / Paperback:** Price `₹350.00` | ISBN: `9788126705733` | Weight: `350g` | Stock: `277`
+     - **Hardcover:** Price `₹995.00` | ISBN: `9788126705726` | Weight: `450g` | Stock: `165`
+  10. **Law & Constitutional Vault Books (Exact CSV Data):**
+      - *Bharatiya Bhasha Mein High Court Ki Vakalat* — Author: `Anoop Baranwal Deshbandhu` | Publisher: `Lokbharti Prakashan` | Paperback `₹350.00` | ISBN: `9788197989667` | Pages: `216p` | Weight: `210g` | Year: `1st (2024)` | Cover: `https://images.rajkamalprakashan.com/products/--1776288058601.jpg`
+      - *Bharat Ka Samvidhan : Sankshipt Parichay* — Author: `Subhash Kashyap` | Publisher: `Rajkamal Prakashan, Akshar` | Paperback `₹195.00` | ISBN: `9789390971480` | Pages: `184p` | Weight: `180g` | Year: `3rd (2022)` | Cover: `https://images.rajkamalprakashan.com/products/--1776285478375.jpg`
+      - *Samaan Nagrik Sanhita : Chunautiya Aur Samadhan* — Author: `Anoop Baranwal` | Publisher: `Lokbharti Prakashan` | Paperback `₹399.00` (`9789389742305`, `362g`) / Hardcover `₹995.00` (`9789389742299`, `458g`) | Pages: `279p` | Year: `1st (2019)` | Cover: `https://images.rajkamalprakashan.com/products/--1776276748463.jpg`
+      - *Nyayapalika Kasauti Par* — Author: `Kamlesh Jain, Ed. Ranjeet Verma` | Publisher: `Rajkamal Prakashan` | Paperback `₹199.00` | ISBN: `9788119835416` | Pages: `152p` | Weight: `200g` | Year: `1st (2023)` | Cover: `https://images.rajkamalprakashan.com/products/--1776287918098.jpg`
+
+- **NEVER show `ISBN: 978-XXXXXXXXXX` or fake `320p` anywhere!** Write a parser function `parseIndigoSpecsHtml(bodyHtml)` that automatically extracts `Author`, `Publisher`, `Language`, `Binding`, `Pages`, `Edition / Year`, `Subject / Category`, and `ISBN` from `product.description` / `Body (HTML)` for every single book in Shopify and `preview.html`.
+
+---
+
+#### 2. BUILD THE EXACT `indigobooksindia.com` SOLO PRODUCT PAGE (`image_76d5ff.jpg` & `image_76d5e0.jpg`)
+When a user clicks on ANY book cover, title, `"Full Page"`, or `"Details"` button, open the dedicated **Solo Product Page (`#indigo-solo-product-view`)** modeled directly on `image_76d5ff.jpg` and `image_76d5e0.jpg`:
+1. **Top Breadcrumb Bar:** `Home / Shop / {{ book.category }} / {{ book.title }}` + `← Back to Bookstore` button.
+2. **3-Column Main Product Showcase (`max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: 380px 1fr 340px; gap: 36px; align-items: start;`):**
+   - **LEFT COLUMN (Framed Cover + Interactive Hover 3D Book Preview + Thumbnail):**
+     - White bordered frame (`background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 28px; display: flex; flex-direction: column; align-items: center;`) containing the large book cover (with smooth 3D hover cover-open preview!) and the mini cover thumbnail selector box underneath (`image_76d5ff.jpg`).
+   - **CENTER COLUMN (Book Details, Variant Switcher & Tabs — `image_76d5ff.jpg`):**
+     - **Category Pill Badge:** Blue/Teal rounded pill (`Poetry/Shayari`, `Fiction : Novel`, `Literary Criticism`, etc.).
+     - **Book Title (`<h1>`):** Large `Merriweather` serif title (`32px`, `#09132C`).
+     - **Clickable Author Avatar Pill (`image_76d5ff.jpg`):** Circular gold initial badge (`P` for Piyush Mishra) + `Author: <a href="javascript:void(0)" onclick="window.openAuthorBooksPage(book.author)" style="color:#09132C;font-weight:700;text-decoration:underline;">{{ book.author }}</a>` (Clicking opens all books by this author!).
+     - **Price Display:** Large bold price `₹{{ variant.price }}` (`28px`, `font-weight: 800`).
+     - **`Select Variant` Box (`image_76d5ff.jpg`):**
+       - White bordered container (`border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; margin: 18px 0;`) with heading `Select Variant` and interactive format buttons: `[ Paperback ]` `[ Hardcover ]` (or `[ Text Book ]`).
+       - Clicking `Paperback` or `Hardcover` **instantly updates the displayed Price, ISBN-13, Weight (Grams), Stock Count (`✓ In Stock (4005 left)`), and Cover Image** to that exact binding's row from the CSV!
+     - **Live Stock Badge:** Green `✓ In Stock ({{ variant.qty }} left)` from CSV `Variant Inventory Qty`.
+     - **Interactive `Description` | `Details` Tabs (`image_76d5ff.jpg`):**
+       - **`Description` Tab:** Full book synopsis + publisher note (`Shipped nationwide across India with Cash on Delivery (COD) by Indigo Books India, Prayagraj`).
+       - **`Details` Tab (Complete CSV Technical Table):**
+         - `Title`: Exact CSV Title
+         - `Author`: Exact Author from `indigo-book-specs`
+         - `Publisher`: Exact CSV `Vendor` (`Rajkamal Prakashan`, `Lokbharti Prakashan`, `Radhakrishna Prakashan`, etc.)
+         - `Binding / Format`: `Paperback` / `Hardcover`
+         - `ISBN-13`: Exact 13-digit `Variant SKU` from CSV (e.g., `9788126728435`)
+         - `Number of Pages`: Exact `Pages` from CSV (`147p`, `312p`, `324p`, etc.)
+         - `Language`: Exact `Language` from CSV (`Hindi` / `English` / `Urdu`)
+         - `Edition / Year`: Exact `Edition / Year` from CSV (`5th (2016)`)
+         - `Weight`: Exact `Variant Grams` from CSV (`160 g`, `300 g`, etc.)
+         - `Dimensions (L × B × H)`: `21.6 × 14.0 × 1.5 cm` (calculated proportionally from binding & page count if not explicitly in HTML)
+   - **RIGHT COLUMN (Delivery & Express Buy Box — `image_76d5ff.jpg`):**
+     - Bordered white card (`border: 1px solid #E2E8F0; border-radius: 14px; padding: 24px; background: #FFFFFF; box-shadow: 0 10px 30px rgba(0,0,0,0.05);`).
+     - Top Price (`₹...`).
+     - **Green Delivery Box:** `🚚 FREE DELIVERY` + dynamically calculated delivery date (5 days from today) + `"Order today for earliest dispatch from Prayagraj"`.
+     - **Pincode & Live GPS Location Checker (`image_76d5ff.jpg`):**
+       - `"📍 Add an address to check delivery availability"`
+       - Input `[ Enter 6-digit pincode ]` + `[ Check ]` button (validates Indian 6-digit pincode & shows `"✓ Express Delivery & COD available at [Pincode]"`).
+       - `OR` divider + **`[ 🎯 Use current location ]`** button! When clicked, uses `navigator.geolocation.getCurrentPosition` + free OpenStreetMap Nominatim reverse-geocoding (`https://nominatim.openstreetmap.org/reverse?format=json&lat=...&lon=...`) to automatically detect and fill the user's **City, Area, State, and 6-digit Pincode**, and saves it to `localStorage.getItem('indigo_saved_location')`!
+     - **Quantity Selector:** `Qty: [ - ] [ 1 ] [ + ]`.
+     - **Action Buttons:**
+       1. Dark Navy **`🛒 Add to Cart`** button (`onclick="window.addToCart(activeVariantId, qty, this)"`).
+       2. Warm Gold **`⚡ Buy Now (1-Click Phone Checkout — No Sign-In Needed)`** button (`onclick="window.openExpressPhoneCheckout(activeVariantId, qty)"`).
+       3. Emerald Green **`💬 Order on WhatsApp COD`** button.
+3. **Bottom Horizontal Carousel on Solo Page (`image_76d5e0.jpg` — "More Books by [Author]" + "Customer Reviews"):**
+   - Directly below the 3-column showcase, render a horizontal scrollable shelf of **More Books by the Same Author** (plus same-category books if the author has fewer than 6 titles), followed by a clean **Customer Reviews** card (`Write a Review` + verified reader ratings).
+
+---
+
+#### 3. ADD FAST CATEGORY DISCOVERY BANNERS, HORIZONTAL CATEGORY SHELVES & CATEGORY-DROPDOWN SEARCH (`image_76cf1e.png`, `image_76cefb.jpg`, `image_76cedc.png`)
+Make finding books effortless and fast like `indigobooksindia.com`:
+1. **Upgrade the Top & Catalog Search Bar with a Category Selector Dropdown (`image_76cefb.jpg`):**
+   - Put a unified search bar `[ All Books ▾ | Search books, authors, publishers, ISBN... | 🔍 Search ]` where the left dropdown lets customers pre-filter by `All Books`, `Fiction : Novel`, `Poetry & Shayari`, `Fiction : Stories`, `Literary Criticism`, `History & Politics`, `Biography & Memoirs`, or `Law & Constitution`.
+2. **Add the 3 Iconic Category Promo Banners (`image_76cedc.png` — Excluding Fake Bundles):**
+   - Render the 3 rich horizontal promo cards in a `1340px` 3-column grid:
+     - Card 1 (Deep Navy `#1D3549`): `Exclusive collections` / **`BEST SELLING BOOKS`** / `Shop Now →` (filters/scrolls to Bestsellers).
+     - Card 2 (Deep Espresso `#2B1D12`): `Available shortly` / **`PRE-ORDER & NEW RELEASES`** / `Explore Now →` (filters to latest 2024–2026 editions).
+     - Card 3 (Deep Forest `#133026`): `Hardcover & Paperback` / **`CLASSIC HINDI & URDU LITERATURE`** / `Explore Classics →` (filters to Classics).
+3. **Add Fast Horizontal Category Shelves (`image_76cf1e.png` & `image_76cefb.jpg`):**
+   - Above the main paginated directory, include quick-browsing horizontal shelves with a **`Browse All`** link on the right for:
+     - **Popular Novels (`Fiction : Novel`)** — *Godan*, *Raag Darbari*, *Chitralekha*, *Gypsy*, *Aadha Gaon*, *Mahabhoj*, *Shekhar Ek Jeevani*, *1084ven Ki Maan*, *Gaban*.
+     - **Poetry, Ghazals & Shayari (`Poetry / Shayari`)** — *Kuchh Ishq Kiya Kuchh Kaam Kiya*, *Rashmirathi*, *Tarkash*, *Mere Manch Ki Sargam*, *Arambh Hai Prachand*, *Tum Meri Jaan Ho Raziya B*, *Guzare Lamhe*.
+     - **Literary Criticism, History & Law** — *Aacharya Ramchandra Shukla Aur Hindi Aalochana*, *1857 : Awadh Ka Muktisangram*, *Bharat Ka Samvidhan*, *Bharatiya Bhasha Mein High Court Ki Vakalat*, *Samaan Nagrik Sanhita*.
+
+---
+
+#### 4. ADD SMOOTH 3D HOVER BOOK-OPENING ANIMATION TO EVERY BOOK CARD ON THE WEBSITE (ON HOVER, NOT CLICK!)
+You asked for the 3D book-opening animation to work **on hover (`:hover`) on EVERY book listed across the entire website** (Podium, Rekhta, Category Shelves, Law Vault, and Catalog Grid), while **clicking** the book opens its Solo Product Page!
+- **How to build the Universal 3D Hover Book-Opening Card (`.indigo-3d-book-stage`):**
+  Every book cover container across the website must use this smooth 3D hover hinge structure:
+  ```css
+  .indigo-3d-book-stage {
+    position: relative !important;
+    width: 100% !important;
+    aspect-ratio: 2 / 3 !important;
+    perspective: 1400px !important;
+    transform-style: preserve-3d !important;
+    cursor: pointer !important;
+  }
+  /* Stationary Cream First-Page Preview Inside the Book */
+  .indigo-3d-inside-page {
+    position: absolute !important;
+    inset: 4px !important;
+    background: linear-gradient(to right, #EAE3D2 0%, #FFFDF9 12%, #FFFDF9 100%) !important;
+    border: 1px solid #CBD5E1 !important;
+    border-right: 5px solid #CBD5E1 !important;
+    border-radius: 2px 6px 6px 2px !important;
+    padding: 14px 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    z-index: 1 !important;
+    box-shadow: inset 6px 0 12px rgba(0,0,0,0.08), 0 10px 24px rgba(0,0,0,0.12) !important;
+    overflow: hidden !important;
+  }
+  /* Front Cover Leaf That Swings Open on Hover */
+  .indigo-3d-cover-leaf {
+    position: absolute !important;
+    inset: 0 !important;
+    transform-origin: left center !important;
+    transform-style: preserve-3d !important;
+    transition: transform 0.68s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.68s ease !important;
+    z-index: 10 !important;
+    border-radius: 2px 6px 6px 2px !important;
+  }
+  /* OPEN COVER AUTOMATICALLY ON HOVER! */
+  .indigo-3d-book-stage:hover .indigo-3d-cover-leaf,
+  .podium-center-book:hover .podium-cover-leaf {
+    transform: rotateY(-128deg) !important;
+    box-shadow: -14px 18px 28px rgba(0,0,0,0.35) !important;
+  }
+  .indigo-3d-cover-front,
+  .indigo-3d-cover-back {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+    border-radius: 2px 6px 6px 2px !important;
+    overflow: hidden !important;
+  }
+  .indigo-3d-cover-front {
+    z-index: 2 !important;
+    background: #0F172A !important;
+  }
+  .indigo-3d-cover-front img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+  .indigo-3d-cover-back {
+    transform: rotateY(180deg) !important;
+    background: linear-gradient(145deg, #09132C 0%, #1E293B 100%) !important;
+    border: 2px solid #D99B26 !important;
+    color: #FEF3C7 !important;
+    padding: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-07T16:46:08+05:30.
+
+The user's current state is as follows:
+Active Document: d:\Games\indigo books\sync_preview_to_shopify.py (LANGUAGE_UNSPECIFIED)
+Cursor is on line: 1
+Other open documents:
+- d:\Games\indigo books\layout\theme.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\sections\_blocks.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\sections\bento-promo.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\snippets\icon-indigo-emblem.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\sections\bestsellers-bundles.liquid (LANGUAGE_UNSPECIFIED)
+
+The user has mentioned some items in the form @[ITEM]. Here is extra information about the items that were mentioned by the user, in the order that they appear:
+
+/goal is a [Slash Command]:
+The user has marked this task with /goal, indicating that this task is intended to run for a long time without user input, e.g. overnight. You should be extra thorough and only stop when you are confident the goal has been completely fulfilled. The system will force you to continue execution, prompting you to audit your work until completion. Once complete, include <!-- GOAL_COMPLETE --> in your response. If the user explicitly asked to stop or cancel this goal, include <!-- GOAL_CANCELLED --> in your response to cancel the goal.
+</ADDITIONAL_METADATA>

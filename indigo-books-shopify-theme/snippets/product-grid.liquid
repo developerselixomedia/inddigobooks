@@ -1,0 +1,5 @@
+<div class="grid grid--4-col grid--2-col-tablet">
+  {%- for product in products -%}
+    {% render 'product-card', product: product %}
+  {%- endfor -%}
+</div>

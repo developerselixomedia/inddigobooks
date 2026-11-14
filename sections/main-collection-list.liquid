@@ -1,0 +1,52 @@
+{% comment %}
+  Main Collection List Page (All Book Categories & Genres)
+{% endcomment %}
+
+<section class="section section-main-collection-list">
+  <div class="page-width">
+    <div class="section-header text-center">
+      <h1 class="section-header__title">All Book Genres & Collections</h1>
+      <p class="section-header__subheading">Explore our entire catalogue of over 2,000 titles categorized by interest</p>
+    </div>
+
+    {%- paginate collections by 24 -%}
+      <div class="grid grid--4-col grid--2-col-tablet">
+        {%- for collection in collections -%}
+          <div class="grid__item">
+            <a href="{{ collection.url }}" class="collection-card">
+              <div class="collection-card__image-wrap">
+                {%- if collection.image -%}
+                  <img src="{{ collection.image | image_url: width: 600 }}" alt="{{ collection.title | escape }}" loading="lazy">
+                {%- elsif collection.products.first.featured_media -%}
+                  <img src="{{ collection.products.first.featured_media | image_url: width: 600 }}" alt="{{ collection.title | escape }}" loading="lazy">
+                {%- else -%}
+                  <div class="collection-card__placeholder">
+                    {% render 'icon', name: 'book' %}
+                  </div>
+                {%- endif -%}
+              </div>
+              <div class="collection-card__overlay">
+                <h3 class="collection-card__title">{{ collection.title }}</h3>
+                <span class="collection-card__count">{{ collection.products_count }} Books</span>
+              </div>
+            </a>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <div class="pagination-wrapper text-center">
+          {% render 'pagination', paginate: paginate %}
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection List Page",
+  "settings": []
+}
+{% endschema %}
+

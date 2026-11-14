@@ -1,0 +1,71 @@
+{% comment %}
+  Featured Blog Posts / Book Summaries & Reading Guides
+{% endcomment %}
+
+<section class="section section-featured-blog" id="FeaturedBlog-{{ section.id }}">
+  <div class="page-width">
+    {%- if section.settings.title != blank -%}
+      <div class="section-header text-center">
+        <h2 class="section-header__title">{{ section.settings.title | escape }}</h2>
+        {%- if section.settings.subtitle != blank -%}
+          <p class="section-header__subheading">{{ section.settings.subtitle | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="grid grid--3-col grid--1-col-tablet">
+      {%- assign blog = blogs[section.settings.blog] -%}
+      {%- if blog != blank and blog.articles_count > 0 -%}
+        {%- for article in blog.articles limit: section.settings.posts_to_show -%}
+          <div class="grid__item">
+            <article class="blog-card">
+              {%- if article.image -%}
+                <a href="{{ article.url }}" class="blog-card__image-link">
+                  <img src="{{ article.image | image_url: width: 600 }}" alt="{{ article.image.alt | default: article.title | escape }}" loading="lazy">
+                </a>
+              {%- endif -%}
+              <div class="blog-card__content">
+                <span class="blog-card__date">{{ article.published_at | date: '%b %d, %Y' }}</span>
+                <h3 class="blog-card__title">
+                  <a href="{{ article.url }}">{{ article.title | escape }}</a>
+                </h3>
+                <p class="blog-card__excerpt">{{ article.excerpt_or_content | strip_html | truncatewords: 20 }}</p>
+                <a href="{{ article.url }}" class="blog-card__read-more">Read Guide &rarr;</a>
+              </div>
+            </article>
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..3) -%}
+          <div class="grid__item">
+            <article class="blog-card">
+              <div class="blog-card__placeholder">
+                {% render 'icon', name: 'book' %}
+              </div>
+              <div class="blog-card__content">
+                <span class="blog-card__date">Reading Guide</span>
+                <h3 class="blog-card__title">Top 10 Books That Will Transform Your Habits This Year</h3>
+                <p class="blog-card__excerpt">Discover the most influential books recommended by entrepreneurs and psychologists...</p>
+              </div>
+            </article>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Reading Guides",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "From the Indigo Reading Club" },
+    { "type": "text", "id": "subtitle", "label": "Subheading", "default": "Book reviews, author insights, and reading recommendations" },
+    { "type": "blog", "id": "blog", "label": "Blog" },
+    { "type": "range", "id": "posts_to_show", "min": 2, "max": 6, "step": 1, "default": 3, "label": "Posts to show" }
+  ],
+  "presets": [
+    { "name": "Featured Reading Guides" }
+  ]
+}
+{% endschema %}

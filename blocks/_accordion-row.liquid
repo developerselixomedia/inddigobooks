@@ -1,0 +1,9 @@
+<details class="accordion-row" {{ block.shopify_attributes }}>
+  <summary class="accordion-row__title">
+    <span>{{ block.settings.heading | default: 'Book Details' }}</span>
+    {% render 'icon', name: 'chevron-down' %}
+  </summary>
+  <div class="accordion-row__content rte">
+    {{ block.settings.content | default: '<p>Comprehensive information about this edition, binding, and publisher.</p>' }}
+  </div>
+</details>

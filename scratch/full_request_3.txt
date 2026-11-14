@@ -1,0 +1,53 @@
+<USER_REQUEST>
+### CRITICAL FIX: Fix All 21 Missing Book Cover 404 Errors (`1857--1776...jpg`), Fix Left-Squished Stats Bar Alignment, and Fix Podium Book Opening Cover
+
+Look at our 3 screenshots (`image_3cf12a.png`, `image_3cee81.jpg`, `image_3cee21.jpg`). Execute these 3 exact fixes in BOTH `preview.html` and the Shopify `.zip` (`sections/main-indigo-store.liquid` / `layout/theme.liquid`) right now:
+
+---
+
+#### 1. FIX ALL MISSING BOOK COVERS & 21 RED `404` CONSOLE ERRORS (`image_3cf12a.png` & `image_3cee21.jpg`)
+Look at the console in `image_3cee21.jpg`: 21 images like `1857--1776285215509.jpg`, `1232--1776280998246.jpg`, and `1084--1776277414176.jpg` are throwing `404 (Not Found)` because you stripped the domain/path and only put the bare filename in `src="..."`!
+
+- **Fix A — In the Shopify `.zip` (`sections/main-indigo-store.liquid`):**
+  Since all 5,500+ books are already uploaded to our Shopify store via CSV, inject a Liquid `<script>` bridge at the top of `sections/main-indigo-store.liquid` that builds a live lookup map of all Shopify product images by title and handle using real Shopify CDN URLs (`{{ product.featured_image | image_url: width: 600 }}`), AND dynamically replaces any broken/relative `.jpg` path on the page:
+  ```liquid
+  <script>
+    window.SHOPIFY_LIVE_PRODUCTS = [
+      {% paginate collections.all.products by 250 %}
+        {% for product in collections.all.products %}
+          {
+            id: {{ product.id | json }},
+            title: {{ product.title | json }},
+            handle: {{ product.handle | json }},
+            vendor: {{ product.vendor | json }},
+            type: {{ product.type | json }},
+            price: "{{ product.price | money_without_currency }}",
+            compare_at_price: "{{ product.compare_at_price | money_without_currency }}",
+            image: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
+            variant_id: {{ product.selected_or_first_available_variant.id | json }},
+            description: {{ product.description | strip_html | truncate: 280 | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      {% endpaginate %}
+    ];
+  </script>
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-05T23:41:45+05:30.
+
+The user's current state is as follows:
+Active Document: d:\Games\indigo books\sync_preview_to_shopify.py (LANGUAGE_UNSPECIFIED)
+Cursor is on line: 1
+Other open documents:
+- d:\Games\indigo books\layout\theme.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\sections\_blocks.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\sections\bento-promo.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\snippets\icon-indigo-emblem.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\sections\bestsellers-bundles.liquid (LANGUAGE_UNSPECIFIED)
+
+The user has uploaded 3 image(s):
+- C:/Users/MOHIT/.gemini/antigravity/brain/4bd00de3-65f9-4d41-a334-5b93517bd44c/.user_uploaded/media_1793902284059_a5ec9356.jpg
+- C:/Users/MOHIT/.gemini/antigravity/brain/4bd00de3-65f9-4d41-a334-5b93517bd44c/.user_uploaded/media_1793902289322_93ae00b1.jpg
+- C:/Users/MOHIT/.gemini/antigravity/brain/4bd00de3-65f9-4d41-a334-5b93517bd44c/.user_uploaded/media_1793902295074_b8d0db75.png
+You can embed these images in an artifact if you need the USER to review them.
+</ADDITIONAL_METADATA>

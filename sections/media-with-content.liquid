@@ -1,0 +1,272 @@
+{% comment %}
+  Indigo Books India - Editorial Heritage Banner & Concierge Card
+  Symmetrical 2-Column Layout: Heritage Narrative on Left + Prayagraj Concierge Card on Right
+{% endcomment %}
+
+<style id="editorialHeritageStyles">
+  .editorial-heritage-section {
+    padding: 72px 0 !important;
+    background-color: #FAF8F5 !important;
+    border-top: 1px solid #e2e8f0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .heritage-container {
+    max-width: 1280px !important;
+    margin: 0 auto !important;
+    padding: 0 28px !important;
+    box-sizing: border-box !important;
+  }
+  .heritage-grid {
+    display: grid !important;
+    grid-template-columns: 1.15fr 0.85fr !important;
+    gap: 48px !important;
+    align-items: center !important;
+  }
+  @media (max-width: 1023px) {
+    .heritage-grid {
+      grid-template-columns: 1fr !important;
+      gap: 40px !important;
+    }
+  }
+  .heritage-title {
+    font-family: 'Merriweather', Georgia, serif !important;
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    color: #0A1128 !important;
+    line-height: 1.25 !important;
+    margin: 8px 0 16px 0 !important;
+  }
+  @media (min-width: 1024px) {
+    .heritage-title {
+      font-size: 38px !important;
+    }
+  }
+  .heritage-body {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 14px !important;
+    line-height: 1.75 !important;
+    color: #475569 !important;
+    margin-bottom: 14px !important;
+  }
+  .heritage-stat-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
+    padding-top: 24px !important;
+    margin-top: 24px !important;
+    border-top: 1px solid #cbd5e1 !important;
+  }
+  .heritage-stat-val {
+    font-family: 'Merriweather', Georgia, serif !important;
+    font-size: 26px !important;
+    font-weight: 700 !important;
+    color: #0A1128 !important;
+    line-height: 1 !important;
+  }
+  .heritage-stat-val--gold {
+    color: #D99B26 !important;
+  }
+  .heritage-stat-lbl {
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 12px !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+    margin-top: 6px !important;
+  }
+  .concierge-card {
+    background-color: #0A1128 !important;
+    color: #ffffff !important;
+    padding: 36px 32px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(217, 155, 38, 0.35) !important;
+    box-shadow: 0 20px 40px -15px rgba(10, 17, 40, 0.4) !important;
+    position: relative !important;
+  }
+  .concierge-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    padding-bottom: 20px !important;
+    margin-bottom: 20px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  .concierge-emblem {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(217, 155, 38, 0.35) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #D99B26 !important;
+    flex-shrink: 0 !important;
+  }
+  .concierge-item {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    margin-bottom: 16px !important;
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+    color: #cbd5e1 !important;
+  }
+  .concierge-item strong {
+    color: #ffffff !important;
+    display: block !important;
+  }
+  .concierge-item a {
+    color: #D99B26 !important;
+    text-decoration: none !important;
+  }
+  .concierge-item a:hover {
+    text-decoration: underline !important;
+  }
+  .btn-concierge-wa {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    background: #25D366 !important;
+    color: #ffffff !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    padding: 14px 20px !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3) !important;
+    transition: background 0.2s, transform 0.2s !important;
+    margin-top: 24px !important;
+    box-sizing: border-box !important;
+  }
+  .btn-concierge-wa:hover {
+    background: #1eb956 !important;
+    transform: translateY(-1px) !important;
+  }
+</style>
+
+<section class="editorial-heritage-section" id="AboutIndigo-{{ section.id }}">
+  <div class="heritage-container">
+    <div class="heritage-grid">
+      
+      <!-- Left Column: Heritage Story & Unified Metric Baseline -->
+      <div>
+        <div class="editorial-overline" style="justify-content: flex-start;">
+          <span class="editorial-overline__line"></span>
+          <span class="editorial-overline__text">PRAYAGRAJ LITERARY HERITAGE</span>
+        </div>
+
+        <h2 class="heritage-title">
+          From the Literary Heart of Prayagraj to Every Reader in India
+        </h2>
+
+        <p class="heritage-body">
+          Indigo Books India is rooted in the historic literary city of Prayagraj—the cultural crossroads of the Hindi belt and Urdu poetry. We provide over 5,500+ authentic publisher editions ranging from timeless Rekhta poetry and contemporary Indian fiction to university legal treatises and competitive examination archives.
+        </p>
+
+        <p class="heritage-body">
+          Every volume is verified for original printing, individually bubble-cushioned, and dispatched with pan-India express tracking and Cash on Delivery (COD) to every pin code across India.
+        </p>
+
+        <!-- 3-Column Metric Grid Aligned on Baseline -->
+        <div class="heritage-stat-grid">
+          <div>
+            <div class="heritage-stat-val">5,500+</div>
+            <div class="heritage-stat-lbl">Titles in Stock</div>
+          </div>
+          <div>
+            <div class="heritage-stat-val heritage-stat-val--gold">24-Hour</div>
+            <div class="heritage-stat-lbl">Express Dispatch</div>
+          </div>
+          <div>
+            <div class="heritage-stat-val">Pan-India</div>
+            <div class="heritage-stat-lbl">Cash on Delivery</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Direct Store & Concierge Card -->
+      <div>
+        <div class="concierge-card">
+          <div class="concierge-header">
+            <span class="concierge-emblem">
+              {% render 'icon-indigo-emblem' %}
+            </span>
+            <div>
+              <h3 style="font-family: 'Merriweather', Georgia, serif; font-size: 17px; font-weight: 700; color: #ffffff; margin: 0;">
+                Indigo Books India — Headquarters
+              </h3>
+              <span style="font-size: 11px; color: #D99B26; letter-spacing: 0.05em; text-transform: uppercase;">Literary Concierge & Distribution</span>
+            </div>
+          </div>
+
+          <div class="concierge-item">
+            <i data-lucide="map-pin" style="color: #D99B26; margin-top: 3px; flex-shrink: 0;"></i>
+            <div>
+              <strong>Headquarters & Dispatch Facility:</strong>
+              <span style="color: #94a3b8;">Civil Lines / Katra Literary District, Prayagraj, Uttar Pradesh 211001, India</span>
+            </div>
+          </div>
+
+          <div class="concierge-item">
+            <i data-lucide="clock" style="color: #D99B26; margin-top: 3px; flex-shrink: 0;"></i>
+            <div>
+              <strong>Operating Hours:</strong>
+              <span style="color: #94a3b8;">Monday &ndash; Saturday: 10:00 AM &ndash; 8:30 PM IST (Sunday Online Dispatch)</span>
+            </div>
+          </div>
+
+          <div class="concierge-item">
+            <i data-lucide="phone" style="color: #D99B26; margin-top: 3px; flex-shrink: 0;"></i>
+            <div>
+              <strong>Direct Phone & Bulk Inquiries:</strong>
+              <a href="tel:+918933063306">+91 8933063306</a>
+            </div>
+          </div>
+
+          <div class="concierge-item">
+            <i data-lucide="mail" style="color: #D99B26; margin-top: 3px; flex-shrink: 0;"></i>
+            <div>
+              <strong>Official Publisher Correspondence:</strong>
+              <a href="mailto:info@indigobooks.com" style="color: #cbd5e1;">info@indigobooks.com</a>
+            </div>
+          </div>
+
+          <a
+            href="https://wa.me/918933063306?text=Hello%20Indigo%20Books%20Prayagraj!%20I%20would%20like%20to%20order%20books%20from%20your%20store."
+            target="_blank"
+            rel="noopener"
+            class="btn-concierge-wa"
+          >
+            <i data-lucide="message-circle"></i>
+            <span>Order via WhatsApp (+91 8933063306)</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Editorial Heritage Banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "From the Literary Heart of Prayagraj to Every Reader in India"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial Heritage Banner"
+    }
+  ]
+}
+{% endschema %}

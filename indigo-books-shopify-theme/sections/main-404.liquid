@@ -1,0 +1,61 @@
+{% comment %}
+  Indigo Books India - Styled 404 Chapter Not Found Page
+  Official WhatsApp Concierge: +91 8933063306
+{% endcomment %}
+
+<section style="min-height: 75vh; display: flex; align-items: center; justify-content: center; padding: 60px 20px; background-color: #FAF8F5; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;">
+  <div style="max-width: 580px; width: 100%; margin: 0 auto; text-align: center; background: #FFFFFF; padding: 48px 36px; border-radius: 16px; border: 1px solid rgba(15, 23, 42, 0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.06);">
+    
+    <div style="width: 72px; height: 72px; margin: 0 auto 24px; border-radius: 50%; background: #EFF6FF; display: flex; align-items: center; justify-content: center; color: #0066B3;">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0066B3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+      </svg>
+    </div>
+
+    <div style="font-size: 11.5px; font-weight: 800; color: #B45309; text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 8px;">
+      CHAPTER NOT FOUND • ERROR 404
+    </div>
+
+    <h1 style="font-family: 'Merriweather', Georgia, serif; font-size: 28px; font-weight: 700; color: #0F172A; margin: 0 0 14px 0; line-height: 1.25;">
+      This Chapter Has Been Misplaced
+    </h1>
+
+    <p style="font-size: 14.5px; color: #64748B; line-height: 1.6; margin: 0 0 28px 0;">
+      The book, author, or literary collection you are looking for seems to have been borrowed by another reader or moved to a different shelf in our 5,500+ archive.
+    </p>
+
+    <div style="margin-bottom: 28px;">
+      <form action="{{ routes.search_url }}" method="get" style="display: flex; gap: 8px; max-width: 440px; margin: 0 auto;">
+        <input
+          type="search"
+          name="q"
+          placeholder="Search 5,500+ books by title, author, or ISBN..."
+          style="flex: 1; padding: 12px 16px; font-size: 13.5px; border: 1px solid #CBD5E1; border-radius: 8px; outline: none; font-family: inherit;"
+        >
+        <button type="submit" style="background: #0066B3; color: #FFFFFF; border: none; font-weight: 700; font-size: 13.5px; padding: 12px 20px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+          Search
+        </button>
+      </form>
+    </div>
+
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+      <a href="/" style="display: inline-flex; align-items: center; gap: 8px; background: #0F172A; color: #FFFFFF; font-weight: 700; font-size: 13.5px; padding: 12px 22px; border-radius: 8px; text-decoration: none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Return to Bookstore (5,500+ Books)
+      </a>
+      <a href="https://wa.me/918933063306?text=Hello%20Indigo%20Books!%20I%20am%20looking%20for%20a%20book%20that%20showed%20404." target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: #25D366; color: #FFFFFF; font-weight: 700; font-size: 13.5px; padding: 12px 22px; border-radius: 8px; text-decoration: none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Ask Concierge on WhatsApp
+      </a>
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "404 Page",
+  "settings": []
+}
+{% endschema %}

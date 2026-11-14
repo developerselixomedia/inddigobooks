@@ -1,0 +1,88 @@
+{% comment %}
+  Featured Product Information - High-Converting Book Spotlight for Meta Ads Campaigns
+{% endcomment %}
+
+<section class="section section-featured-product-info" id="FeaturedProductInfo-{{ section.id }}">
+  <div class="page-width">
+    {%- assign product = all_products[section.settings.product] -%}
+
+    {%- if product != blank -%}
+      <div class="book-spotlight-grid">
+        <div class="book-spotlight__media">
+          {%- if product.featured_media -%}
+            <img
+              src="{{ product.featured_media | image_url: width: 800 }}"
+              alt="{{ product.title | escape }}"
+              class="book-spotlight__cover"
+              loading="lazy"
+            >
+          {%- endif -%}
+        </div>
+
+        <div class="book-spotlight__content">
+          <span class="badge badge--bestseller">Spotlight Book of the Month</span>
+          <h2 class="book-spotlight__title">{{ product.title | escape }}</h2>
+          <p class="book-spotlight__author">by <strong>{{ product.vendor | default: 'Author' }}</strong></p>
+
+          <div class="book-spotlight__rating">
+            <div class="rating-stars">
+              {% for i in (1..5) %}
+                {% render 'icon', name: 'star' %}
+              {% endfor %}
+            </div>
+            <span>(500+ Verified Reader Reviews)</span>
+          </div>
+
+          <div class="book-spotlight__price">
+            {% render 'price', product: product %}
+          </div>
+
+          <div class="book-spotlight__description rte">
+            {{ product.description | truncatewords: 60 }}
+          </div>
+
+          <!-- Book Metadata Specification Grid -->
+          <div class="book-specs-mini-grid">
+            <div class="spec-pill"><strong>Format:</strong> Paperback / Hardcover</div>
+            <div class="spec-pill"><strong>Dispatch:</strong> Same Day Dispatch</div>
+            <div class="spec-pill"><strong>Guarantee:</strong> 100% Genuine Edition</div>
+          </div>
+
+          <div class="book-spotlight__actions">
+            <form action="/cart/add" method="post" enctype="multipart/form-data" class="spotlight-form">
+              <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+              <button type="submit" class="btn btn--primary btn--lg">
+                Add to Cart &bull; {{ product.price | money }}
+              </button>
+            </form>
+
+            {% render 'whatsapp-button', mode: 'product', product: product, class: 'spotlight-wa-btn' %}
+          </div>
+        </div>
+      </div>
+    {%- else -%}
+      <div class="placeholder-content text-center">
+        <h2>Book Spotlight Section</h2>
+        <p>Select a book in theme customizer to showcase here.</p>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Book Info",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Featured Book"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Book Info"
+    }
+  ]
+}
+{% endschema %}

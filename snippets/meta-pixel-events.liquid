@@ -1,0 +1,66 @@
+{% comment %}
+  Meta Pixel & Conversions API integration helper for Indigo Books
+  Handles ViewContent, AddToCart, InitiateCheckout & WhatsApp Lead event tracking
+{% endcomment %}
+
+{%- if settings.meta_pixel_id != blank -%}
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '{{ settings.meta_pixel_id }}');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id={{ settings.meta_pixel_id }}&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- End Meta Pixel Code -->
+{%- endif -%}
+
+{%- if template contains 'product' -%}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof fbq === 'function') {
+        fbq('track', 'ViewContent', {
+          content_name: {{ product.title | json }},
+          content_category: {{ product.type | default: product.collections.first.title | default: 'Books' | json }},
+          content_ids: ['{{ product.selected_or_first_available_variant.id }}'],
+          content_type: 'product',
+          value: {{ product.price | money_without_currency | remove: ',' }},
+          currency: '{{ cart.currency.iso_code }}'
+        });
+      }
+    });
+  </script>
+{%- elsif template contains 'collection' -%}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof fbq === 'function') {
+        fbq('trackCustom', 'ViewBookGenre', {
+          collection_title: {{ collection.title | json }},
+          collection_handle: {{ collection.handle | json }},
+          total_books: {{ collection.products_count }}
+        });
+      }
+    });
+  </script>
+{%- elsif template contains 'search' -%}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof fbq === 'function' && {{ search.performed | json }}) {
+        fbq('track', 'Search', {
+          search_string: {{ search.terms | json }},
+          results_count: {{ search.results_count }}
+        });
+      }
+    });
+  </script>
+{%- endif -%}
+

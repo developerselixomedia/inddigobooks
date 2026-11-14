@@ -1,0 +1,103 @@
+{% comment %}
+  Grid of Collections / Book Genres
+{% endcomment %}
+
+<section class="section section-collection-list" id="CollectionList-{{ section.id }}">
+  <div class="page-width">
+    {%- if section.settings.title != blank -%}
+      <div class="section-header text-center">
+        <h2 class="section-header__title">{{ section.settings.title | escape }}</h2>
+        {%- if section.settings.subtitle != blank -%}
+          <p class="section-header__subheading">{{ section.settings.subtitle | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="grid grid--{{ section.settings.columns_desktop }}-col grid--2-col-tablet">
+      {%- for block in section.blocks -%}
+        {%- assign collection = block.settings.collection -%}
+        <div class="grid__item" {{ block.shopify_attributes }}>
+          <a
+            href="{% if collection != blank %}{{ collection.url }}{% else %}#{% endif %}"
+            class="collection-card"
+          >
+            <div class="collection-card__image-wrap">
+              {%- if block.settings.image != blank -%}
+                <img
+                  src="{{ block.settings.image | image_url: width: 600 }}"
+                  alt="{{ block.settings.image.alt | default: collection.title | escape }}"
+                  loading="lazy"
+                >
+              {%- elsif collection.image != blank -%}
+                <img
+                  src="{{ collection.image | image_url: width: 600 }}"
+                  alt="{{ collection.title | escape }}"
+                  loading="lazy"
+                >
+              {%- else -%}
+                <div class="collection-card__placeholder">
+                  {% render 'icon', name: 'book' %}
+                </div>
+              {%- endif -%}
+            </div>
+            <div class="collection-card__overlay">
+              <h3 class="collection-card__title">
+                {%- if block.settings.title != blank -%}
+                  {{ block.settings.title }}
+                {%- elsif collection != blank -%}
+                  {{ collection.title }}
+                {%- else -%}
+                  Genre {{ forloop.index }}
+                {%- endif -%}
+              </h3>
+              {%- if collection != blank -%}
+                <span class="collection-card__count">{{ collection.products_count }} Books</span>
+              {%- endif -%}
+            </div>
+          </a>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection List",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Explore Book Categories" },
+    { "type": "text", "id": "subtitle", "label": "Subheading", "default": "Handcrafted collections tailored for every reader" },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "Columns on Desktop"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "featured_collection",
+      "name": "Collection",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "image_picker", "id": "image", "label": "Custom Image (optional)" },
+        { "type": "text", "id": "title", "label": "Custom Title (optional)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection List",
+      "blocks": [
+        { "type": "featured_collection" },
+        { "type": "featured_collection" },
+        { "type": "featured_collection" },
+        { "type": "featured_collection" }
+      ]
+    }
+  ]
+}
+{% endschema %}

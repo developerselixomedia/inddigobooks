@@ -1,0 +1,5 @@
+<div class="cart-products-snippet">
+  {%- for item in cart.items -%}
+    <div class="cart-product-entry">{{ item.product.title }} x {{ item.quantity }}</div>
+  {%- endfor -%}
+</div>

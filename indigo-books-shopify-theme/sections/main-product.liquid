@@ -1,0 +1,392 @@
+{% comment %}
+  Indigo Books India - Dedicated Amazon-Style Single Book Product Details Page
+  Single Source of Truth Template for /products/*
+  Optimized for Desktop (3-Column Amazon Layout) and Mobile (Stacked)
+  Official WhatsApp Concierge: +91 8933063306
+{% endcomment %}
+
+<section class="section section-main-product" id="MainProduct-{{ section.id }}" data-product-id="{{ product.id }}" style="background: #FAF8F5; min-height: 80vh; padding: 24px 0 60px;">
+  <div class="product-page-wrapper" style="max-width: 1280px; margin: 0 auto; padding: 0 20px; box-sizing: border-box;">
+    
+    <!-- Top Breadcrumb Bar -->
+    <div class="product-breadcrumb-bar" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0 20px; border-bottom: 1px solid #E2E8F0; margin-bottom: 28px; font-size: 13px; color: #64748B; flex-wrap: wrap; gap: 12px;">
+      <div class="breadcrumb-nav" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <a href="/" style="color: #0066B3; text-decoration: none; font-weight: 500;">Home</a>
+        <span style="color: #94A3B8; font-size: 12px;">&rsaquo;</span>
+        {%- if product.collections.first -%}
+          <a href="{{ product.collections.first.url }}" style="color: #0066B3; text-decoration: none; font-weight: 500;">{{ product.collections.first.title }}</a>
+          <span style="color: #94A3B8; font-size: 12px;">&rsaquo;</span>
+        {%- elsif product.type != blank -%}
+          <span style="color: #64748B;">{{ product.type }}</span>
+          <span style="color: #94A3B8; font-size: 12px;">&rsaquo;</span>
+        {%- endif -%}
+        <span style="color: #0F172A; font-weight: 600;">{{ product.title | escape }}</span>
+      </div>
+      <a href="/" class="btn-back-to-store" style="display: inline-flex; align-items: center; gap: 6px; background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none;">
+        <i data-lucide="arrow-left" style="width: 15px; height: 15px;"></i> Back to Bookstore
+      </a>
+    </div>
+
+    <!-- 3-Column Amazon-Style Grid -->
+    <div class="product-pdp-grid">
+      
+      <!-- LEFT COLUMN: Sticky Book Cover & Preview Excerpt -->
+      <div class="pdp-left-col">
+        <div class="pdp-cover-card">
+          <div class="pdp-cover-img-wrap">
+            {%- if product.featured_image -%}
+              <img
+                src="{{ product.featured_image | image_url: width: 800 }}"
+                alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                class="pdp-cover-img"
+                id="ProductMainCover"
+                loading="eager"
+              >
+            {%- else -%}
+              <img
+                src="{{ 'hero-godan.jpg' | asset_url }}"
+                alt="{{ product.title | escape }}"
+                class="pdp-cover-img"
+                id="ProductMainCover"
+              >
+            {%- endif -%}
+          </div>
+
+          <button type="button" class="pdp-look-inside-btn" onclick="toggleMainProductExcerpt()">
+            <i data-lucide="book-open" style="width: 16px; height: 16px;"></i> Look Inside / First Page Excerpt
+          </button>
+
+          <!-- Collapsible First Page Excerpt Box -->
+          <div id="MainProductExcerptBox" class="pdp-excerpt-box">
+            <div style="font-size: 11px; font-weight: 700; color: #B45309; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 6px;">
+              अध्याय १ • FIRST PAGE PREVIEW
+            </div>
+            <p style="margin: 0; font-size: 13.5px; line-height: 1.7; color: #334155;">
+              {{ product.description | strip_html | truncate: 350 | default: 'First page preview available upon book dispatch. Authorized unabridged edition.' }}
+            </p>
+          </div>
+
+          <!-- Trust Perks -->
+          <ul class="pdp-perks-checklist">
+            <li>
+              <i data-lucide="shield-check" style="width: 15px; height: 15px; color: #16A34A; flex-shrink: 0; margin-top: 2px;"></i>
+              <span><strong>100% Genuine Edition:</strong> Direct authorized publisher copy with crisp binding.</span>
+            </li>
+            <li>
+              <i data-lucide="truck" style="width: 15px; height: 15px; color: #16A34A; flex-shrink: 0; margin-top: 2px;"></i>
+              <span><strong>Prayagraj Hub Dispatch:</strong> Same-day dispatch with moisture-proof packing.</span>
+            </li>
+            <li>
+              <i data-lucide="check-circle" style="width: 15px; height: 15px; color: #16A34A; flex-shrink: 0; margin-top: 2px;"></i>
+              <span><strong>Cash on Delivery:</strong> Pay at your doorstep across 19,000+ PIN codes.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CENTER COLUMN: Editorial Description & Technical Specifications -->
+      <div class="pdp-center-col">
+        <span class="pdp-genre-pill">{{ product.type | default: product.collections.first.title | default: 'NATIONAL BESTSELLER' }}</span>
+        <h1 class="pdp-book-title">{{ product.title | escape }}</h1>
+        
+        <div class="pdp-author-row">
+          By <a href="javascript:void(0)" onclick="filterCatalogByAuthor('{{ product.vendor | escape }}')" style="color: #D99B26; font-weight: 600; text-decoration: underline; cursor: pointer;">{{ product.metafields.custom.author.value | default: product.vendor | default: 'Celebrated Author' }}</a> &bull; Authorized Indian Edition
+        </div>
+
+        <div class="pdp-rating-row">
+          <div class="pdp-stars">
+            <i data-lucide="star" style="width: 15px; height: 15px; fill: currentColor;"></i>
+            <i data-lucide="star" style="width: 15px; height: 15px; fill: currentColor;"></i>
+            <i data-lucide="star" style="width: 15px; height: 15px; fill: currentColor;"></i>
+            <i data-lucide="star" style="width: 15px; height: 15px; fill: currentColor;"></i>
+            <i data-lucide="star" style="width: 15px; height: 15px; fill: currentColor;"></i>
+          </div>
+          <span class="pdp-rating-text">4.9 / 5.0 (12,840 verified readers)</span>
+        </div>
+
+        <!-- Price Section -->
+        <div class="pdp-price-wrap">
+          <span class="pdp-selling-price">{{ product.price | money }}</span>
+          {%- if product.compare_at_price > product.price -%}
+            <span class="pdp-compare-price">{{ product.compare_at_price | money }}</span>
+            {%- assign discount = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+            <span class="pdp-discount-badge">{{ discount }}% OFF</span>
+          {%- endif -%}
+          <span style="font-size: 12px; color: #64748B; margin-left: 4px;">(Inclusive of all taxes)</span>
+        </div>
+
+        <!-- Format Pill -->
+        <div class="pdp-format-row">
+          <div class="pdp-format-label">Binding &amp; Format:</div>
+          <div class="pdp-format-pill">
+            <i data-lucide="book" style="width: 16px; height: 16px;"></i>
+            <span>{{ product.selected_or_first_available_variant.title | default: 'Paperback Edition' }}</span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pdp-description-wrap">
+          <h3 class="pdp-sec-heading">Editorial Overview &amp; Synopsis</h3>
+          <div class="pdp-description-text">
+            {{ product.description | default: 'Authentic publisher edition curated by Indigo Books India.' }}
+          </div>
+        </div>
+
+        <!-- Bibliographic Details Table -->
+        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px;">
+          <h4 style="font-family: 'Merriweather', serif; font-size: 15px; font-weight: 700; color: #0F172A; margin: 0 0 12px;">
+            Bibliographic Details
+          </h4>
+          <table class="pdp-tech-table">
+            <tbody>
+              <tr>
+                <th>ISBN-13 / SKU:</th>
+                <td>{{ product.selected_or_first_available_variant.sku | default: product.selected_or_first_available_variant.barcode | default: '978-IND-EDITION' }}</td>
+              </tr>
+              <tr>
+                <th>Publisher:</th>
+                <td>{{ product.vendor | default: 'Authorized Publisher' }}</td>
+              </tr>
+              <tr>
+                <th>Category:</th>
+                <td>{{ product.type | default: 'General Literature' }}</td>
+              </tr>
+              <tr>
+                <th>Language:</th>
+                <td>{{ product.metafields.custom.language.value | default: 'Hindi (देवनागरी) / English' }}</td>
+              </tr>
+              <tr>
+                <th>Available Stock:</th>
+                <td style="color: #059669; font-weight: 600;">
+                  {% if product.selected_or_first_available_variant.inventory_quantity > 0 %}
+                    {{ product.selected_or_first_available_variant.inventory_quantity }} copies (Prayagraj Warehouse)
+                  {% elsif product.available %}
+                    In Stock • Ready to Dispatch
+                  {% else %}
+                    Temporarily Out of Stock
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <th>Dimensions (L &times; B &times; H):</th>
+                <td>{{ product.metafields.custom.dimensions.value | default: '21.5 × 14.0 × 1.0 cm' }}</td>
+              </tr>
+              <tr>
+                <th>Dispatch Hub:</th>
+                <td>Prayagraj, Uttar Pradesh (Same-Day)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: Amazon-Style Sticky Buy Box -->
+      <div class="pdp-right-col">
+        <div class="pdp-buy-box">
+          <div class="pdp-bb-price">{{ product.price | money }}</div>
+          
+          <div class="pdp-bb-stock">
+            <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
+            <span>{% if product.available %}In Stock • Ready to Dispatch{% else %}Temporarily Out of Stock{% endif %}</span>
+          </div>
+
+          <div class="pdp-bb-delivery">
+            Delivery to your location within <strong>2-5 Business Days</strong> via Express Courier.
+          </div>
+
+          {%- form 'product', product, id: 'MainProductForm' -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+            <!-- Quantity Selector -->
+            <div class="pdp-qty-row">
+              <label class="pdp-qty-label" for="LiquidProductQuantity">Quantity:</label>
+              <div class="pdp-qty-control">
+                <button type="button" class="pdp-qty-btn" onclick="decrementLiquidQty()">-</button>
+                <input type="number" id="LiquidProductQuantity" name="quantity" value="1" min="1" max="99" class="pdp-qty-input" />
+                <button type="button" class="pdp-qty-btn" onclick="incrementLiquidQty()">+</button>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pdp-btn-stack">
+              <button
+                type="submit"
+                class="pdp-btn-add-cart"
+                {% unless product.available %}disabled{% endunless %}
+              >
+                <i data-lucide="shopping-bag" style="width: 16px; height: 16px;"></i>
+                <span>{% if product.available %}Add to Cart{% else %}Out of Stock{% endif %}</span>
+              </button>
+
+              {%- if product.available -%}
+                <button
+                  type="button"
+                  class="pdp-btn-buy-now"
+                  onclick="liquidBuyNow('{{ product.selected_or_first_available_variant.id }}')"
+                >
+                  <i data-lucide="zap" style="width: 16px; height: 16px;"></i>
+                  <span>Buy Now (Instant Checkout)</span>
+                </button>
+              {%- endif -%}
+
+              <!-- WhatsApp COD Button -->
+              {%- capture wa_message -%}
+Hello Indigo Books Prayagraj! [Website Order]
+I would like to order:
+- Book: {{ product.title }}
+- Author: {{ product.vendor }}
+- Price: {{ product.price | money }}
+- SKU: {{ product.selected_or_first_available_variant.sku }}
+Please confirm Cash on Delivery availability and dispatch details.
+              {%- endcapture -%}
+              <a
+                href="https://wa.me/918933063306?text={{ wa_message | strip | url_encode }}"
+                target="_blank"
+                class="pdp-btn-wa-cod"
+              >
+                <i data-lucide="message-circle" style="width: 16px; height: 16px;"></i>
+                <span>Order via WhatsApp COD</span>
+              </a>
+            </div>
+          {%- endform -%}
+
+          <div class="pdp-bb-security">
+            <i data-lucide="lock" style="width: 13px; height: 13px; color: #16A34A;"></i>
+            <span>Secure 256-Bit Encrypted Ordering</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom: More Books by {{ product.vendor }} -->
+    <div class="pdp-recommendations-sec">
+      <h3 style="font-family: 'Merriweather', Georgia, serif; font-size: 22px; font-weight: 700; color: #0F172A; margin: 0 0 6px;">
+        More Books by {{ product.vendor | default: 'This Author' }}
+      </h3>
+      <p style="font-size: 13.5px; color: #64748B; margin: 0 0 20px;">
+        Explore other celebrated titles and writings from the same literary voice.
+      </p>
+      
+      <div class="pdp-rec-grid">
+        {%- assign rec_count = 0 -%}
+        {%- for related_product in collections.all.products -%}
+          {%- if related_product.id != product.id and related_product.vendor == product.vendor and rec_count < 4 -%}
+            {%- assign rec_count = rec_count | plus: 1 -%}
+            <div class="catalog-card">
+              <div class="catalog-thumb" onclick="location.href='{{ related_product.url }}'" style="cursor: pointer;">
+                {%- if related_product.featured_image -%}
+                  <img src="{{ related_product.featured_image | image_url: width: 400 }}" alt="{{ related_product.title | escape }}" loading="lazy" />
+                {%- else -%}
+                  <img src="{{ 'hero-godan.jpg' | asset_url }}" alt="{{ related_product.title | escape }}" loading="lazy" />
+                {%- endif -%}
+              </div>
+              <div style="font-size: 10.5px; font-weight: 700; color: #B45309; text-transform: uppercase; margin-bottom: 4px;">
+                {{ related_product.type | default: 'IN STOCK' }}
+              </div>
+              <h3 style="font-family: 'Merriweather', Georgia, serif; font-size: 14px; font-weight: 700; color: #0F172A; line-height: 1.3; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-height: 36px;">
+                <a href="{{ related_product.url }}" style="color: inherit; text-decoration: none;">{{ related_product.title }}</a>
+              </h3>
+              <div style="font-size: 12px; color: #64748B; margin-bottom: 10px;">
+                {{ related_product.vendor }}
+              </div>
+              <div style="display: flex; align-items: baseline; gap: 8px; margin-top: auto; margin-bottom: 12px;">
+                <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 800; color: #0F172A; font-variant-numeric: lining-nums tabular-nums !important;">{{ related_product.price | money }}</span>
+              </div>
+              <a href="{{ related_product.url }}" class="btn-overview" style="width: 100%; justify-content: center; text-decoration: none; padding: 10px 0;">
+                <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> View Details
+              </a>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- if rec_count < 4 -%}
+          {%- for related_product in collections.all.products -%}
+            {%- if related_product.id != product.id and related_product.vendor != product.vendor and rec_count < 4 -%}
+              {%- assign rec_count = rec_count | plus: 1 -%}
+              <div class="catalog-card">
+                <div class="catalog-thumb" onclick="location.href='{{ related_product.url }}'" style="cursor: pointer;">
+                  {%- if related_product.featured_image -%}
+                    <img src="{{ related_product.featured_image | image_url: width: 400 }}" alt="{{ related_product.title | escape }}" loading="lazy" />
+                  {%- else -%}
+                    <img src="{{ 'hero-godan.jpg' | asset_url }}" alt="{{ related_product.title | escape }}" loading="lazy" />
+                  {%- endif -%}
+                </div>
+                <div style="font-size: 10.5px; font-weight: 700; color: #B45309; text-transform: uppercase; margin-bottom: 4px;">
+                  {{ related_product.type | default: 'IN STOCK' }}
+                </div>
+                <h3 style="font-family: 'Merriweather', Georgia, serif; font-size: 14px; font-weight: 700; color: #0F172A; line-height: 1.3; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-height: 36px;">
+                  <a href="{{ related_product.url }}" style="color: inherit; text-decoration: none;">{{ related_product.title }}</a>
+                </h3>
+                <div style="font-size: 12px; color: #64748B; margin-bottom: 10px;">
+                  {{ related_product.vendor }}
+                </div>
+                <div style="display: flex; align-items: baseline; gap: 8px; margin-top: auto; margin-bottom: 12px;">
+                  <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 800; color: #0F172A; font-variant-numeric: lining-nums tabular-nums !important;">{{ related_product.price | money }}</span>
+                </div>
+                <a href="{{ related_product.url }}" class="btn-overview" style="width: 100%; justify-content: center; text-decoration: none; padding: 10px 0;">
+                  <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> View Details
+                </a>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  function filterCatalogByAuthor(author) {
+    if (!author) return;
+    window.location.href = '/search?q=' + encodeURIComponent(author);
+  }
+
+  function toggleMainProductExcerpt() {
+    var box = document.getElementById('MainProductExcerptBox');
+    if (box) box.classList.toggle('open');
+  }
+
+  function decrementLiquidQty() {
+    var input = document.getElementById('LiquidProductQuantity');
+    if (input && parseInt(input.value) > 1) {
+      input.value = parseInt(input.value) - 1;
+    }
+  }
+
+  function incrementLiquidQty() {
+    var input = document.getElementById('LiquidProductQuantity');
+    if (input && parseInt(input.value) < 99) {
+      input.value = parseInt(input.value) + 1;
+    }
+  }
+
+  function liquidBuyNow(variantId) {
+    var input = document.getElementById('LiquidProductQuantity');
+    var qty = input ? input.value : 1;
+    window.location.href = '/cart/' + variantId + ':' + qty;
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Main Product Details",
+  "tag": "section",
+  "class": "indigo-main-product-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Main Product Details"
+    }
+  ]
+}
+{% endschema %}
+

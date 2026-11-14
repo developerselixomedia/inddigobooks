@@ -1,0 +1,3 @@
+{%- if variant.unit_price_measurement -%}
+  <span>{{ variant.unit_price | money }} / {{ variant.unit_price_measurement.reference_value }}{{ variant.unit_price_measurement.reference_unit }}</span>
+{%- endif -%}

@@ -1,0 +1,7 @@
+<div class="media-element">
+  {%- if media.media_type == 'image' -%}
+    <img src="{{ media | image_url: width: 800 }}" alt="{{ media.alt | escape }}">
+  {%- elsif media.media_type == 'video' -%}
+    {{ media | video_tag: controls: true }}
+  {%- endif -%}
+</div>

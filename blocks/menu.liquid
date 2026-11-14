@@ -1,0 +1,13 @@
+<ul class="menu-block" {{ block.shopify_attributes }}>
+  {%- for link in linklists[block.settings.menu].links -%}
+    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+  {%- endfor -%}
+</ul>
+{% schema %}
+{
+  "name": "Menu",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" }
+  ]
+}
+{% endschema %}

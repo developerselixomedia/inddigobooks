@@ -1,0 +1,81 @@
+{% comment %}
+  Bookstore Hero Slideshow Section
+{% endcomment %}
+
+<section class="section section-slideshow" id="Slideshow-{{ section.id }}">
+  <div class="slideshow-container">
+    {%- for block in section.blocks -%}
+      <div class="slideshow-slide {% if forloop.first %}slideshow-slide--active{% endif %}" {{ block.shopify_attributes }}>
+        <div class="slideshow-slide__media">
+          {%- if block.settings.image != blank -%}
+            <img src="{{ block.settings.image | image_url: width: 1800 }}" alt="{{ block.settings.heading | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+          {%- else -%}
+            <div class="slideshow-placeholder-bg"></div>
+          {%- endif -%}
+        </div>
+
+        <div class="slideshow-slide__overlay">
+          <div class="page-width">
+            <div class="slideshow-content-box">
+              {%- if block.settings.subheading != blank -%}
+                <span class="slideshow-subheading">{{ block.settings.subheading }}</span>
+              {%- endif -%}
+              <h2 class="slideshow-heading">{{ block.settings.heading }}</h2>
+              {%- if block.settings.text != blank -%}
+                <p class="slideshow-text">{{ block.settings.text }}</p>
+              {%- endif -%}
+              <div class="slideshow-actions">
+                {%- if block.settings.button_label != blank -%}
+                  <a href="{{ block.settings.button_link }}" class="btn btn--primary btn--lg">
+                    {{ block.settings.button_label }} &rarr;
+                  </a>
+                {%- endif -%}
+                {%- if block.settings.show_wa_btn -%}
+                  <a
+                    href="https://wa.me/{{ settings.whatsapp_number | remove: '+' | remove: ' ' }}?text=Hi%20Indigo%20Books,%20I%20am%20interested%20in%20your%20offers."
+                    target="_blank"
+                    rel="noopener"
+                    class="btn btn--whatsapp btn--lg"
+                  >
+                    {% render 'icon', name: 'whatsapp' %} Chat on WhatsApp
+                  </a>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Slideshow",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Slide Image" },
+        { "type": "text", "id": "subheading", "label": "Subheading", "default": "MASSIVE BOOK FAIR" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Over 2,000+ Titles at Up To 40% OFF" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Explore timeless literature, psychology, financial wisdom, and children's stories." },
+        { "type": "text", "id": "button_label", "label": "Button Label", "default": "Shop Bestsellers" },
+        { "type": "url", "id": "button_link", "label": "Button Link" },
+        { "type": "checkbox", "id": "show_wa_btn", "label": "Show WhatsApp Button", "default": true }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Slideshow",
+      "blocks": [
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}
+

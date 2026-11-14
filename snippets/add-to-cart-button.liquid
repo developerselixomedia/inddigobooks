@@ -1,0 +1,3 @@
+<button type="submit" name="add" class="btn btn--primary btn--add-to-cart" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+  {% if product.selected_or_first_available_variant.available %}Add to Cart{% else %}Sold Out{% endif %}
+</button>

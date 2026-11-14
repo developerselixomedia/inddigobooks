@@ -1,0 +1,641 @@
+<style id="productListStandaloneCss">
+  #ProductList-{{ section.id }} {
+    padding: 48px 0 !important;
+    background-color: {% if section.settings.bg_cream %}#FAF8F5{% else %}#ffffff{% endif %} !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    width: 100% !important;
+  }
+  #ProductList-{{ section.id }} .product-list-container {
+    max-width: 1280px !important;
+    margin: 0 auto !important;
+    padding: 0 24px !important;
+    box-sizing: border-box !important;
+  }
+  #ProductList-{{ section.id }} .product-list-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 24px !important;
+    width: 100% !important;
+  }
+  @media (max-width: 1023px) {
+    #ProductList-{{ section.id }} .product-list-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 16px !important;
+    }
+  }
+  @media (max-width: 480px) {
+    #ProductList-{{ section.id }} .product-list-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+    }
+  }
+</style>
+
+{% comment %}
+  Indigo Books India - Responsive Curated Product List
+  Supports both Shopify Collections and Instant Curated Fallbacks with Real Book Photos & Quick View (Mini Overview)
+{% endcomment %}
+
+<section class="py-12 {% if section.settings.bg_cream %}bg-[#FAF8F5]{% else %}bg-white{% endif %} border-b border-slate-100" id="ProductList-{{ section.id }}">
+  <div class="product-list-container max-w-7xl mx-auto px-6 lg:px-8">
+    
+    {%- if section.settings.title != blank -%}
+      <div class="text-center mb-8">
+        <h2 class="text-2xl sm:text-3xl font-serif font-bold text-slate-900 tracking-tight uppercase">
+          {{ section.settings.title | escape }}
+        </h2>
+        {%- if section.settings.subtitle != blank -%}
+          <p class="text-xs sm:text-sm text-slate-500 mt-1.5 max-w-2xl mx-auto">
+            {{ section.settings.subtitle | escape }}
+          </p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- assign collection = collections[section.settings.collection] -%}
+    {%- if collection != blank and collection.products_count > 0 -%}
+      <div class="product-list-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        {%- for product in collection.products limit: section.settings.products_to_show -%}
+          <div class="h-full">
+            {% render 'product-card', product: product, section_id: section.id %}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      {%- comment -%}
+        Dynamic Curated Fallback with Real Book Covers and Quick-View Modal Data
+      {%- endcomment -%}
+      {%- assign title_up = section.settings.title | upcase -%}
+      <div class="product-list-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+
+        
+        {%- if title_up contains 'REKHTA' -%}
+          <!-- Rekhta Publications Curations -->
+          {% render 'curated-book-item',
+            title: "Kyon",
+            author: "Jaun Elia",
+            price: "₹450.00",
+            original: "₹550.00",
+            discount: "18% OFF",
+            stars: "5",
+            reviews: "421",
+            image_name: "book-kyon-jaun-elia.jpg",
+            isbn: "978-8193859214",
+            publisher: "Rekhta Publications",
+            language: "Urdu / Hindi",
+            pages: "240 pp",
+            binding: "Hardcover",
+            desc: "Jaun Elia's legendary collection of philosophical, heartbreaking, and non-conformist couplets published with exquisite Rekhta typography."
+          %}
+          {% render 'curated-book-item',
+            title: "Ranjish Hi Sahi",
+            author: "Ahmad Faraz",
+            price: "₹249.00",
+            original: "₹299.00",
+            discount: "17% OFF",
+            stars: "5",
+            reviews: "310",
+            image_name: "book-ranjish-hi-sahi.jpg",
+            isbn: "978-8193859221",
+            publisher: "Rekhta Publications",
+            language: "Urdu / Hindi",
+            pages: "192 pp",
+            binding: "Paperback",
+            desc: "Immortal ghazals by Ahmad Faraz capturing the sweet pangs of separation, resilience, and romantic revolution."
+          %}
+          {% render 'curated-book-item',
+            title: "Dozakhnama",
+            author: "Rabisankar Bal",
+            price: "₹649.00",
+            original: "₹749.00",
+            discount: "13% OFF",
+            stars: "5",
+            reviews: "295",
+            image_name: "hero-book-dozakh.jpg",
+            isbn: "978-8184003055",
+            publisher: "Penguin Vintage",
+            language: "Hindi / Urdu",
+            pages: "528 pp",
+            binding: "Hardcover",
+            desc: "Conversations in hell between Mirza Ghalib and Saadat Hasan Manto—a transcendent literary conversation on art, sorrow, and Delhi-Lahore memory."
+          %}
+          {% render 'curated-book-item',
+            title: "Thanda Gosht",
+            author: "Saadat Hasan Manto",
+            price: "₹200.00",
+            original: "₹249.00",
+            discount: "20% OFF",
+            stars: "5",
+            reviews: "480",
+            image_name: "hero-book-thanda-ghost.jpg",
+            isbn: "978-9350293112",
+            publisher: "Rekhta Publications",
+            language: "Urdu / Hindi",
+            pages: "160 pp",
+            binding: "Paperback",
+            desc: "Manto's unvarnished, unflinching short stories tearing through hypocrisy, communal madness, and the human condition."
+          %}
+          {% render 'curated-book-item',
+            title: "Dhuaan",
+            author: "Saadat Hasan Manto",
+            price: "₹200.00",
+            original: "₹249.00",
+            discount: "20% OFF",
+            stars: "5",
+            reviews: "367",
+            image_name: "hero-book-dhuaan.jpg",
+            isbn: "978-9350293129",
+            publisher: "Rekhta Publications",
+            language: "Urdu / Hindi",
+            pages: "176 pp",
+            binding: "Paperback",
+            desc: "The controversial and daring literary masterpiece exploring taboo psychology, longing, and adolescent vulnerability."
+          %}
+          {% render 'curated-book-item',
+            title: "Tumhare Shahar Ka Mausam",
+            author: "Qaisar-ul Jafri",
+            price: "₹249.00",
+            original: "₹299.00",
+            discount: "17% OFF",
+            stars: "5",
+            reviews: "156",
+            image_name: "book-tumhare-shahar.jpg",
+            isbn: "978-8193859238",
+            publisher: "Rekhta Publications",
+            language: "Urdu / Hindi",
+            pages: "184 pp",
+            binding: "Paperback",
+            desc: "Lyrical and evocative Urdu ghazals echoing the nostalgic weather and bittersweet memories of Prayagraj and Lucknow."
+          %}
+
+        {%- elsif title_up contains 'FICTION' or title_up contains 'NOVEL' -%}
+          <!-- Contemporary Fiction & Indian Novels -->
+          {% render 'curated-book-item',
+            title: "Diary of a Wimpy Kid: Fight or Flight",
+            author: "Jeff Kinney",
+            price: "₹420.00",
+            original: "₹499.00",
+            discount: "16% OFF",
+            stars: "5",
+            reviews: "420",
+            image_name: "hero-book-wimpy-kid.jpg",
+            isbn: "978-0141385679",
+            publisher: "Puffin Books",
+            language: "English",
+            pages: "224 pp",
+            binding: "Hardcover",
+            desc: "The laugh-out-loud 21st adventure of Greg Heffley as family holiday plans go hilariously sideways."
+          %}
+          {% render 'curated-book-item',
+            title: "Ujli Raaten",
+            author: "Fyodor Dostoevsky",
+            price: "₹220.00",
+            original: "₹299.00",
+            discount: "26% OFF",
+            stars: "5",
+            reviews: "310",
+            image_name: "hero-book-ujli-raaten.jpg",
+            isbn: "978-9388423106",
+            publisher: "Penguin Classics",
+            language: "Hindi",
+            pages: "160 pp",
+            binding: "Paperback",
+            desc: "The poignant lyrical story of a lonely dreamer in St. Petersburg and four magical white nights with Nastenka."
+          %}
+          {% render 'curated-book-item',
+            title: "Kasaibada",
+            author: "Manoj Rajan Tripathi",
+            price: "₹299.00",
+            original: "₹350.00",
+            discount: "15% OFF",
+            stars: "5",
+            reviews: "54",
+            image_name: "hero-book-kasaibada.jpg",
+            isbn: "978-9390315895",
+            publisher: "Vani Prakashan",
+            language: "Hindi",
+            pages: "210 pp",
+            binding: "Paperback",
+            desc: "A gripping literary masterpiece set across Northern India exploring power, rural socio-politics, and fierce redemption."
+          %}
+          {% render 'curated-book-item',
+            title: "The Masnavi: Teachings of Rumi",
+            author: "Maryam Mafi",
+            price: "₹399.00",
+            original: "₹499.00",
+            discount: "20% OFF",
+            stars: "5",
+            reviews: "215",
+            image_name: "hero-book-rumi.png",
+            isbn: "978-1846045585",
+            publisher: "Rider Books",
+            language: "English",
+            pages: "304 pp",
+            binding: "Hardcover",
+            desc: "The sublime spiritual verses and profound allegories of Jalal al-Din Rumi beautifully translated for modern seekers."
+          %}
+          {% render 'curated-book-item',
+            title: "Cheelwali Kothi",
+            author: "Sara Rai",
+            price: "₹249.00",
+            original: "₹299.00",
+            discount: "17% OFF",
+            stars: "5",
+            reviews: "142",
+            image_name: "book-cheelwali-kothi.jpg",
+            isbn: "978-8126731023",
+            publisher: "Rajkamal Prakashan",
+            language: "Hindi",
+            pages: "192 pp",
+            binding: "Paperback",
+            desc: "Memories of Allahabad / Prayagraj weaving together the ancestral legacy of Munshi Premchand and quiet domestic tapestries."
+          %}
+          {% render 'curated-book-item',
+            title: "Nar Nareeshwar",
+            author: "Perumal Murugan",
+            price: "₹249.00",
+            original: "₹299.00",
+            discount: "17% OFF",
+            stars: "5",
+            reviews: "230",
+            image_name: "book-nar-nareeshwar.jpg",
+            isbn: "978-0143444851",
+            publisher: "Penguin Swadesh",
+            language: "Hindi",
+            pages: "220 pp",
+            binding: "Paperback",
+            desc: "The acclaimed Hindi translation of Murugan's exploration of traditional society, gender fluidity, ritual, and longing."
+          %}
+
+        {%- elsif title_up contains 'ACADEMIC' or title_up contains 'SAHITYA' -%}
+          <!-- Academic Textbooks & Hindi Sahitya -->
+          {% render 'curated-book-item',
+            title: "Lok Sahitya Ki Bhumika",
+            author: "Krishnadev Upadhyaya",
+            price: "₹292.00",
+            original: "₹325.00",
+            discount: "10% OFF",
+            stars: "5",
+            reviews: "189",
+            image_name: "book-lok-sahitya.jpg",
+            isbn: "978-8180311238",
+            publisher: "Lokbharti Prakashan",
+            language: "Hindi",
+            pages: "340 pp",
+            binding: "Paperback",
+            desc: "A foundational scholarly work on Indian folklore, folk songs, traditions, and the cultural sociology of Hindi belt regions."
+          %}
+          {% render 'curated-book-item',
+            title: "Hindi Kavya",
+            author: "Prof. D. P. Singh",
+            price: "₹200.00",
+            original: "₹250.00",
+            discount: "20% OFF",
+            stars: "5",
+            reviews: "145",
+            image_name: "book-hindi-kavya.jpg",
+            isbn: "978-8180312006",
+            publisher: "University Book House",
+            language: "Hindi",
+            pages: "216 pp",
+            binding: "Paperback",
+            desc: "Comprehensive academic textbook analyzing medieval Bhakti kaal poetry, Chhayavad, and contemporary free verse."
+          %}
+          {% render 'curated-book-item',
+            title: "Hindi Sahitya Ka Saral Itihas",
+            author: "Vishwanath Tripathi",
+            price: "₹250.00",
+            original: "₹275.00",
+            discount: "9% OFF",
+            stars: "5",
+            reviews: "890",
+            image_name: "book-hindi-sahitya-itihas.jpg",
+            isbn: "978-8125032540",
+            publisher: "Orient BlackSwan",
+            language: "Hindi",
+            pages: "264 pp",
+            binding: "Paperback",
+            desc: "The most widely recommended and authoritative standard history of Hindi literature for college curricula and civil service exams."
+          %}
+          {% render 'curated-book-item',
+            title: "Hindi Bhasha",
+            author: "Dr. Hardev Bahri",
+            price: "₹200.00",
+            original: "₹240.00",
+            discount: "17% OFF",
+            stars: "5",
+            reviews: "520",
+            image_name: "book-hindi-bhasha.jpg",
+            isbn: "978-8180310507",
+            publisher: "Lokbharti Prakashan",
+            language: "Hindi",
+            pages: "280 pp",
+            binding: "Paperback",
+            desc: "Rigorous linguistic analysis of the origin, dialects, phonology, and evolution of Hindi by the legendary Prayagraj lexicographer."
+          %}
+          {% render 'curated-book-item',
+            title: "Aadhunik Hindi Vyakaran",
+            author: "Vasudevanandan Prasad",
+            price: "₹225.00",
+            original: "₹260.00",
+            discount: "13% OFF",
+            stars: "5",
+            reviews: "940",
+            image_name: "book-hindi-vyakaran.jpg",
+            isbn: "978-8177092141",
+            publisher: "Bharati Bhawan",
+            language: "Hindi",
+            pages: "360 pp",
+            binding: "Paperback",
+            desc: "The indispensable standard grammar textbook used by scholars, competitive exam aspirants, and teachers across India."
+          %}
+          {% render 'curated-book-item',
+            title: "Kabira Khada Bazaar Mein",
+            author: "Bhishma Sahni",
+            price: "₹90.00",
+            original: "₹110.00",
+            discount: "18% OFF",
+            stars: "5",
+            reviews: "380",
+            image_name: "book-kabira-khada.jpg",
+            isbn: "978-8126701832",
+            publisher: "Rajkamal Prakashan",
+            language: "Hindi",
+            pages: "128 pp",
+            binding: "Paperback",
+            desc: "The celebrated historic play by Bhishma Sahni dramatizing Saint Kabir's courageous confrontation against religious dogma."
+          %}
+
+        {%- elsif title_up contains 'BUNDLE' or title_up contains 'BOX' -%}
+          <!-- Value Bundles & Box Sets -->
+          {% render 'curated-book-item',
+            title: "Arundhati Roy Non-Fiction (1998–2016)",
+            author: "Arundhati Roy",
+            price: "₹1,260.00",
+            original: "₹1,699.00",
+            discount: "26% OFF",
+            stars: "5",
+            reviews: "340",
+            image_name: "hero-book-arundhati.jpg",
+            isbn: "978-0670087457",
+            publisher: "Penguin Hamish Hamilton",
+            language: "English",
+            pages: "1000 pp",
+            binding: "Hardcover Deluxe",
+            desc: "An expansive 1000-page omnibus compiling two decades of Roy's visionary political essays, speeches, and meditations."
+          %}
+          {% render 'curated-book-item',
+            title: "Best of Murakami (3 Masterpieces)",
+            author: "Haruki Murakami",
+            price: "₹1,259.00",
+            original: "₹1,799.00",
+            discount: "30% OFF",
+            stars: "5",
+            reviews: "875",
+            image_name: "hero-book-murakami.jpg",
+            isbn: "978-0099511649",
+            publisher: "Vintage Classics",
+            language: "English",
+            pages: "980 pp",
+            binding: "Paperback 3-Set",
+            desc: "A collector set containing Norwegian Wood, Kafka on the Shore, and The Wind-Up Bird Chronicle in uniform vintage design."
+          %}
+          {% render 'curated-book-item',
+            title: "Books for Wealth & Success (Set of 4)",
+            author: "Various Authors",
+            price: "₹599.00",
+            original: "₹999.00",
+            discount: "40% OFF",
+            stars: "5",
+            reviews: "1450",
+            image_name: "hero-book-psychology-money.jpg",
+            isbn: "978-9388423458",
+            publisher: "Jaico Publishing",
+            language: "English",
+            pages: "720 pp",
+            binding: "Boxset",
+            desc: "Four evergreen financial masterworks teaching timeless psychology, compound growth, discipline, and prosperity."
+          %}
+          {% render 'curated-book-item',
+            title: "Darius Foroux Collection (6 Books)",
+            author: "Darius Foroux",
+            price: "₹909.00",
+            original: "₹1,499.00",
+            discount: "39% OFF",
+            stars: "5",
+            reviews: "620",
+            image_name: "hero-book-darius.jpg",
+            isbn: "978-0143456782",
+            publisher: "Penguin Life",
+            language: "English",
+            pages: "860 pp",
+            binding: "Boxset",
+            desc: "Six compact productivity and stoic mindset guides designed to eliminate procrastination and build consistent daily habits."
+          %}
+          {% render 'curated-book-item',
+            title: "Court of Thorns and Roses (5 Books)",
+            author: "Sarah J. Maas",
+            price: "₹2,199.00",
+            original: "₹2,999.00",
+            discount: "27% OFF",
+            stars: "5",
+            reviews: "1120",
+            image_name: "book-acotar.jpg",
+            isbn: "978-1526626585",
+            publisher: "Bloomsbury",
+            language: "English",
+            pages: "2100 pp",
+            binding: "Boxset",
+            desc: "The complete breathtaking fantasy box set following Feyre Archeron across the faerie courts of Prythian."
+          %}
+          {% render 'curated-book-item',
+            title: "Meri Maan Meri Gangster | Azadi",
+            author: "Arundhati Roy",
+            price: "₹595.00",
+            original: "₹799.00",
+            discount: "25% OFF",
+            stars: "5",
+            reviews: "290",
+            image_name: "hero-book-arundhati.jpg",
+            isbn: "978-8126732907",
+            publisher: "Rajkamal Prakashan",
+            language: "Hindi",
+            pages: "440 pp",
+            binding: "Paperback 2-Set",
+            desc: "A specially paired 2-volume literary combo of Arundhati Roy's fierce essayistic exploration of dissent, democracy, and motherland."
+          %}
+
+        {%- elsif title_up contains 'LAW' or title_up contains 'RIGHTS' -%}
+          <!-- Law Books & Legal References -->
+          {% render 'curated-book-item',
+            title: "Medical Jurisprudence and Toxicology",
+            author: "J. P. Modi",
+            price: "₹4,120.00",
+            original: "₹5,495.00",
+            discount: "25% OFF",
+            stars: "5",
+            reviews: "310",
+            image_name: "book-medical-jurisprudence.jpg",
+            isbn: "978-9390529810",
+            publisher: "LexisNexis Butterworths",
+            language: "English",
+            pages: "1480 pp",
+            binding: "Hardcover Deluxe",
+            desc: "The ultimate 26th landmark edition of India's undisputed forensic legal Bible cited by High Courts and the Supreme Court."
+          %}
+          {% render 'curated-book-item',
+            title: "The Lawful and the Awful",
+            author: "Tushar Mehta",
+            price: "₹775.00",
+            original: "₹995.00",
+            discount: "22% OFF",
+            stars: "5",
+            reviews: "260",
+            image_name: "book-lawful-awful.jpg",
+            isbn: "978-9357021456",
+            publisher: "Rupa Publications",
+            language: "English",
+            pages: "310 pp",
+            binding: "Hardcover",
+            desc: "Captivating memoirs, witty court exchanges, and legal philosophies from the Solicitor General of India."
+          %}
+          {% render 'curated-book-item',
+            title: "10 Faisle Jinse Badla Desh",
+            author: "Priya Jain",
+            price: "₹280.00",
+            original: "₹350.00",
+            discount: "20% OFF",
+            stars: "5",
+            reviews: "490",
+            image_name: "book-10-faisle.jpg",
+            isbn: "978-9390315482",
+            publisher: "Prabhat Prakashan",
+            language: "Hindi",
+            pages: "232 pp",
+            binding: "Paperback",
+            desc: "Ten historic Supreme Court verdicts that reshaped India's constitutional law, fundamental rights, and civil liberties."
+          %}
+          {% render 'curated-book-item',
+            title: "The Bench, The Bar & The Bizarre",
+            author: "Tushar Mehta",
+            price: "₹1,995.00",
+            original: "₹2,490.00",
+            discount: "20% OFF",
+            stars: "5",
+            reviews: "180",
+            image_name: "book-bench-bar.jpg",
+            isbn: "978-9357022804",
+            publisher: "Rupa Legal",
+            language: "English",
+            pages: "640 pp",
+            binding: "Hardcover 2-Set",
+            desc: "A collector 2-book set exploring courtroom humour, judicial eccentricities, and profound legal turning points."
+          %}
+          {% render 'curated-book-item',
+            title: "How Anil Naik Built L&T",
+            author: "R. Gopalakrishnan",
+            price: "₹395.00",
+            original: "₹499.00",
+            discount: "21% OFF",
+            stars: "5",
+            reviews: "340",
+            image_name: "book-anil-naik.jpg",
+            isbn: "978-0143460127",
+            publisher: "Penguin Enterprise",
+            language: "English",
+            pages: "272 pp",
+            binding: "Paperback",
+            desc: "Strategic lessons in corporate governance, institutional resilience, and scaling indigenous Indian engineering."
+          %}
+
+        {%- else -%}
+          <!-- Default Best Reads -->
+          {% render 'curated-book-item',
+            title: "Dozakhnama",
+            author: "Rabisankar Bal",
+            price: "₹649.00",
+            original: "₹749.00",
+            discount: "13% OFF",
+            stars: "5",
+            reviews: "295",
+            image_name: "hero-book-dozakh.jpg",
+            isbn: "978-8184003055",
+            publisher: "Penguin Vintage",
+            language: "Hindi / Urdu",
+            pages: "528 pp",
+            binding: "Hardcover",
+            desc: "Conversations in hell between Mirza Ghalib and Saadat Hasan Manto."
+          %}
+          {% render 'curated-book-item',
+            title: "Kasaibada",
+            author: "Manoj Rajan Tripathi",
+            price: "₹299.00",
+            original: "₹350.00",
+            discount: "15% OFF",
+            stars: "5",
+            reviews: "54",
+            image_name: "hero-book-kasaibada.jpg",
+            isbn: "978-9390315895",
+            publisher: "Vani Prakashan",
+            language: "Hindi",
+            pages: "210 pp",
+            binding: "Paperback",
+            desc: "A gripping literary masterpiece set across Northern India."
+          %}
+          {% render 'curated-book-item',
+            title: "Ujli Raaten",
+            author: "Fyodor Dostoevsky",
+            price: "₹220.00",
+            original: "₹299.00",
+            discount: "26% OFF",
+            stars: "5",
+            reviews: "310",
+            image_name: "hero-book-ujli-raaten.jpg",
+            isbn: "978-9388423106",
+            publisher: "Penguin Classics",
+            language: "Hindi",
+            pages: "160 pp",
+            binding: "Paperback",
+            desc: "The poignant lyrical story of a lonely dreamer in St. Petersburg."
+          %}
+          {% render 'curated-book-item',
+            title: "The Masnavi: Rumi",
+            author: "Maryam Mafi",
+            price: "₹399.00",
+            original: "₹499.00",
+            discount: "20% OFF",
+            stars: "5",
+            reviews: "215",
+            image_name: "hero-book-rumi.png",
+            isbn: "978-1846045585",
+            publisher: "Rider Books",
+            language: "English",
+            pages: "304 pp",
+            binding: "Hardcover",
+            desc: "The sublime spiritual verses and profound allegories of Jalal al-Din Rumi."
+          %}
+        {%- endif -%}
+
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product List",
+  "settings": [
+    { "type": "checkbox", "id": "bg_cream", "label": "Warm Cream Background (Indigo Classic)", "default": false },
+    { "type": "text", "id": "title", "label": "Heading", "default": "Staff Picks & Editor Choices" },
+    { "type": "text", "id": "subtitle", "label": "Subheading", "default": "Hand-selected by our in-house bibliophiles" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_to_show", "min": 4, "max": 12, "step": 1, "default": 6, "label": "Products to show" }
+  ],
+  "presets": [
+    { "name": "Product List" }
+  ]
+}
+{% endschema %}
+
+

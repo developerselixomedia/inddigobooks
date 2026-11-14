@@ -1,0 +1,5 @@
+<div class="featured-product-gallery" {{ block.shopify_attributes }}>
+  {%- if product.featured_media -%}
+    <img src="{{ product.featured_media | image_url: width: 600 }}" alt="{{ product.title | escape }}" loading="lazy">
+  {%- endif -%}
+</div>

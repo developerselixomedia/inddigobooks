@@ -1,0 +1,5 @@
+{%- if media != blank -%}
+  <div class="background-media-wrap">
+    <img src="{{ media | image_url: width: 1800 }}" alt="" loading="lazy">
+  </div>
+{%- endif -%}

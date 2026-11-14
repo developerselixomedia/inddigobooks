@@ -1,0 +1,58 @@
+<USER_REQUEST>
+### SINGLE MASTER FIX FOR ALL 4 PROBLEMS: (1) Search Dropdown Z-Index & Paperback/Hardcover Separation, (2) Fixed Slide-Over Cart Drawer with Add-to-Cart Animation, (3) Full-Width Law Vault Padding & Correct Covers, and (4) Complete Solo Product Page (Full CSV Metadata, Clickable Authors, Same-Author Suggestions & Working "Browse All 5,500+ Books" Button)
+
+Look at our 4 screenshots (`image_ba8228.jpg`, `image_ba7ec0.png`, `image_ba7aa3.png`, `image_b2daa2.jpg`). Fix all 4 problems simultaneously in BOTH `preview.html` and the Shopify `.zip` (`layout/theme.liquid`, `sections/main-indigo-store.liquid`, `sections/main-product.liquid`) right now:
+
+---
+
+#### PROBLEM 1: HERO SEARCH DROPDOWN HIDING BEHIND LOWER SECTION & DUPLICATE BINDING RESULTS (`image_ba8228.jpg`)
+1. **Unclip the Hero Search Dropdown so It Floats Over the Marquee & Stats Bar:**
+   - Remove `overflow: hidden` from `#indigo-video-hero`, `#indigo-hero-master`, and `.ivh-section` (put `overflow: hidden` ONLY on an inner background wrapper `.hero-bg-clip { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }` for the Rangoli/Diyas).
+   - Add these exact stacking rules so `#hero-search-dropdown` is never covered by the section below:
+   ```css
+   #indigo-video-hero, #indigo-hero-master, .ivh-section {
+     position: relative !important;
+     z-index: 500 !important;
+     overflow: visible !important;
+   }
+   .ivh-container, .ihm-container, .ivh-left, .ihm-left-col, .ihm-search-wrap {
+     position: relative !important;
+     z-index: 600 !important;
+     overflow: visible !important;
+   }
+   #hero-search-dropdown, .indigo-search-dropdown {
+     position: absolute !important;
+     top: calc(100% + 8px) !important;
+     left: 0 !important;
+     width: 100% !important;
+     min-width: 360px !important;
+     max-height: 400px !important;
+     overflow-y: auto !important;
+     background: #FFFFFF !important;
+     border: 1px solid #CBD5E1 !important;
+     border-radius: 12px !important;
+     box-shadow: 0 24px 60px rgba(9, 19, 44, 0.4) !important;
+     z-index: 999999 !important;
+     padding: 10px !important;
+   }
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-07T03:02:49+05:30.
+
+The user's current state is as follows:
+Active Document: d:\Games\indigo books\sync_preview_to_shopify.py (LANGUAGE_UNSPECIFIED)
+Cursor is on line: 1
+Other open documents:
+- d:\Games\indigo books\layout\theme.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\sections\_blocks.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\sections\bento-promo.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\snippets\icon-indigo-emblem.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\sections\bestsellers-bundles.liquid (LANGUAGE_UNSPECIFIED)
+
+The user has uploaded 4 image(s):
+- C:/Users/MOHIT/.gemini/antigravity/brain/4bd00de3-65f9-4d41-a334-5b93517bd44c/.user_uploaded/media_1794000738662_2e88161b.jpg
+- C:/Users/MOHIT/.gemini/antigravity/brain/4bd00de3-65f9-4d41-a334-5b93517bd44c/.user_uploaded/media_1794000743879_174a9809.png
+- C:/Users/MOHIT/.gemini/antigravity/brain/4bd00de3-65f9-4d41-a334-5b93517bd44c/.user_uploaded/media_1794000750051_a4f4107e.png
+- C:/Users/MOHIT/.gemini/antigravity/brain/4bd00de3-65f9-4d41-a334-5b93517bd44c/.user_uploaded/media_1794000756235_9bcb43b5.jpg
+You can embed these images in an artifact if you need the USER to review them.
+</ADDITIONAL_METADATA>

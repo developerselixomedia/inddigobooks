@@ -1,0 +1,31 @@
+{% comment %}
+  Renders product price
+  Accepts:
+  - product: {Object} Product Liquid object (optional)
+  - use_variant: {Boolean} Renders selected or first available variant price (optional)
+  - show_badges: {Boolean} Renders 'Sale' or 'Sold Out' tags (optional)
+{% endcomment %}
+{%- liquid
+  if use_variant
+    assign target = product.selected_or_first_available_variant
+  else
+    assign target = product
+  endif
+
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+  assign available = target.available | default: false
+  assign money_price = price | money
+-%}
+
+<div class="price-container {% if compare_at_price > price %}price--on-sale{% endif %} {% unless available %}price--sold-out{% endunless %}">
+  <div class="price__regular">
+    <span class="price-item price-item--current">{{ money_price }}</span>
+    {%- if compare_at_price > price -%}
+      <s class="price-item price-item--compare">{{ compare_at_price | money }}</s>
+      {%- assign discount_percent = compare_at_price | minus: price | times: 100 | divided_by: compare_at_price -%}
+      <span class="badge badge--discount">-{{ discount_percent }}% OFF</span>
+    {%- endif -%}
+  </div>
+</div>
+

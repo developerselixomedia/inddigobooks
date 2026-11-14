@@ -1,0 +1,17 @@
+{% comment %}
+  Section Rendering API endpoint for single book card AJAX fetch
+{% endcomment %}
+
+<div class="section-rendering-product-card-wrap">
+  {%- if product != blank -%}
+    {% render 'product-card', product: product, section_id: section.id %}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Product Card Render",
+  "settings": []
+}
+{% endschema %}
+

@@ -1,0 +1,49 @@
+{
+  "general": {
+    "search": {
+      "search": "Search 5,500+ books by title, author, genre or ISBN...",
+      "no_results": "No books found matching your query",
+      "heading": "Search results",
+      "view_all": "View all results"
+    },
+    "cart": {
+      "title": "Your Reading Cart",
+      "empty": "Your cart is currently empty.",
+      "continue_shopping": "Explore Books",
+      "checkout": "Proceed to Checkout",
+      "whatsapp_order": "Order / Assist via WhatsApp",
+      "subtotal": "Subtotal",
+      "savings": "You are saving"
+    },
+    "whatsapp": {
+      "chat_with_us": "Chat on WhatsApp",
+      "order_on_whatsapp": "Order on WhatsApp",
+      "inquire": "Inquire about this Book",
+      "online_status": "Online • Instant Support"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "buy_now": "Buy Now",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "author": "Author",
+      "isbn": "ISBN",
+      "pages": "Pages",
+      "format": "Format",
+      "publisher": "Publisher",
+      "quantity": "Quantity",
+      "read_sample": "Read Free Sample",
+      "quick_view": "Quick Preview"
+    }
+  },
+  "sections": {
+    "collection_template": {
+      "title": "Books Collection",
+      "filter_by_label": "Filter by Genre / Author",
+      "sort_by_label": "Sort by",
+      "books_count": "{{ count }} books available"
+    }
+  }
+}

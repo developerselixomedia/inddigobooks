@@ -1,0 +1,65 @@
+{% comment %}
+  Search Results Grid Section with Faceted Filtering
+{% endcomment %}
+
+<section class="section section-search-results">
+  <div class="page-width">
+    {%- if search.performed -%}
+      {%- if search.results_count > 0 -%}
+        <div class="collection-catalog-layout">
+          <!-- Sidebar Filters for Search Results -->
+          <aside class="collection-sidebar">
+            {% render 'book-filter-facets', results: search, results_url: routes.search_url %}
+          </aside>
+
+          <!-- Search Results Grid -->
+          <div class="collection-products-area">
+            {%- paginate search.results by 24 -%}
+              <div class="grid grid--4-col grid--2-col-tablet grid--1-col-mobile">
+                {%- for item in search.results -%}
+                  {%- if item.object_type == 'product' -%}
+                    <div class="grid__item">
+                      {% render 'product-card', product: item, section_id: section.id %}
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+
+              {%- if paginate.pages > 1 -%}
+                <div class="pagination-wrapper text-center">
+                  {% render 'pagination', paginate: paginate %}
+                </div>
+              {%- endif -%}
+            {%- endpaginate -%}
+          </div>
+        </div>
+      {%- else -%}
+        <div class="search-no-results text-center">
+          {% render 'icon', name: 'book' %}
+          <h2>No matching books found</h2>
+          <p>We could not find any titles matching your search criteria. Try checking spelling or search for popular genres.</p>
+
+          <div class="search-wa-help">
+            <p>Need help finding a rare or unlisted book?</p>
+            <a
+              href="https://wa.me/{{ settings.whatsapp_number | remove: '+' | remove: ' ' }}?text=Hi%20Indigo%20Books,%20I%20am%20looking%20for%20a%20book%20titled:%20{{ search.terms | url_encode }}."
+              target="_blank"
+              rel="noopener"
+              class="btn btn--whatsapp"
+            >
+              {% render 'icon', name: 'whatsapp' %} Ask our Book Concierge on WhatsApp
+            </a>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Search Results",
+  "settings": []
+}
+{% endschema %}
+

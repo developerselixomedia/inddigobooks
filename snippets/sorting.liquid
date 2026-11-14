@@ -1,0 +1,8 @@
+<div class="sorting-selector">
+  <label for="SortSelect">Sort by:</label>
+  <select id="SortSelect" class="sort-select">
+    {% for option in collection.sort_options %}
+      <option value="{{ option.value }}" {% if option.value == collection.sort_by %}selected{% endif %}>{{ option.name }}</option>
+    {% endfor %}
+  </select>
+</div>

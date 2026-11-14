@@ -1,0 +1,223 @@
+{% comment %}
+  Quick Order List / Bulk Bookstore Ordering Section
+  Allows schools, libraries, book clubs, and corporate buyers to order in bulk
+{% endcomment %}
+
+<section class="section section-quick-order" id="QuickOrder-{{ section.id }}">
+  <div class="page-width">
+    <div class="section-header text-center">
+      <h1 class="section-header__title">{{ section.settings.title | default: 'Quick / Bulk Book Order List' }}</h1>
+      <p class="section-header__subheading">Add multiple books directly to your cart or submit an instant bulk quote request</p>
+    </div>
+
+    <!-- Quick Search Filter Bar inside Bulk list -->
+    <div class="quick-order-controls">
+      <input
+        type="text"
+        id="QuickOrderFilterInput"
+        placeholder="Filter books by title, author, or ISBN in this list..."
+        class="quick-order-search-input"
+      >
+      <div class="quick-order-summary">
+        <span>Selected Items: <strong id="QuickOrderTotalCount">0</strong></span>
+        <span>Estimated Total: <strong id="QuickOrderTotalPrice">{{ 0 | money }}</strong></span>
+      </div>
+    </div>
+
+    <div class="quick-order-table-wrap">
+      <table class="quick-order-table" id="QuickOrderTable">
+        <thead>
+          <tr>
+            <th>Book / Edition</th>
+            <th>Author</th>
+            <th>Format</th>
+            <th>Unit Price</th>
+            <th>Stock Status</th>
+            <th>Order Quantity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- assign collection = collections[section.settings.collection] | default: collections.all -%}
+          {%- if collection != blank and collection.products_count > 0 -%}
+            {%- for product in collection.products limit: 50 -%}
+              {%- assign variant = product.selected_or_first_available_variant -%}
+              <tr class="quick-order-row" data-search-term="{{ product.title | downcase }} {{ product.vendor | downcase }} {{ variant.barcode | downcase }}">
+                <td class="quick-order-cell--title">
+                  <div class="quick-order-product-meta">
+                    {%- if product.featured_media -%}
+                      <img src="{{ product.featured_media | image_url: width: 60 }}" alt="{{ product.title | escape }}" loading="lazy">
+                    {%- endif -%}
+                    <div>
+                      <strong><a href="{{ product.url }}" target="_blank">{{ product.title | escape }}</a></strong>
+                      <small class="text-muted">SKU: {{ variant.sku | default: variant.id }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ product.vendor | default: 'Author' }}</td>
+                <td>{{ variant.title }}</td>
+                <td class="quick-order-unit-price" data-price="{{ variant.price }}">{{ variant.price | money }}</td>
+                <td>
+                  {%- if variant.available -%}
+                    <span class="stock-badge stock-badge--in">In Stock</span>
+                  {%- else -%}
+                    <span class="stock-badge stock-badge--out">Sold Out</span>
+                  {%- endif -%}
+                </td>
+                <td class="quick-order-cell--qty">
+                  {%- if variant.available -%}
+                    <div class="qty-selector qty-selector--sm">
+                      <button type="button" class="quick-qty-btn" onclick="updateBulkQty('{{ variant.id }}', -1)">-</button>
+                      <input
+                        type="number"
+                        id="bulk_qty_{{ variant.id }}"
+                        data-variant-id="{{ variant.id }}"
+                        data-unit-price="{{ variant.price }}"
+                        value="0"
+                        min="0"
+                        class="bulk-qty-field"
+                        onchange="recalculateBulkOrder()"
+                      >
+                      <button type="button" class="quick-qty-btn" onclick="updateBulkQty('{{ variant.id }}', 1)">+</button>
+                    </div>
+                  {%- else -%}
+                    <span class="text-muted">&mdash;</span>
+                  {%- endif -%}
+                </td>
+              </tr>
+            {%- endfor -%}
+          {%- endif -%}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Bulk Actions Footer -->
+    <div class="quick-order-actions-bar">
+      <button type="button" class="btn btn--secondary" onclick="resetBulkOrder()">Clear Form</button>
+
+      <button type="button" class="btn btn--whatsapp" id="QuickOrderWhatsAppSubmit" onclick="submitBulkViaWhatsApp()">
+        {% render 'icon', name: 'whatsapp' %} Inquire / Order Bulk on WhatsApp
+      </button>
+
+      <button type="button" class="btn btn--primary btn--lg" id="QuickOrderAddAllBtn" onclick="addAllBulkToCart()">
+        Add Selected Books to Cart
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  function updateBulkQty(variantId, change) {
+    const input = document.getElementById('bulk_qty_' + variantId);
+    if (!input) return;
+    let val = parseInt(input.value) || 0;
+    val = Math.max(0, val + change);
+    input.value = val;
+    recalculateBulkOrder();
+  }
+
+  function recalculateBulkOrder() {
+    let totalItems = 0;
+    let totalPrice = 0;
+    document.querySelectorAll('.bulk-qty-field').forEach(input => {
+      const qty = parseInt(input.value) || 0;
+      const unitPrice = parseFloat(input.dataset.unitPrice) || 0;
+      totalItems += qty;
+      totalPrice += (qty * unitPrice);
+    });
+
+    const countEl = document.getElementById('QuickOrderTotalCount');
+    const priceEl = document.getElementById('QuickOrderTotalPrice');
+    if (countEl) countEl.innerText = totalItems;
+    if (priceEl) priceEl.innerText = (totalPrice / 100).toLocaleString('en-IN', { style: 'currency', currency: '{{ cart.currency.iso_code }}' });
+  }
+
+  function resetBulkOrder() {
+    document.querySelectorAll('.bulk-qty-field').forEach(input => input.value = 0);
+    recalculateBulkOrder();
+  }
+
+  function addAllBulkToCart() {
+    const items = [];
+    document.querySelectorAll('.bulk-qty-field').forEach(input => {
+      const qty = parseInt(input.value) || 0;
+      if (qty > 0) {
+        items.push({ id: input.dataset.variantId, quantity: qty });
+      }
+    });
+
+    if (items.length === 0) {
+      alert('Please select at least 1 book quantity first.');
+      return;
+    }
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: items })
+    })
+    .then(res => res.json())
+    .then(() => {
+      window.location.href = '/cart';
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Failed to add items to cart.');
+    });
+  }
+
+  function submitBulkViaWhatsApp() {
+    const phone = '{{ settings.whatsapp_number | remove: "+" | remove: " " }}';
+    let message = "Hello Indigo Books!  I want to request a bulk order/quote for:\n";
+    let hasItems = false;
+
+    document.querySelectorAll('.quick-order-row').forEach(row => {
+      const input = row.querySelector('.bulk-qty-field');
+      if (input && parseInt(input.value) > 0) {
+        const title = row.querySelector('.quick-order-product-meta strong').innerText.trim();
+        const qty = input.value;
+        message += `- ${title} x ${qty}\n`;
+        hasItems = true;
+      }
+    });
+
+    if (!hasItems) {
+      message += "I have a bulk book requirement. Please contact me with your wholesale catalog!";
+    }
+
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+  }
+
+  // Live filter table rows
+  document.getElementById('QuickOrderFilterInput')?.addEventListener('input', function(e) {
+    const query = e.target.value.toLowerCase();
+    document.querySelectorAll('.quick-order-row').forEach(row => {
+      const text = row.dataset.searchTerm || '';
+      row.style.display = text.includes(query) ? '' : 'none';
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Quick / Bulk Order List",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Quick / Bulk Book Order List"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection to display"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Quick / Bulk Order List"
+    }
+  ]
+}
+{% endschema %}
+

@@ -1,0 +1,3 @@
+{%- if image != blank -%}
+  <img src="{{ image | image_url: width: width | default: 600 }}" alt="{{ alt | default: '' }}" loading="{{ loading | default: 'lazy' }}" class="{{ class }}">
+{%- endif -%}

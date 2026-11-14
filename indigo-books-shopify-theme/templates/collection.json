@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "main_collection": {
+      "type": "main-collection",
+      "settings": {
+        "enable_filtering": true,
+        "enable_sorting": true
+      }
+    }
+  },
+  "order": [
+    "main_collection"
+  ]
+}
+

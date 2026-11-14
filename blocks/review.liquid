@@ -1,0 +1,11 @@
+<div class="review-block" {{ block.shopify_attributes }}>
+  <div class="rating-stars">
+    {% for i in (1..5) %}
+      {% render 'icon', name: 'star' %}
+    {% endfor %}
+  </div>
+  <span>(4.9 / 5 from 1,200+ readers)</span>
+</div>
+{% schema %}
+{ "name": "Reviews & Ratings", "settings": [] }
+{% endschema %}

@@ -1,0 +1,106 @@
+{% comment %}
+  Main Cart Page Section with WhatsApp Commerce Checkout
+{% endcomment %}
+
+<section class="section section-main-cart" id="MainCart-{{ section.id }}">
+  <div class="page-width">
+    <div class="section-header">
+      <h1 class="section-header__title">Your Reading Cart ({{ cart.item_count }} items)</h1>
+    </div>
+
+    {%- if cart.item_count > 0 -%}
+      <form action="{{ routes.cart_url }}" method="post" id="cart-form" class="cart-form-grid">
+        <div class="cart-items-table-wrap">
+          <table class="cart-table">
+            <thead>
+              <tr>
+                <th>Book Details</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%- for item in cart.items -%}
+                <tr class="cart-row">
+                  <td class="cart-cell--info">
+                    <div class="cart-product-cell">
+                      {%- if item.image -%}
+                        <img src="{{ item.image | image_url: width: 140 }}" alt="{{ item.title | escape }}" class="cart-product-thumb" loading="lazy">
+                      {%- endif -%}
+                      <div>
+                        <a href="{{ item.url }}" class="cart-product-title">{{ item.product.title | escape }}</a>
+                        {%- unless item.product.has_only_default_variant -%}
+                          <p class="cart-product-variant">{{ item.variant.title }}</p>
+                        {%- endunless -%}
+                        <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0" class="cart-remove-link">Remove</a>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="cart-cell--price">{{ item.price | money }}</td>
+                  <td class="cart-cell--qty">
+                    <input
+                      type="number"
+                      name="updates[]"
+                      id="updates_{{ item.key }}"
+                      value="{{ item.quantity }}"
+                      min="0"
+                      class="cart-qty-input"
+                    >
+                  </td>
+                  <td class="cart-cell--total">
+                    <strong>{{ item.final_line_price | money }}</strong>
+                  </td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+
+          <div class="cart-table-actions">
+            <button type="submit" name="update" class="btn btn--secondary btn--sm">Update Cart</button>
+            <a href="/collections/all" class="continue-shopping-link">&larr; Continue Exploring Books</a>
+          </div>
+        </div>
+
+        <div class="cart-summary-sidebar">
+          <div class="cart-summary-card">
+            <h3 class="cart-summary-title">Order Summary</h3>
+            <div class="summary-line">
+              <span>Subtotal</span>
+              <strong class="summary-subtotal">{{ cart.total_price | money }}</strong>
+            </div>
+            <p class="summary-notice">Free shipping applied on eligible orders. Taxes calculated at checkout.</p>
+
+            <div class="cart-checkout-actions">
+              <button type="submit" name="checkout" class="btn btn--primary btn--full-width btn--lg">
+                Proceed to Secure Checkout &rarr;
+              </button>
+
+              {% render 'whatsapp-button', mode: 'cart' %}
+            </div>
+
+            <div class="cart-perks">
+              <div class="perk-item">{% render 'icon', name: 'shield-check' %} 100% Original Book Assurance</div>
+              <div class="perk-item">{% render 'icon', name: 'truck' %} Fast Dispatch & Delivery</div>
+            </div>
+          </div>
+        </div>
+      </form>
+    {%- else -%}
+      <div class="cart-empty-state text-center">
+        {% render 'icon', name: 'book', class: 'icon-empty-lg' %}
+        <h2>Your reading cart is currently empty</h2>
+        <p>Explore thousands of books across all genres and authors.</p>
+        <a href="/collections/all" class="btn btn--primary btn--lg">Browse 2,000+ Books</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Cart Page",
+  "settings": []
+}
+{% endschema %}
+

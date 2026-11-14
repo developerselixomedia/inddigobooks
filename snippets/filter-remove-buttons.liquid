@@ -1,0 +1,9 @@
+<div class="filter-remove-tags">
+  {%- for filter in results.filters -%}
+    {%- for value in filter.active_values -%}
+      <a href="{{ value.url_to_remove }}" class="filter-tag-pill">
+        {{ value.label }} &times;
+      </a>
+    {%- endfor -%}
+  {%- endfor -%}
+</div>

@@ -1,0 +1,117 @@
+{% comment %}
+  Slide-out AJAX Cart Drawer with WhatsApp Order Integration & Free Shipping Bar
+{% endcomment %}
+
+<div class="cart-drawer-overlay" id="CartDrawerOverlay" data-action="close-cart-drawer"></div>
+
+<aside class="cart-drawer" id="CartDrawer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Shopping Cart">
+  <div class="cart-drawer__header">
+    <h2 class="cart-drawer__title">
+      {% render 'icon', name: 'cart' %}
+      <span>Your Book Bag</span>
+      <span class="cart-drawer__count">({{ cart.item_count }})</span>
+    </h2>
+    <button type="button" class="cart-drawer__close" data-action="close-cart-drawer" aria-label="Close Cart">
+      {% render 'icon', name: 'close' %}
+    </button>
+  </div>
+
+  <!-- Free Shipping Goal Indicator -->
+  <div class="cart-drawer__shipping-bar">
+    {%- assign free_shipping_threshold = 99900 -%}
+    {%- if cart.total_price >= free_shipping_threshold -%}
+      <p class="shipping-bar__message shipping-bar__message--unlocked">
+         <strong>Congratulations!</strong> You have unlocked <strong>FREE Shipping!</strong>
+      </p>
+      <div class="shipping-bar__track"><div class="shipping-bar__progress" style="width: 100%;"></div></div>
+    {%- else -%}
+      {%- assign needed = free_shipping_threshold | minus: cart.total_price -%}
+      <p class="shipping-bar__message">
+        Add <strong>{{ needed | money }}</strong> more books for <strong>FREE Delivery</strong>!
+      </p>
+      {%- assign progress = cart.total_price | times: 100 | divided_by: free_shipping_threshold -%}
+      <div class="shipping-bar__track"><div class="shipping-bar__progress" style="width: {{ progress }}%;"></div></div>
+    {%- endif -%}
+  </div>
+
+  <div class="cart-drawer__body" id="CartDrawerItems">
+    {%- if cart.item_count > 0 -%}
+      <ul class="cart-drawer__items-list">
+        {%- for item in cart.items -%}
+          <li class="cart-drawer__item" data-line-item-key="{{ item.key }}">
+            <div class="cart-item__image-wrap">
+              {%- if item.image -%}
+                <img src="{{ item.image | image_url: width: 140 }}" alt="{{ item.title | escape }}" loading="lazy">
+              {%- endif -%}
+            </div>
+            <div class="cart-item__details">
+              <h4 class="cart-item__title">
+                <a href="{{ item.url }}">{{ item.product.title | escape }}</a>
+              </h4>
+              {%- unless item.product.has_only_default_variant -%}
+                <p class="cart-item__variant">{{ item.variant.title }}</p>
+              {%- endunless -%}
+              <div class="cart-item__price">{{ item.final_line_price | money }}</div>
+
+              <div class="cart-item__qty-row">
+                <div class="qty-selector">
+                  <button type="button" class="qty-btn" data-action="decrease-qty" data-line="{{ forloop.index }}">-</button>
+                  <input type="number" class="qty-input" value="{{ item.quantity }}" min="1" readonly>
+                  <button type="button" class="qty-btn" data-action="increase-qty" data-line="{{ forloop.index }}">+</button>
+                </div>
+                <button type="button" class="cart-item__remove-btn" data-action="remove-item" data-line="{{ forloop.index }}">
+                  Remove
+                </button>
+              </div>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- else -%}
+      <div class="cart-drawer__empty text-center">
+        {% render 'icon', name: 'book', class: 'icon-empty-cart' %}
+        <p>Your reading cart is currently empty.</p>
+        <a href="/collections/all" class="btn btn--primary btn--sm" data-action="close-cart-drawer">
+          Discover Books
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if cart.item_count > 0 -%}
+    <div class="cart-drawer__footer">
+      <div class="cart-drawer__subtotal-row">
+        <span>Estimated Subtotal</span>
+        <strong class="cart-drawer__subtotal-val">{{ cart.total_price | money }}</strong>
+      </div>
+      <p class="cart-drawer__tax-note">Taxes and shipping calculated at checkout.</p>
+
+      <div class="cart-drawer__cta-stack">
+        <!-- Standard Checkout Button -->
+        <a href="/checkout" class="btn btn--primary btn--full-width" id="CartDrawerCheckoutBtn">
+          Secure Checkout &rarr;
+        </a>
+
+        <!-- WhatsApp Checkout / Assistance Option -->
+        {% render 'whatsapp-button', mode: 'cart' %}
+      </div>
+
+      <div class="cart-drawer__trust-badges">
+        <span>{% render 'icon', name: 'shield-check' %} 100% Genuine Books</span>
+        <span>{% render 'icon', name: 'truck' %} Fast Dispatch</span>
+      </div>
+    </div>
+  {%- endif -%}
+</aside>
+
+{% schema %}
+{
+  "name": "Cart Drawer",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Slide-out Cart Drawer with instant quantity updates and WhatsApp checkout integration."
+    }
+  ]
+}
+{% endschema %}

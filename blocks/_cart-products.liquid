@@ -1,0 +1,8 @@
+<div class="cart-products-list" {{ block.shopify_attributes }}>
+  {%- for item in cart.items -%}
+    <div class="cart-product-row" data-key="{{ item.key }}">
+      <span>{{ item.product.title }} x {{ item.quantity }}</span>
+      <strong>{{ item.final_line_price | money }}</strong>
+    </div>
+  {%- endfor -%}
+</div>

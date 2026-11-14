@@ -1,0 +1,11 @@
+<div class="product-inventory-block" {{ block.shopify_attributes }}>
+  {%- assign variant = product.selected_or_first_available_variant -%}
+  {%- if variant.available -%}
+    <span class="stock-badge stock-badge--in"><i data-lucide="check" class="w-3.5 h-3.5 inline"></i> In Stock &bull; Ready to Dispatch</span>
+  {%- else -%}
+    <span class="stock-badge stock-badge--out">Sold Out</span>
+  {%- endif -%}
+</div>
+{% schema %}
+{ "name": "Inventory Status", "settings": [] }
+{% endschema %}

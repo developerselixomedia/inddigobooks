@@ -1,0 +1,11 @@
+<div class="icon-block" {{ block.shopify_attributes }}>
+  {% render 'icon', name: block.settings.icon | default: 'book' %}
+</div>
+{% schema %}
+{
+  "name": "Icon",
+  "settings": [
+    { "type": "text", "id": "icon", "label": "Icon Name", "default": "book" }
+  ]
+}
+{% endschema %}

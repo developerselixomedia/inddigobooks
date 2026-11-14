@@ -1,0 +1,63 @@
+{% comment %}
+  Indigo Books India - Floating Hero Stats Ribbon
+  4-Column Metric Grid directly below the Hero Section
+{% endcomment %}
+
+<section class="bg-[#111936] border-y border-amber-500/20 text-white py-4 relative z-30 shadow-md">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center divide-y lg:divide-y-0 lg:divide-x divide-slate-800">
+      <div class="p-2">
+        <div class="text-2xl lg:text-3xl font-black text-[#D99B26] font-serif tracking-tight">
+          {{ section.settings.metric_1_num | default: '5,500+' }}
+        </div>
+        <div class="text-xs text-slate-300 font-medium mt-1">
+          {{ section.settings.metric_1_lbl | default: 'Books Available (Pan-India Collection)' }}
+        </div>
+      </div>
+      <div class="p-2 pt-4 lg:pt-2">
+        <div class="text-2xl lg:text-3xl font-black text-amber-400 font-serif tracking-tight">
+          {{ section.settings.metric_2_num | default: '24+' }}
+        </div>
+        <div class="text-xs text-slate-300 font-medium mt-1">
+          {{ section.settings.metric_2_lbl | default: 'Featured Curations (Handpicked Gems)' }}
+        </div>
+      </div>
+      <div class="p-2 pt-4 lg:pt-2">
+        <div class="text-2xl lg:text-3xl font-black text-[#D99B26] font-serif tracking-tight">
+          {{ section.settings.metric_3_num | default: '10+' }}
+        </div>
+        <div class="text-xs text-slate-300 font-medium mt-1">
+          {{ section.settings.metric_3_lbl | default: 'Major Categories (Hindi, Law, Rekhta)' }}
+        </div>
+      </div>
+      <div class="p-2 pt-4 lg:pt-2">
+        <div class="text-2xl lg:text-3xl font-black text-emerald-400 font-serif tracking-tight">
+          {{ section.settings.metric_4_num | default: '100%' }}
+        </div>
+        <div class="text-xs text-slate-300 font-medium mt-1">
+          {{ section.settings.metric_4_lbl | default: 'Secure Shopping (Fast Delivery & COD)' }}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero Stats Ribbon",
+  "settings": [
+    { "type": "text", "id": "metric_1_num", "label": "Metric 1 Number", "default": "5,500+" },
+    { "type": "text", "id": "metric_1_lbl", "label": "Metric 1 Label", "default": "Books Available (Pan-India Collection)" },
+    { "type": "text", "id": "metric_2_num", "label": "Metric 2 Number", "default": "24+" },
+    { "type": "text", "id": "metric_2_lbl", "label": "Metric 2 Label", "default": "Featured Curations (Handpicked Gems)" },
+    { "type": "text", "id": "metric_3_num", "label": "Metric 3 Number", "default": "10+" },
+    { "type": "text", "id": "metric_3_lbl", "label": "Metric 3 Label", "default": "Major Categories (Hindi, Law, Rekhta)" },
+    { "type": "text", "id": "metric_4_num", "label": "Metric 4 Number", "default": "100%" },
+    { "type": "text", "id": "metric_4_lbl", "label": "Metric 4 Label", "default": "Secure Shopping (Fast Delivery & COD)" }
+  ],
+  "presets": [
+    { "name": "Hero Stats Ribbon" }
+  ]
+}
+{% endschema %}
+

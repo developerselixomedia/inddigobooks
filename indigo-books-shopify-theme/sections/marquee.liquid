@@ -1,0 +1,77 @@
+{% comment %}
+  Marquee / Infinite Scrolling Announcement Ticker
+{% endcomment %}
+
+<div class="marquee-section" id="Marquee-{{ section.id }}" style="background-color: {{ section.settings.bg_color | default: '#1a365d' }}; color: {{ section.settings.text_color | default: '#ffffff' }};">
+  <div class="marquee-track">
+    <div class="marquee-content">
+      {%- for block in section.blocks -%}
+        <span class="marquee-item" {{ block.shopify_attributes }}>
+          {%- if block.settings.icon_emoji != blank -%}
+            <span class="marquee-icon">{{ block.settings.icon_emoji }}</span>
+          {%- endif -%}
+          <span>{{ block.settings.text }}</span>
+        </span>
+      {%- else -%}
+        <span class="marquee-item"><span> Over 2,000+ Curated Books In Stock</span></span>
+        <span class="marquee-item"><span><i data-lucide="zap"></i> Instant Order Confirmation on WhatsApp</span></span>
+        <span class="marquee-item"><span> Fast Nationwide Delivery & Cash on Delivery (COD)</span></span>
+        <span class="marquee-item"><span> 100% Original Genuine Publisher Editions</span></span>
+        <span class="marquee-item"><span> Free Shipping on orders over ₹999</span></span>
+      {%- endfor -%}
+    </div>
+    <!-- Duplicate for seamless continuous scroll loop -->
+    <div class="marquee-content" aria-hidden="true">
+      {%- for block in section.blocks -%}
+        <span class="marquee-item">
+          {%- if block.settings.icon_emoji != blank -%}
+            <span class="marquee-icon">{{ block.settings.icon_emoji }}</span>
+          {%- endif -%}
+          <span>{{ block.settings.text }}</span>
+        </span>
+      {%- else -%}
+        <span class="marquee-item"><span> Over 2,000+ Curated Books In Stock</span></span>
+        <span class="marquee-item"><span><i data-lucide="zap"></i> Instant Order Confirmation on WhatsApp</span></span>
+        <span class="marquee-item"><span> Fast Nationwide Delivery & Cash on Delivery (COD)</span></span>
+        <span class="marquee-item"><span> 100% Original Genuine Publisher Editions</span></span>
+        <span class="marquee-item"><span> Free Shipping on orders over ₹999</span></span>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Scrolling Marquee",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#1e3a8a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "marquee_item",
+      "name": "Marquee Item",
+      "settings": [
+        { "type": "text", "id": "icon_emoji", "label": "Emoji", "default": "⭐" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Free Delivery on orders above ₹999" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scrolling Marquee"
+    }
+  ]
+}
+{% endschema %}
+

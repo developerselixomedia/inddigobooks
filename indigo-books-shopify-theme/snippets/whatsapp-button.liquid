@@ -1,0 +1,89 @@
+{% comment %}
+  Renders WhatsApp Commerce Buttons
+  Accepts:
+  - mode: 'floating' | 'product' | 'cart' | 'card'
+  - product: Product object (required for 'product' and 'card')
+  - class: Optional CSS class
+{% endcomment %}
+
+{%- assign phone = settings.whatsapp_number | default: '918933063306' | remove: '+' | remove: ' ' | remove: '-' -%}
+
+{%- case mode -%}
+  {%- when 'floating' -%}
+    {%- if settings.enable_floating_whatsapp -%}
+      <aside class="whatsapp-floating-widget" aria-label="WhatsApp Support">
+        <button
+          type="button"
+          class="whatsapp-floating-bubble"
+          id="whatsappBubbleTrigger"
+          aria-label="Open WhatsApp Chat"
+          onclick="window.open('https://wa.me/{{ phone }}?text={{ settings.whatsapp_default_message | url_encode }}', '_blank')"
+        >
+          <span class="whatsapp-bubble-ping"></span>
+          {% render 'icon', name: 'whatsapp', class: 'icon-whatsapp-float' %}
+          <span class="whatsapp-floating-badge">1</span>
+        </button>
+      </aside>
+    {%- endif -%}
+
+  {%- when 'product' -%}
+    {%- if settings.enable_product_whatsapp_btn -%}
+      {%- capture product_wa_msg -%}
+Hello Indigo Books! 
+I would like to order this book:
+*Book:* {{ product.title }}
+*Author:* {{ product.vendor | default: 'Author' }}
+*Price:* {{ product.price | money }}
+*Format:* {{ product.selected_or_first_available_variant.title }}
+*URL:* {{ shop.secure_url }}{{ product.url }}
+
+Please confirm availability and share COD / Payment details!
+      {%- endcapture -%}
+
+      <a
+        href="https://wa.me/{{ phone }}?text={{ product_wa_msg | strip | url_encode }}"
+        target="_blank"
+        rel="noopener"
+        class="btn btn--whatsapp btn--full-width {{ class }}"
+        data-whatsapp-track="Product Page Order"
+        data-book-title="{{ product.title | escape }}"
+        data-book-price="{{ product.price | money_without_currency }}"
+      >
+        {% render 'icon', name: 'whatsapp', class: 'icon-whatsapp-btn' %}
+        <span>Order Directly on WhatsApp</span>
+      </a>
+    {%- endif -%}
+
+  {%- when 'card' -%}
+    {%- capture card_wa_msg -%}
+Hi Indigo Books!  I am interested in ordering:
+*{{ product.title }}* ({{ product.price | money }})
+Link: {{ shop.secure_url }}{{ product.url }}
+    {%- endcapture -%}
+    <a
+      href="https://wa.me/{{ phone }}?text={{ card_wa_msg | strip | url_encode }}"
+      target="_blank"
+      rel="noopener"
+      class="product-card__whatsapp-btn {{ class }}"
+      title="Order on WhatsApp"
+      aria-label="Order {{ product.title | escape }} on WhatsApp"
+      data-whatsapp-track="Product Card Quick Order"
+    >
+      {% render 'icon', name: 'whatsapp' %}
+    </a>
+
+  {%- when 'cart' -%}
+    {%- if settings.enable_cart_whatsapp_checkout -%}
+      <button
+        type="button"
+        class="btn btn--whatsapp-outline btn--full-width whatsapp-cart-checkout-btn {{ class }}"
+        id="whatsappCartCheckoutBtn"
+        data-phone="{{ phone }}"
+        data-shop="{{ shop.name | escape }}"
+      >
+        {% render 'icon', name: 'whatsapp', class: 'icon-whatsapp-btn' %}
+        <span>Order Cart via WhatsApp</span>
+      </button>
+    {%- endif -%}
+{%- endcase -%}
+

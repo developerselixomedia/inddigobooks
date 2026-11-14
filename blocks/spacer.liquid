@@ -1,0 +1,9 @@
+<div class="spacer-block" style="height: {{ block.settings.height | default: 24 }}px;" {{ block.shopify_attributes }}></div>
+{% schema %}
+{
+  "name": "Spacer",
+  "settings": [
+    { "type": "range", "id": "height", "min": 8, "max": 80, "step": 4, "unit": "px", "default": 24, "label": "Height" }
+  ]
+}
+{% endschema %}

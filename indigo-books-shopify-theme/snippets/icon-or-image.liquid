@@ -1,0 +1,5 @@
+{%- if icon != blank -%}
+  {% render 'icon', name: icon %}
+{%- elsif image != blank -%}
+  <img src="{{ image | image_url: width: 40 }}" alt="">
+{%- endif -%}

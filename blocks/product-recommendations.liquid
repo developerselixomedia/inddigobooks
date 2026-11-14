@@ -1,0 +1,6 @@
+<div class="product-recommendations-block" {{ block.shopify_attributes }}>
+  {% render 'product-card', product: recommendation %}
+</div>
+{% schema %}
+{ "name": "Recommendations", "settings": [] }
+{% endschema %}

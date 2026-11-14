@@ -1,0 +1,50 @@
+{% comment %}
+  Main Blog / Reading Guides Listing Section
+{% endcomment %}
+
+<section class="section section-main-blog">
+  <div class="page-width">
+    <div class="section-header text-center">
+      <h1 class="section-header__title">{{ blog.title }}</h1>
+      <p class="section-header__subheading">Book recommendations, author deep-dives, and reading guides.</p>
+    </div>
+
+    {%- paginate blog.articles by 9 -%}
+      <div class="grid grid--3-col grid--1-col-tablet">
+        {%- for article in blog.articles -%}
+          <div class="grid__item">
+            <article class="blog-card">
+              {%- if article.image -%}
+                <a href="{{ article.url }}" class="blog-card__image-link">
+                  <img src="{{ article.image | image_url: width: 600 }}" alt="{{ article.image.alt | default: article.title | escape }}" loading="lazy">
+                </a>
+              {%- endif -%}
+              <div class="blog-card__content">
+                <span class="blog-card__date">{{ article.published_at | date: '%b %d, %Y' }}</span>
+                <h3 class="blog-card__title">
+                  <a href="{{ article.url }}">{{ article.title | escape }}</a>
+                </h3>
+                <p class="blog-card__excerpt">{{ article.excerpt_or_content | strip_html | truncatewords: 25 }}</p>
+                <a href="{{ article.url }}" class="blog-card__read-more">Read Article &rarr;</a>
+              </div>
+            </article>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <div class="pagination-wrapper text-center">
+          {% render 'pagination', paginate: paginate %}
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Blog Listing",
+  "settings": []
+}
+{% endschema %}
+

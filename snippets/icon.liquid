@@ -1,0 +1,72 @@
+{% comment %}
+  Renders SVG icons for the theme
+  Usage: {% render 'icon', name: 'whatsapp', class: 'icon-lg' %}
+{% endcomment %}
+{%- case name -%}
+  {%- when 'whatsapp' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.59 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19.01L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67ZM8.53 7.33C8.37 7.33 8.1 7.39 7.87 7.64C7.65 7.89 7.02 8.48 7.02 9.7C7.02 10.91 7.91 12.08 8.03 12.24C8.16 12.4 9.74 14.98 12.23 15.96C14.3 16.77 14.72 16.61 15.17 16.57C15.62 16.53 16.62 15.98 16.83 15.39C17.03 14.81 17.03 14.3 16.97 14.2C16.91 14.09 16.76 14.03 16.53 13.91C16.3 13.8 15.18 13.25 14.97 13.17C14.77 13.09 14.62 13.05 14.47 13.28C14.32 13.51 13.89 14.03 13.76 14.18C13.63 14.33 13.5 14.35 13.28 14.24C13.05 14.12 12.33 13.88 11.47 13.11C10.8 12.51 10.35 11.78 10.22 11.56C10.09 11.33 10.2 11.21 10.32 11.1C10.42 11 10.55 10.83 10.66 10.7C10.78 10.57 10.82 10.47 10.9 10.31C10.97 10.15 10.94 10.01 10.88 9.9C10.82 9.78 10.37 8.67 10.18 8.22C10 7.78 9.81 7.84 9.67 7.83C9.54 7.83 9.38 7.82 9.23 7.82C9.07 7.82 8.82 7.88 8.6 8.12C8.38 8.36 8.53 7.33 8.53 7.33Z"/>
+    </svg>
+  {%- when 'cart' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <path d="M16 10a4 4 0 0 1-8 0"></path>
+    </svg>
+  {%- when 'search' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+  {%- when 'close' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  {%- when 'book' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+    </svg>
+  {%- when 'star' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+    </svg>
+  {%- when 'chevron-down' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  {%- when 'arrow-right' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+      <polyline points="12 5 19 12 12 19"></polyline>
+    </svg>
+  {%- when 'filter' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+    </svg>
+  {%- when 'shield-check' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      <polyline points="9 12 11 14 15 10"></polyline>
+    </svg>
+  {%- when 'truck' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="1" y="3" width="15" height="13"></rect>
+      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+      <circle cx="5.5" cy="18.5" r="2.5"></circle>
+      <circle cx="18.5" cy="18.5" r="2.5"></circle>
+    </svg>
+  {%- when 'user' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+  {%- when 'heart' -%}
+    <svg class="{{ class | default: 'icon' }}" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+    </svg>
+  {%- else -%}
+    <span></span>
+{%- endcase -%}
+

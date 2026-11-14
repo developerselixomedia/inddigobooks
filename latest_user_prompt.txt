@@ -1,0 +1,128 @@
+<USER_REQUEST>
+/goal ### MASTER FIX FOR ALL 7 ISSUES: (1) Remove All Fake Discounts/Strikethroughs & Reviews, (2) Convert Categories Section to Match the Exact `Indian Voices` Layout (`image_68cd69.jpg`) with Perfect Padding & Equal Heights, (3) Enable 3D Hover Book-Opening Animation on EVERY Book Across the Entire Website, (4) Fix Hero Animation Persistence & Book Clicks, (5) Unstick the Overview Modal (`image_6920f8.jpg`), (6) Fix Add-to-Cart Everywhere, and (7) Paginate Catalog (12 Books/Page) with Aligned Cover Heights (`image_6920b8.jpg`)
+
+Look at our video recording and 3 screenshots (`image_6920f8.jpg`, `image_6920b8.jpg`, `image_68cd69.jpg`). Execute all 7 of these mandatory fixes across `preview.html` and the Shopify `.zip` (`layout/theme.liquid`, `sections/main-indigo-store.liquid`, `sections/main-product.liquid`) right now:
+
+---
+
+#### 1. COMPLETELY REMOVE ALL DISCOUNTS (`% OFF`), STRIKETHROUGH PRICES, STAR RATINGS, AND CUSTOMER REVIEWS EVERYWHERE
+Our `shopify_products_import.csv` has NO discounts (`Variant Compare At Price` is empty) and NO customer reviews!
+1. **Delete all `% OFF` badges (`23% OFF`, `24% OFF`, `25% OFF`, `30% Max Savings on Bundles`) and all strikethrough fake MRPs (`₹325.00`, `₹388.00`, `₹405.00`, `₹648.00`)** from:
+   - The Hero section, Stats Bar (change `30% Max Savings on Bundles` to `24-Hr Express Dispatch from Prayagraj`), Podium, Mehfil-e-Rekhta, Indian Voices, Law Vault, Category Sections, Catalog Grid, Overview Modal (`image_6920f8.jpg`), and Solo Product Page!
+   - Display **ONLY the exact single CSV selling price** (`₹250.00`, `₹299.00`, `₹450.00`, `₹499.00`, `₹695.00`, etc.) in clean bold typography.
+2. **Delete all star ratings (`★★★★★ 4.9 (12,840)`)** from the Podium and all book cards.
+3. **Delete the entire `Customer Reviews` block** (`Dr. Arvind Sharma`, `Meenakshi Trivedi`, `Write a Review`) from the Solo Product Page (Video `00:16`).
+
+---
+
+#### 2. BUILD THE CATEGORIES SECTION USING THE EXACT ASYMMETRIC SHOWCASE LAYOUT FROM `image_68cd69.jpg` (WITH CATEGORY TABS & PERFECT PADDING)
+Look at the last photo (`image_68cd69.jpg` — *"Indian Voices & Contemporary Hindi Literature"*):
+- You want the **Categories Browsing Section** to use this exact **Left Featured Spotlight Card + Right 2×2 Horizontal Book Cards Grid** layout (`image_68cd69.jpg`), with interactive **Category Filter Pills** at the top so the website does NOT dump dozens of books on screen at once!
+
+**Exact Structure & CSS for the Unified Category Showcase Section (`image_68cd69.jpg` Style):**
+1. **Top Category Switcher Pills (Inside the `1340px` Container):**
+   - `Contemporary Hindi Fiction` (Default — shows *Raag Darbari* on left + *Gypsy*, *Aadha Gaon*, *Mahabhoj*, *Shekhar Ek Jeevani : Part-1* on right)
+   - `Poetry, Ghazals & Shayari` (Shows *Kuchh Ishq Kiya Kuchh Kaam Kiya* on left + *Tarkash*, *Rashmirathi : Dinkar Granthmala*, *Guzare Lamhe*, *Mere Manch Ki Sargam* on right)
+   - `Classic Hindi Novels (Premchand & Masters)` (Shows *Godan* on left + *Gaban*, *Chitralekha*, *1084ven Ki Maan*, *Mansarovar Vol. 2* on right)
+   - `History, Criticism & Politics` (Shows *1857 : Awadh Ka Muktisangram* on left + *Aacharya Ramchandra Shukla Aur Hindi Aalochana*, *Bharat Ka Itihas (Romila Thapar)*, *Bhimrao Ambedkar : Ek Jeevani*, *1232km* on right)
+   - `Law & Constitutional Studies` (Shows *Bharatiya Samvidhan Ki Nirman-Yatra* on left + *Bharatiya Bhasha Mein High Court Ki Vakalat*, *Bharat Ka Samvidhan : Sankshipt Parichay*, *Samaan Nagrik Sanhita*, *Nyayapalika Kasauti Par* on right)
+2. **Fix the Padding & Height Alignment of `image_68cd69.jpg` so Left and Right Columns Match 100% Flush:**
+   ```css
+   .category-bento-showcase {
+     max-width: 1340px !important;
+     width: 100% !important;
+     margin: 0 auto !important;
+     padding: 48px 32px !important;
+     box-sizing: border-box !important;
+   }
+   .category-bento-grid {
+     display: grid !important;
+     grid-template-columns: 400px 1fr !important;
+     gap: 24px !important;
+     align-items: stretch !important; /* Forces Left Card and Right 2x2 Grid to have identical total height! */
+   }
+   /* LEFT LARGE FEATURED CARD (Raag Darbari style) */
+   .bento-left-spotlight {
+     background: #FFFFFF !important;
+     border: 1px solid #E2E8F0 !important;
+     border-radius: 16px !important;
+     padding: 28px !important;
+     display: flex !important;
+     flex-direction: column !important;
+     justify-content: space-between !important;
+     box-sizing: border-box !important;
+     height: 100% !important;
+   }
+   .bento-left-cover-wrap {
+     width: 210px !important;
+     height: 315px !important;
+     margin: 0 auto 20px auto !important;
+     position: relative !important;
+   }
+   /* RIGHT 2x2 GRID OF 4 HORIZONTAL CARDS (Gypsy, Aadha Gaon, Mahabhoj, Shekhar style) */
+   .bento-right-2x2 {
+     display: grid !important;
+     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+     grid-template-rows: repeat(2, 1fr) !important;
+     gap: 20px !important;
+     height: 100% !important;
+   }
+   .bento-horiz-card {
+     background: #FFFFFF !important;
+     border: 1px solid #E2E8F0 !important;
+     border-radius: 16px !important;
+     padding: 20px !important;
+     display: flex !important;
+     flex-direction: column !important;
+     justify-content: space-between !important;
+     box-sizing: border-box !important;
+     height: 100% !important;
+     position: relative !important;
+   }
+   .bento-horiz-top {
+     display: grid !important;
+     grid-template-columns: 96px 1fr !important;
+     gap: 16px !important;
+     align-items: start !important;
+     margin-bottom: 12px !important;
+   }
+   .bento-horiz-cover {
+     width: 96px !important;
+     height: 144px !important;
+     position: relative !important;
+     flex-shrink: 0 !important;
+   }
+   .bento-card-actions {
+     display: grid !important;
+     grid-template-columns: 1fr 1fr !important;
+     gap: 10px !important;
+     margin-top: auto !important;
+     padding-top: 12px !important;
+   }
+   @media (max-width: 1024px) {
+     .category-bento-grid {
+       grid-template-columns: 1fr !important;
+     }
+     .bento-right-2x2 {
+       grid-template-columns: 1fr !important;
+     }
+   }
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-11-07T19:07:26+05:30.
+
+The user's current state is as follows:
+Active Document: d:\Games\indigo books\sync_preview_to_shopify.py (LANGUAGE_UNSPECIFIED)
+Cursor is on line: 1
+Other open documents:
+- d:\Games\indigo books\layout\theme.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\sections\_blocks.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\sections\bento-promo.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\snippets\icon-indigo-emblem.liquid (LANGUAGE_UNSPECIFIED)
+- d:\Games\indigo books\sections\bestsellers-bundles.liquid (LANGUAGE_UNSPECIFIED)
+
+The user has mentioned some items in the form @[ITEM]. Here is extra information about the items that were mentioned by the user, in the order that they appear:
+
+/goal is a [Slash Command]:
+The user has marked this task with /goal, indicating that this task is intended to run for a long time without user input, e.g. overnight. You should be extra thorough and only stop when you are confident the goal has been completely fulfilled. The system will force you to continue execution, prompting you to audit your work until completion. Once complete, include <!-- GOAL_COMPLETE --> in your response. If the user explicitly asked to stop or cancel this goal, include <!-- GOAL_CANCELLED --> in your response to cancel the goal.
+</ADDITIONAL_METADATA>

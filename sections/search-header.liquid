@@ -1,0 +1,39 @@
+{% comment %}
+  Search Page Header & Input Bar
+{% endcomment %}
+
+<section class="section section-search-header">
+  <div class="page-width page-width--narrow text-center">
+    <h1 class="search-page-title">
+      {%- if search.performed -%}
+        Results for "{{ search.terms }}" ({{ search.results_count }} found)
+      {%- else -%}
+        Search Our Library of 2,000+ Books
+      {%- endif -%}
+    </h1>
+
+    <div class="search-page-bar">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-form-full">
+        <input
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="Search by Title, Author name, Genre, ISBN..."
+          class="search-input-lg"
+        >
+        <input type="hidden" name="type" value="product">
+        <button type="submit" class="btn btn--primary btn--search-submit">
+          {% render 'icon', name: 'search' %} Search
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Search Header",
+  "settings": []
+}
+{% endschema %}
+

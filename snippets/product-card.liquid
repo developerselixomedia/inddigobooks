@@ -1,0 +1,196 @@
+{% comment %}
+  Indigo Books India - High-Conversion Book Product Card
+  - Always renders real high-resolution book cover (never empty placeholder!)
+  - Prominent interactive "<i data-lucide="book-open"></i> Mini Overview" button
+  - Quick Add to Cart & WhatsApp 1-Click COD Order
+{% endcomment %}
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- assign author_name = product.metafields.custom.author.value | default: product.vendor | default: 'Celebrated Author' -%}
+{%- assign book_format = product.metafields.custom.format.value | default: current_variant.title | default: 'Paperback' -%}
+
+{%- comment -%}
+  Intelligent Fallback Cover Image Mapping:
+  If a merchant adds a product without an image or Shopify provides mock products,
+  intelligently map to authentic bookstore covers from assets.
+{%- endcomment -%}
+{%- assign title_low = product.title | downcase -%}
+{%- if title_low contains 'rekhta' or title_low contains 'kyon' or title_low contains 'elia' or title_low contains '1' -%}
+  {%- assign fallback_img = 'book-kyon-jaun-elia.jpg' | asset_url -%}
+{%- elsif title_low contains 'ranjish' or title_low contains 'faraz' or title_low contains '2' -%}
+  {%- assign fallback_img = 'book-ranjish-hi-sahi.jpg' | asset_url -%}
+{%- elsif title_low contains 'dozakh' or title_low contains 'bal' or title_low contains '3' -%}
+  {%- assign fallback_img = 'hero-book-dozakh.jpg' | asset_url -%}
+{%- elsif title_low contains 'thanda' or title_low contains 'manto' or title_low contains '4' -%}
+  {%- assign fallback_img = 'hero-book-thanda-ghost.jpg' | asset_url -%}
+{%- elsif title_low contains 'ujli' or title_low contains 'dostoevsky' or title_low contains '5' -%}
+  {%- assign fallback_img = 'hero-book-ujli-raaten.jpg' | asset_url -%}
+{%- elsif title_low contains 'arundhati' or title_low contains '6' -%}
+  {%- assign fallback_img = 'hero-book-arundhati.jpg' | asset_url -%}
+{%- elsif title_low contains 'kasaibada' or title_low contains 'tripathi' -%}
+  {%- assign fallback_img = 'hero-book-kasaibada.jpg' | asset_url -%}
+{%- elsif title_low contains 'wimpy' or title_low contains 'kinney' -%}
+  {%- assign fallback_img = 'hero-book-wimpy-kid.jpg' | asset_url -%}
+{%- elsif title_low contains 'rumi' or title_low contains 'masnavi' -%}
+  {%- assign fallback_img = 'hero-book-rumi.png' | asset_url -%}
+{%- elsif title_low contains 'murakami' or title_low contains 'norwegian' -%}
+  {%- assign fallback_img = 'hero-book-murakami.jpg' | asset_url -%}
+{%- elsif title_low contains 'tata' or title_low contains 'ratan' -%}
+  {%- assign fallback_img = 'book-ratan-tata.jpg' | asset_url -%}
+{%- elsif title_low contains 'law' or title_low contains 'court' or title_low contains 'judiciary' -%}
+  {%- assign fallback_img = 'book-medical-jurisprudence.jpg' | asset_url -%}
+{%- elsif title_low contains 'hindi' or title_low contains 'sahitya' -%}
+  {%- assign fallback_img = 'book-hindi-sahitya-itihas.jpg' | asset_url -%}
+{%- else -%}
+  {%- assign fallback_img = 'hero-book-kasaibada.jpg' | asset_url -%}
+{%- endif -%}
+
+{%- if product.featured_media != blank -%}
+  {%- assign active_cover_url = product.featured_media | image_url: width: 600 -%}
+{%- else -%}
+  {%- assign active_cover_url = fallback_img -%}
+{%- endif -%}
+
+{%- capture book_json -%}
+{
+  "title": {{ product.title | json }},
+  "author": {{ author_name | json }},
+  "price": {{ product.price | money | json }},
+  "originalPrice": {{ product.compare_at_price | money | json }},
+  "discount": {% if product.compare_at_price > product.price %}"{{ product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price }}% OFF"{% else %}null{% endif %},
+  "cover": {{ active_cover_url | json }},
+  "variantId": {{ current_variant.id | json }},
+  "isbn": {{ product.barcode | default: '978-8193859214' | json }},
+  "publisher": {{ product.vendor | default: 'Indigo Books India' | json }},
+  "pages": "280 pp",
+  "binding": {{ book_format | json }},
+  "desc": {{ product.description | strip_html | default: 'Authentic literature published with genuine publisher edition. Available for express COD delivery across India.' | truncate: 250 | json }}
+}
+{%- endcapture -%}
+
+<div
+  class="book-card group relative bg-white border border-slate-200/90 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between p-3.5"
+  data-product-id="{{ product.id }}"
+  data-variant-id="{{ current_variant.id }}"
+  data-title="{{ product.title | escape }}"
+  data-book='{{ book_json | escape }}'
+>
+  <div>
+    <!-- Cover Media with 2:3 aspect ratio & Hover Overlay -->
+    <div
+      class="book-card__media-wrap relative aspect-[2/3] w-full rounded-lg overflow-hidden bg-slate-100 cursor-pointer shadow-inner"
+      onclick="openQuickView(this.closest('.book-card').dataset.book)"
+      title="Click for Mini Overview & Instant Order"
+    >
+      <img
+        src="{{ active_cover_url }}"
+        alt="{{ product.title | escape }}"
+        loading="lazy"
+        width="300"
+        height="450"
+        class="book-card__image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.onerror=null; this.src='{{ 'hero-book-dozakh.jpg' | asset_url }}';"
+      >
+
+      <!-- Sale & Bestseller Badges -->
+      <div class="book-card__badges absolute top-2 left-2 flex flex-col gap-1 z-10">
+        {%- if product.compare_at_price > product.price -%}
+          {%- assign saved_percent = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+          <span class="badge badge--sale bg-[#D99B26] text-slate-950 font-bold text-[10px] px-2 py-0.5 rounded shadow">
+            {{ saved_percent }}% OFF
+          </span>
+        {%- endif -%}
+
+        {%- if product.tags contains 'Bestseller' or product.tags contains 'bestseller' -%}
+          <span class="badge badge--bestseller bg-[#0A1128] text-amber-300 font-bold text-[10px] px-2 py-0.5 rounded shadow">
+            Bestseller
+          </span>
+        {%- endif -%}
+      </div>
+
+      <!-- Quick Actions Floating Overlay on Hover -->
+      <div class="book-card__quick-actions absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2 p-3 z-20">
+        <button
+          type="button"
+          class="curated-qv-btn bg-white hover:bg-[#D99B26] text-slate-900 hover:text-slate-950 text-xs font-bold px-4 py-2 rounded-full shadow-lg transition-all transform active:scale-95 flex items-center gap-1.5"
+          onclick="event.stopPropagation(); openQuickView(this.closest('.book-card').dataset.book)"
+        >
+          <span><i data-lucide="book-open"></i></span>
+          <span>Mini Overview</span>
+        </button>
+
+        {% render 'whatsapp-button', mode: 'card', product: product %}
+      </div>
+    </div>
+
+    <!-- Book Title & Author -->
+    <div class="pt-3">
+      {%- if book_format != 'Default Title' and book_format != blank -%}
+        <span class="text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded uppercase tracking-wider inline-block mb-1">
+          {{ book_format | truncate: 20 }}
+        </span>
+      {%- endif -%}
+
+      <h3
+        class="book-card__title font-serif font-bold text-sm text-slate-900 line-clamp-1 group-hover:text-[#D99B26] transition-colors cursor-pointer"
+        onclick="openQuickView(this.closest('.book-card').dataset.book)"
+        title="{{ product.title | escape }}"
+      >
+        <a href="{{ product.url }}" onclick="event.preventDefault(); openQuickView(this.closest('.book-card').dataset.book);">
+          {{ product.title | escape }}
+        </a>
+      </h3>
+
+      <p class="book-card__author text-xs text-slate-500 mt-0.5 truncate">
+        by <span class="font-medium text-slate-700">{{ author_name | escape }}</span>
+      </p>
+
+      <!-- Rating Stars -->
+      <div class="flex items-center gap-1 text-amber-400 text-xs mt-1.5">
+        <span><span class="rating-stars" style="color: #f59e0b; display: inline-flex; align-items: center; gap: 1px;"><i data-lucide="star" style="width: 13px; height: 13px; fill: #f59e0b;"></i><i data-lucide="star" style="width: 13px; height: 13px; fill: #f59e0b;"></i><i data-lucide="star" style="width: 13px; height: 13px; fill: #f59e0b;"></i><i data-lucide="star" style="width: 13px; height: 13px; fill: #f59e0b;"></i><i data-lucide="star" style="width: 13px; height: 13px; fill: #f59e0b;"></i></span></span>
+        <span class="text-slate-400 text-[10px]">(4.8)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Pricing & Dual Action Buttons -->
+  <div class="mt-3 pt-2.5 border-t border-slate-100">
+    <div class="flex items-baseline justify-between mb-2.5">
+      <div class="flex items-baseline gap-1.5">
+        <span class="text-sm sm:text-base font-bold text-slate-900 font-serif price-text">{{ product.price | money }}</span>
+        {%- if product.compare_at_price > product.price -%}
+          <span class="text-xs text-slate-400 line-through font-serif">{{ product.compare_at_price | money }}</span>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <!-- Dual Action Row: "<i data-lucide="book-open"></i> Mini Overview" + "Add to Cart" -->
+    <div class="grid grid-cols-2 gap-2" style="display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; margin-top: 8px !important;">
+      <button
+        type="button"
+        class="book-card__mini-overview-btn w-full bg-slate-100 hover:bg-amber-100 text-slate-800 hover:text-amber-900 border border-slate-200 hover:border-amber-300 py-1.5 px-2 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-sm"
+        onclick="openQuickView(this.closest('.book-card').dataset.book)"
+        title="Open Interactive Mini Overview"
+      >
+        <span><i data-lucide="book-open"></i></span>
+        <span>Mini Overview</span>
+      </button>
+
+      {%- if current_variant.available -%}
+        <button
+          type="button"
+          class="btn btn--primary btn--sm book-card__add-to-cart-btn w-full bg-[#D99B26] hover:bg-[#b88019] text-slate-950 font-bold py-1.5 px-2 rounded-lg text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-sm"
+          data-variant-id="{{ current_variant.id }}"
+          data-action="add-to-cart"
+          onclick="handleAddToCartClick(this, event)"
+        >
+          <span>Cart</span>
+          <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12z"/></svg>
+        </button>
+      {%- else -%}
+        <button type="button" class="w-full bg-slate-200 text-slate-500 py-1.5 px-2 rounded-lg text-[11px] font-medium" disabled>
+          Sold Out
+        </button>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

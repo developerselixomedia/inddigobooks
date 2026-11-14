@@ -1,0 +1,46 @@
+{% comment %}
+  Announcement Bar with Rotating Promotional Messages & WhatsApp Quick Connect
+  Indigo Books India (Prayagraj)
+{% endcomment %}
+
+<div class="announcement-bar" id="AnnouncementBar-{{ section.id }}" style="background-color: {{ section.settings.bg_color | default: '#1e3a8a' }}; color: {{ section.settings.text_color | default: '#ffffff' }};">
+  <div class="page-width announcement-bar__inner">
+    <div class="announcement-bar__left">
+      <span class="announcement-badge">INDIGO EXCLUSIVE</span>
+      <span class="announcement-text">{{ section.settings.text | default: ' Discover 2,000+ Books Across India &bull; Free Shipping on Orders Over ₹999 &bull; Cash on Delivery Available!' }}</span>
+    </div>
+
+    <div class="announcement-bar__right">
+      <a href="https://wa.me/{{ settings.whatsapp_number | default: '918933063306' | remove: '+' | remove: ' ' }}?text=Hi%20Indigo%20Books%20India,%20I%20have%20an%20inquiry%20regarding%20a%20book." target="_blank" rel="noopener" class="announcement-wa-link">
+        {% render 'icon', name: 'whatsapp', class: 'icon-announcement-wa' %}
+        <span>WhatsApp Order: +91 8933063306</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Announcement Bar",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Announcement Text",
+      "default": " Discover 2,000+ Books Across India • Free Shipping on Orders Over ₹999 • Cash on Delivery Available!"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#1e3a8a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    }
+  ]
+}
+{% endschema %}

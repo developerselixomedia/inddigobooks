@@ -1,0 +1,133 @@
+{% comment %}
+  Indigo Books India - Main Collection Catalog
+  Reference: Crossword India Layout (Vibrant Category Banner, Subcategory Pills & Faceted Sidebar)
+{% endcomment %}
+
+<section class="section section-main-collection" id="MainCollection-{{ section.id }}">
+  <!-- Crossword-Style Vibrant Collection Header Banner -->
+  <div class="collection-crossword-banner" style="background-color: {{ section.settings.banner_bg | default: '#facc15' }}; color: {{ section.settings.banner_text | default: '#18181b' }};">
+    <div class="page-width text-center">
+      <h1 class="collection-crossword-title">{{ collection.title }}</h1>
+
+      <!-- Curated Subcategory Pills inside Banner (Matching Crossword Image 2) -->
+      <div class="collection-crossword-pills">
+        {%- if collection.handle == 'children' or collection.title contains 'Children' -%}
+          <a href="/collections/all?filter.p.tag=early-learning" class="crossword-pill">Early Learning</a>
+          <a href="/collections/all?filter.p.tag=picture-books" class="crossword-pill">Picture Books</a>
+          <a href="/collections/all?filter.p.tag=puzzles" class="crossword-pill">Activity And Puzzles</a>
+          <a href="/collections/all?filter.p.tag=chapter-books" class="crossword-pill">Chapter Books</a>
+          <a href="/collections/all?filter.p.tag=colouring" class="crossword-pill">Colouring & Art Books</a>
+          <a href="/collections/all?filter.p.tag=reference" class="crossword-pill">Early Reference</a>
+          <a href="/collections/all?filter.p.tag=workbooks" class="crossword-pill">Work Books</a>
+        {%- elsif collection.title contains 'Rekhta' -%}
+          <a href="/collections/all?filter.p.tag=poetry" class="crossword-pill">Shayari & Poetry</a>
+          <a href="/collections/all?filter.p.tag=manto" class="crossword-pill">Saadat Hasan Manto</a>
+          <a href="/collections/all?filter.p.tag=ghalib" class="crossword-pill">Mirza Ghalib</a>
+          <a href="/collections/all?filter.p.tag=classics" class="crossword-pill">Literary Classics</a>
+          <a href="/collections/all?filter.p.tag=urdu" class="crossword-pill">Urdu Literature</a>
+        {%- else -%}
+          <a href="/collections/all?filter.p.m.custom.genre=Fiction" class="crossword-pill">Fiction Classics</a>
+          <a href="/collections/all?filter.p.m.custom.genre=Self-Help" class="crossword-pill">Self-Help & Mindset</a>
+          <a href="/collections/all?filter.p.m.custom.genre=Business" class="crossword-pill">Business & Investing</a>
+          <a href="/collections/all?filter.p.m.custom.genre=Children" class="crossword-pill">Children Stories</a>
+          <a href="/collections/all?filter.p.m.custom.genre=Law" class="crossword-pill">Law & Human Rights</a>
+          <a href="/collections/all?filter.p.m.custom.genre=Bundles" class="crossword-pill">Book Bundles</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  <div class="page-width catalog-body-wrap">
+    <!-- Top Bar: Filter Header & Sort By Relevance (Matching Crossword) -->
+    <div class="catalog-top-controls">
+      <div class="catalog-left-label">
+        <h3 class="filter-main-heading">Filter</h3>
+      </div>
+      <div class="catalog-right-sort">
+        <label for="SortBySelect">Sort By :</label>
+        <select id="SortBySelect" class="crossword-sort-select" onchange="location = this.value;">
+          {%- for option in collection.sort_options -%}
+            <option value="{{ collection.url }}?sort_by={{ option.value }}" {% if option.value == collection.sort_by %}selected{% endif %}>
+              {{ option.name }}
+            </option>
+          {%- endfor -%}
+        </select>
+      </div>
+    </div>
+
+    <!-- Catalog Layout: Left Filter Sidebar + Right Products Grid -->
+    <div class="collection-catalog-layout">
+      <!-- Faceted Sidebar (Category, Sub Category, Format, Price) -->
+      <aside class="collection-sidebar" id="CollectionSidebar">
+        {% render 'book-filter-facets', results: collection, results_url: collection.url %}
+
+        <!-- WhatsApp Quick Book Finder in Sidebar -->
+        <div class="sidebar-whatsapp-card">
+          <div class="wa-card-header">
+            {% render 'icon', name: 'whatsapp' %}
+            <strong>Cannot find an ISBN or Title?</strong>
+          </div>
+          <p>We source over 10,000+ books upon request directly from Indian and international publishers.</p>
+          <a
+            href="https://wa.me/{{ settings.whatsapp_number | default: '918933063306' | remove: '+' | remove: ' ' }}?text=Hi%20Indigo%20Books%20India,%20I%20am%20looking%20for%20a%20book%20in%20{{ collection.title | url_encode }}."
+            target="_blank"
+            rel="noopener"
+            class="btn btn--whatsapp btn--sm btn--full-width"
+            data-whatsapp-track="Sidebar Custom Book Request"
+          >
+            Ask on WhatsApp (+91 8933063306)
+          </a>
+        </div>
+      </aside>
+
+      <!-- Products Grid -->
+      <div class="collection-products-area">
+        {%- paginate collection.products by 24 -%}
+          {%- if collection.products.size > 0 -%}
+            <div class="grid grid--4-col grid--2-col-tablet grid--1-col-mobile" id="ProductGrid">
+              {%- for product in collection.products -%}
+                <div class="grid__item">
+                  {% render 'product-card', product: product, section_id: section.id %}
+                </div>
+              {%- endfor -%}
+            </div>
+
+            {%- if paginate.pages > 1 -%}
+              <div class="pagination-wrapper text-center">
+                {% render 'pagination', paginate: paginate %}
+              </div>
+            {%- endif -%}
+          {%- else -%}
+            <div class="collection-empty text-center">
+              {% render 'icon', name: 'book' %}
+              <h2>No books found in this selection</h2>
+              <p>Try clearing filters or search by ISBN or author.</p>
+              <a href="{{ collection.url }}" class="btn btn--secondary">Clear All Filters</a>
+            </div>
+          {%- endif -%}
+        {%- endpaginate -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection Page",
+  "settings": [
+    {
+      "type": "color",
+      "id": "banner_bg",
+      "label": "Banner Background Color",
+      "default": "#facc15",
+      "info": "Crossword Yellow: #facc15 | Classic Navy: #1e3a8a | Clean Cream: #fef08a"
+    },
+    {
+      "type": "color",
+      "id": "banner_text",
+      "label": "Banner Text Color",
+      "default": "#18181b"
+    }
+  ]
+}
+{% endschema %}

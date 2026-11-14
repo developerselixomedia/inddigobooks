@@ -1,0 +1,15 @@
+<div class="logo-block" {{ block.shopify_attributes }}>
+  {%- if block.settings.image != blank -%}
+    <img src="{{ block.settings.image | image_url: width: 200 }}" alt="{{ shop.name }}" loading="lazy">
+  {%- else -%}
+    <strong>{{ shop.name }}</strong>
+  {%- endif -%}
+</div>
+{% schema %}
+{
+  "name": "Logo",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Logo Image" }
+  ]
+}
+{% endschema %}

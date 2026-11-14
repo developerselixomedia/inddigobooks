@@ -1,0 +1,68 @@
+{% comment %}
+  Featured Product Section
+{% endcomment %}
+
+<section class="section section-featured-product" id="FeaturedProduct-{{ section.id }}">
+  <div class="page-width">
+    {%- assign product = all_products[section.settings.product] -%}
+
+    {%- if product != blank -%}
+      <div class="featured-product-layout">
+        <div class="featured-product__gallery">
+          {%- if product.featured_media != blank -%}
+            <img src="{{ product.featured_media | image_url: width: 700 }}" alt="{{ product.title | escape }}" loading="lazy">
+          {%- endif -%}
+        </div>
+
+        <div class="featured-product__info">
+          <span class="badge badge--bestseller">Recommended Book</span>
+          <h2 class="featured-product__title">{{ product.title | escape }}</h2>
+          <p class="featured-product__vendor">Author: <span>{{ product.vendor }}</span></p>
+
+          <div class="featured-product__price">
+            {% render 'price', product: product, use_variant: true %}
+          </div>
+
+          <div class="featured-product__form-wrap">
+            <form action="/cart/add" method="post" enctype="multipart/form-data" class="product-form">
+              <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+              <div class="product-form__buttons">
+                <button type="submit" class="btn btn--primary btn--full-width" {% unless product.available %}disabled{% endunless %}>
+                  {% if product.available %}Add to Cart{% else %}Sold Out{% endif %}
+                </button>
+              </div>
+            </form>
+
+            <div class="product-form__whatsapp-wrap">
+              {% render 'whatsapp-button', mode: 'product', product: product %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {%- else -%}
+      <div class="placeholder-content text-center">
+        <h2>Featured Product</h2>
+        <p>Select a product to display in this section.</p>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Product",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Product"
+    }
+  ]
+}
+{% endschema %}

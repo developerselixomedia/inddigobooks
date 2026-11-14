@@ -1,0 +1,13 @@
+<div class="variant-main-picker-snippet">
+  <!-- Format & Edition Variant Picker -->
+  {%- unless product.has_only_default_variant -%}
+    <div class="format-options">
+      {%- for variant in product.variants -%}
+        <label class="format-option-card">
+          <input type="radio" name="id" value="{{ variant.id }}" {% if forloop.first %}checked{% endif %}>
+          <span>{{ variant.title }} &bull; {{ variant.price | money }}</span>
+        </label>
+      {%- endfor -%}
+    </div>
+  {%- endunless -%}
+</div>

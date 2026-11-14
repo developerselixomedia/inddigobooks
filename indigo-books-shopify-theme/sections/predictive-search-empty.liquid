@@ -1,0 +1,22 @@
+{% comment %}
+  Suppressed rogue empty state overlay to allow Indigo 2-letter predictive search suggestions
+{% endcomment %}
+<style>
+.predictive-search,
+.predictive-search-empty,
+.predictive-search-empty__message,
+.predictive-search-suggestions,
+.predictive-search-wa-prompt,
+#predictive-search-results,
+[data-predictive-search],
+predictive-search [tabindex="-1"],
+.predictive-search__results-groups-wrapper {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  z-index: -9999 !important;
+}
+</style>

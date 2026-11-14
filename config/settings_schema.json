@@ -1,0 +1,141 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Horizon Indigo Books",
+    "theme_version": "2.0.0",
+    "theme_author": "Indigo Books Development",
+    "theme_documentation_url": "https://help.shopify.com",
+    "theme_support_url": "https://help.shopify.com"
+  },
+  {
+    "name": "Colors & Style",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary Brand Color",
+        "default": "#1a365d"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent Color (Badges & Buttons)",
+        "default": "#e53e3e"
+      },
+      {
+        "type": "color",
+        "id": "color_whatsapp",
+        "label": "WhatsApp Brand Color",
+        "default": "#25D366"
+      },
+      {
+        "type": "color",
+        "id": "color_bg",
+        "label": "Page Background",
+        "default": "#fcfbf9"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Body Text Color",
+        "default": "#2d3748"
+      }
+    ]
+  },
+  {
+    "name": "WhatsApp Commerce & Automation",
+    "settings": [
+      {
+        "type": "text",
+        "id": "whatsapp_number",
+        "label": "WhatsApp Business Phone Number (with Country Code, no + or spaces)",
+        "default": "918933063306",
+        "info": "Example: 918933063306 for Indigo Books India"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_agent_name",
+        "label": "Support Agent / Store Name",
+        "default": "Indigo Books India"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_floating_tooltip",
+        "label": "Floating Button Tooltip",
+        "default": "Need book recommendations? Chat on WhatsApp!"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_floating_whatsapp",
+        "label": "Show Floating WhatsApp Button on all pages",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_product_whatsapp_btn",
+        "label": "Show 'Order on WhatsApp' button on Product Detail Pages",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_cart_whatsapp_checkout",
+        "label": "Show 'Complete Order via WhatsApp' button in Cart Drawer",
+        "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "whatsapp_default_message",
+        "label": "Default General WhatsApp Message",
+        "default": "Hello Indigo Books! I would like some assistance choosing a book."
+      }
+    ]
+  },
+  {
+    "name": "Meta Ads & Conversions API",
+    "settings": [
+      {
+        "type": "text",
+        "id": "meta_pixel_id",
+        "label": "Meta Pixel ID (Optional if using official Shopify Meta app)",
+        "default": "",
+        "info": "Enter your 15-16 digit Meta Pixel ID for custom event tracking."
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_custom_meta_events",
+        "label": "Track Custom High-Intent Meta Events (Quick Order, WhatsApp Inquiry, Catalog Filter)",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Book Store Features (2000+ Catalog)",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_author_on_cards",
+        "label": "Display Author Name on Product Cards",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_format_badge",
+        "label": "Show Book Format Badge (Paperback, Hardcover, E-Book)",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_quick_view",
+        "label": "Enable Fast Quick-View modal for Books",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sticky_add_to_cart",
+        "label": "Enable Sticky Mobile Buy/WhatsApp Bar (Higher Meta Ads conversion)",
+        "default": true
+      }
+    ]
+  }
+]
+

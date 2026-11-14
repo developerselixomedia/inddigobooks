@@ -1,0 +1,6 @@
+<div class="catalog-filters-block" {{ block.shopify_attributes }}>
+  {% render 'book-filter-facets', results: collection, results_url: collection.url %}
+</div>
+{% schema %}
+{ "name": "Catalog Filters", "settings": [] }
+{% endschema %}

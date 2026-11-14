@@ -1,0 +1,122 @@
+{% comment %}
+  Indigo Books India - 3-Banner Bento Promo Grid & Category Pills
+{% endcomment %}
+
+<section id="bentoGridSection" class="py-8 bg-[#FAF8F5]">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    
+    <!-- Interactive Category Pills -->
+    <div class="flex items-center gap-2.5 overflow-x-auto pb-4 pt-2 no-scrollbar mb-8">
+      <button type="button" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="cat-pill active px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all bg-[#0A1128] text-white border-[#0A1128] shadow-sm hover:scale-105 active:scale-95">
+        All Categories
+      </button>
+      <a href="#ProductList-rekhta_showcase" onclick="document.querySelector('#ProductList-rekhta_showcase')?.scrollIntoView({behavior: 'smooth'})" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all bg-white text-slate-700 border-amber-900/20 hover:border-[#D99B26] hover:bg-amber-50 hover:scale-105 active:scale-95">
+        Rekhta Publications
+      </a>
+      <a href="#ProductList-contemporary_fiction" onclick="document.querySelector('#ProductList-contemporary_fiction')?.scrollIntoView({behavior: 'smooth'})" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all bg-white text-slate-700 border-amber-900/20 hover:border-[#D99B26] hover:bg-amber-50 hover:scale-105 active:scale-95">
+        Sudha Murty
+      </a>
+      <a href="#ProductList-contemporary_fiction" onclick="document.querySelector('#ProductList-contemporary_fiction')?.scrollIntoView({behavior: 'smooth'})" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all bg-white text-slate-700 border-amber-900/20 hover:border-[#D99B26] hover:bg-amber-50 hover:scale-105 active:scale-95">
+        Ruskin Bond
+      </a>
+      <a href="#ProductList-academic_sahitya" onclick="document.querySelector('#ProductList-academic_sahitya')?.scrollIntoView({behavior: 'smooth'})" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all bg-white text-slate-700 border-amber-900/20 hover:border-[#D99B26] hover:bg-amber-50 hover:scale-105 active:scale-95">
+        McGraw Hill
+      </a>
+      <a href="#ProductList-contemporary_fiction" onclick="document.querySelector('#ProductList-contemporary_fiction')?.scrollIntoView({behavior: 'smooth'})" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all bg-white text-slate-700 border-amber-900/20 hover:border-[#D99B26] hover:bg-amber-50 hover:scale-105 active:scale-95">
+        New Releases
+      </a>
+      <a href="#ProductList-academic_sahitya" onclick="document.querySelector('#ProductList-academic_sahitya')?.scrollIntoView({behavior: 'smooth'})" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all bg-white text-slate-700 border-amber-900/20 hover:border-[#D99B26] hover:bg-amber-50 hover:scale-105 active:scale-95">
+        Hindi Sahitya
+      </a>
+      <a href="#ProductList-law_books_showcase" onclick="document.querySelector('#ProductList-law_books_showcase')?.scrollIntoView({behavior: 'smooth'})" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all bg-white text-slate-700 border-amber-900/20 hover:border-[#D99B26] hover:bg-amber-50 hover:scale-105 active:scale-95">
+        Law Books
+      </a>
+      <a href="#ProductList-value_bundles" onclick="document.querySelector('#ProductList-value_bundles')?.scrollIntoView({behavior: 'smooth'})" class="cat-pill px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap border transition-all bg-white text-slate-700 border-amber-900/20 hover:border-[#D99B26] hover:bg-amber-50 hover:scale-105 active:scale-95">
+        Value Bundles
+      </a>
+    </div>
+
+    <!-- 3-Banner Bento Promo Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      
+      <!-- Bento Card 1: Deep Navy & Gold -->
+      <div class="relative rounded-2xl overflow-hidden p-6 text-white shadow-lg bg-gradient-to-br from-[#0A1128] via-[#162044] to-[#0A1128] border border-amber-500/20 flex flex-col justify-between min-h-[220px] group hover:shadow-2xl transition-all">
+        <div class="relative z-10">
+          <span class="inline-block bg-[#D99B26] text-slate-950 font-bold text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full mb-3">
+            Exclusive Collections
+          </span>
+          <h3 class="font-serif text-2xl font-bold leading-tight">
+            BEST SELLING<br>BOOKS
+          </h3>
+          <p class="text-xs text-slate-300 mt-2 max-w-xs">
+            Trending literary fiction, biographies, and regional gems across India.
+          </p>
+        </div>
+        <div class="relative z-10 mt-6">
+          <a href="/collections/all?filter.p.m.custom.genre=Bestsellers" class="inline-flex items-center gap-2 text-xs font-bold text-[#D99B26] group-hover:text-amber-300 transition-colors">
+            <span>Shop Now</span>
+            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-amber-400/10 pointer-events-none group-hover:scale-125 transition-transform duration-700"></div>
+      </div>
+
+      <!-- Bento Card 2: Rich Terracotta & Amber -->
+      <div class="relative rounded-2xl overflow-hidden p-6 text-white shadow-lg bg-gradient-to-br from-[#451A03] via-[#78350F] to-[#451A03] border border-amber-500/30 flex flex-col justify-between min-h-[220px] group hover:shadow-2xl transition-all">
+        <div class="relative z-10">
+          <span class="inline-block bg-amber-400 text-slate-950 font-bold text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full mb-3">
+            Available Shortly
+          </span>
+          <h3 class="font-serif text-2xl font-bold leading-tight">
+            COMING SOON &amp;<br>PRE-ORDER
+          </h3>
+          <p class="text-xs text-amber-100 mt-2 max-w-xs">
+            Reserve upcoming high-demand academic titles and international releases.
+          </p>
+        </div>
+        <div class="relative z-10 mt-6">
+          <a href="/collections/all?filter.p.m.custom.genre=Pre-Order" class="inline-flex items-center gap-2 text-xs font-bold text-amber-300 group-hover:text-white transition-colors">
+            <span>Explore Now</span>
+            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-amber-500/15 pointer-events-none group-hover:scale-125 transition-transform duration-700"></div>
+      </div>
+
+      <!-- Bento Card 3: Dark Espresso & Emerald -->
+      <div class="relative rounded-2xl overflow-hidden p-6 text-white shadow-lg bg-gradient-to-br from-[#1C1917] via-[#064E3B] to-[#1C1917] border border-emerald-500/30 flex flex-col justify-between min-h-[220px] group hover:shadow-2xl transition-all">
+        <div class="relative z-10">
+          <span class="inline-block bg-[#10B981] text-white font-bold text-[10px] tracking-wider uppercase px-2.5 py-0.5 rounded-full mb-3">
+            Save More Together
+          </span>
+          <h3 class="font-serif text-2xl font-bold leading-tight">
+            EXCLUSIVE BOOK<br>BUNDLES
+          </h3>
+          <p class="text-xs text-slate-300 mt-2 max-w-xs">
+            Multi-book boxsets, author collections, and complete series up to 40% off.
+          </p>
+        </div>
+        <div class="relative z-10 mt-6">
+          <a href="/collections/bundles" class="inline-flex items-center gap-2 text-xs font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors">
+            <span>Shop Bundles</span>
+            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-emerald-500/15 pointer-events-none group-hover:scale-125 transition-transform duration-700"></div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bento Promo Grid",
+  "settings": [],
+  "presets": [
+    { "name": "Bento Promo Grid" }
+  ]
+}
+{% endschema %}
+

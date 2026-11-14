@@ -1,0 +1,149 @@
+function resolveBookObject(bookOrId, triggerEl) {
+  window.resolveBookObject = resolveBookObject;
+  var pool = []
+    .concat(window.MASTER_BOOKS || [])
+    .concat(window.SHOPIFY_LIVE_PRODUCTS || [])
+    .concat(window.PODIUM_BOOKS || [])
+    .concat(window.REKHTA_BOOKS || [])
+    .concat(window.VAULT_BOOKS || [])
+    .concat(window.CATALOG_BOOKS || []);
+
+  if (typeof PIYUSH_MISHRA_BOOKS !== 'undefined' && Array.isArray(PIYUSH_MISHRA_BOOKS)) {
+    pool = pool.concat(PIYUSH_MISHRA_BOOKS);
+  }
+
+  // 1. Add all CATEGORY_BENTO_DATA books to pool
+  if (typeof CATEGORY_BENTO_DATA !== 'undefined') {
+    for (var cat in CATEGORY_BENTO_DATA) {
+      if (CATEGORY_BENTO_DATA[cat]) {
+        if (CATEGORY_BENTO_DATA[cat].left) pool.push(CATEGORY_BENTO_DATA[cat].left);
+        if (Array.isArray(CATEGORY_BENTO_DATA[cat].right)) {
+          CATEGORY_BENTO_DATA[cat].right.forEach(function(rb) { pool.push(rb); });
+        }
+      }
+    }
+  }
+
+  // 2. Add MODAL_METADATA_DATABASE books to pool
+  if (typeof MODAL_METADATA_DATABASE !== 'undefined') {
+    for (var k in MODAL_METADATA_DATABASE) {
+      if (MODAL_METADATA_DATABASE[k]) {
+        pool.push(Object.assign({ id: k }, MODAL_METADATA_DATABASE[k]));
+      }
+    }
+  }
+
+  // If already an authentic book object with a real title (not 'Selected Book')
+  if (bookOrId && typeof bookOrId === 'object' && bookOrId.title && bookOrId.title !== 'Selected Book') {
+    return bookOrId;
+  }
+
+  var rawKey = String(bookOrId || '').trim();
+  var key = rawKey.toLowerCase().replace(/^\/products\//, '').replace(/^#\/product\//, '');
+  var cleanKey = key.replace(/^(bento-[a-z]+-|podium-|rekhta-|vault-[a-z]+-|vault-|catalog-)/, '');
+
+  if (key) {
+    var found = pool.find(function(b) {
+      if (!b) return false;
+      var bId = String(b.id || '').trim().toLowerCase();
+      var bHandle = String(b.handle || '').trim().toLowerCase();
+      var bSku = String(b.sku || '').trim().toLowerCase();
+      var bTitle = String(b.title || '').trim().toLowerCase();
+      var slugTitle = bTitle.replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      return bId === key || bHandle === key || bSku === key || bTitle === key || slugTitle === key ||
+             (cleanKey.length > 2 && (bId.indexOf(cleanKey) !== -1 || bHandle.indexOf(cleanKey) !== -1 || slugTitle.indexOf(cleanKey) !== -1 || bTitle.indexOf(cleanKey) !== -1));
+    });
+
+    if (found) {
+      var cleanPriceVal = window.cleanPrice(found.price, 299);
+      return {
+        id: found.id || key,
+        title: found.title,
+        handle: found.handle || found.id,
+        author: found.author || found.vendor || 'Indigo Books Author',
+        price: '₹' + cleanPriceVal.toFixed(2),
+        oldPrice: '',
+        discount: 'IN STOCK',
+        cover: getAssetUrl(found.cover || found.coverUrl || found.image, found.id),
+        coverUrl: getAssetUrl(found.coverUrl || found.cover || found.image, found.id),
+        binding: found.binding || found.format || 'Paperback',
+        pub: found.publisher || found.pub || found.vendor || 'Authorized Publisher',
+        isbn: found.isbn || found.sku || '978-81-267-XXXX-X',
+        pages: found.pages || '280 Pages',
+        lang: found.lang || found.language || 'Hindi / English',
+        dispatch: found.dispatch || 'Same-Day Prayagraj Hub Dispatch',
+        overview: found.overview || found.desc || found.description || found.quote || ('Masterpiece edition of ' + found.title + ' curated by Indigo Books India.'),
+        firstPageExcerpt: found.firstPageExcerpt || found.excerpt || found.overview || 'First page preview available upon book dispatch.',
+        highlights: found.highlights || [
+          '100% Authentic Publisher Original Edition',
+          'Direct express dispatch from Prayagraj warehouse',
+          'Protective moisture-proof bookstore packaging',
+          'Cash on Delivery available nationwide'
+        ]
+      };
+    }
+  }
+
+  // Fallback: Scrape exact book data from the clicked DOM card
+  var card = triggerEl ? triggerEl.closest('[data-book-id], [data-title], .bento-left-spotlight, .bento-horiz-card, .vault-card, .catalog-card, .rekhta-card, .ivh-book-card, .book-card') : null;
+  if (card) {
+    var cardId = card.getAttribute('data-book-id') || '';
+    if (cardId) {
+      var byCardId = pool.find(function(b) {
+        return b && (String(b.id || '').toLowerCase() === cardId.toLowerCase() || String(b.handle || '').toLowerCase() === cardId.toLowerCase());
+      });
+      if (byCardId) return byCardId;
+    }
+
+    var domTitle = card.getAttribute('data-title') ||
+      (card.querySelector('#bentoLeftTitle, h3, h4, h2, h1, .book-title, .card-title, .bento-horiz-top h4, a') ?
+       card.querySelector('#bentoLeftTitle, h3, h4, h2, h1, .book-title, .card-title, .bento-horiz-top h4, a').textContent.trim() : '');
+
+    if (domTitle && domTitle.toLowerCase() !== 'selected book') {
+      var byDomTitle = pool.find(function(b) {
+        return b && String(b.title || '').trim().toLowerCase() === domTitle.toLowerCase();
+      });
+      if (byDomTitle) return byDomTitle;
+    }
+
+    var domAuthor = card.getAttribute('data-author') || (card.querySelector('.book-author, .card-author, #bentoLeftAuthor') ? card.querySelector('.book-author, .card-author, #bentoLeftAuthor').textContent.trim() : 'Indigo Books Archive');
+    var domPriceText = card.getAttribute('data-price') || (card.querySelector('.book-price, .price, [class*="price"]') ? card.querySelector('.book-price, .price, [class*="price"]').textContent : '299');
+    var domPrice = window.cleanPrice(domPriceText, 299);
+    var domImg = card.querySelector('img') ? card.querySelector('img').src : '';
+    var domBinding = card.getAttribute('data-binding') || (card.textContent.toLowerCase().indexOf('hardcover') !== -1 ? 'Hardcover' : 'Paperback');
+    var finalTitle = (domTitle && domTitle !== 'Selected Book') ? domTitle : (cleanKey ? cleanKey.replace(/-/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase(); }) : 'Raag Darbari');
+
+    return {
+      id: cardId || (finalTitle || 'book').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      title: finalTitle,
+      handle: (finalTitle || 'book').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      author: domAuthor,
+      vendor: card.getAttribute('data-publisher') || domAuthor,
+      pub: card.getAttribute('data-publisher') || domAuthor,
+      price: '₹' + domPrice.toFixed(2),
+      binding: domBinding,
+      image: domImg,
+      cover: domImg,
+      coverUrl: domImg,
+      category: card.getAttribute('data-category') || 'Curated Literature',
+      isbn: card.getAttribute('data-isbn') || '978-81-267-XXXX-X',
+      dimensions: card.getAttribute('data-dimensions') || '21.5 x 14.0 x 1.8 cm',
+      weight: card.getAttribute('data-weight') || '320 g',
+      pages: card.getAttribute('data-pages') || '280 Pages',
+      lang: card.getAttribute('data-language') || 'Hindi',
+      dispatch: 'Ships in 24 Hours from Prayagraj Hub',
+      overview: card.getAttribute('data-description') || (finalTitle + ' by ' + domAuthor + ' — 100% authentic publisher edition dispatched directly from Indigo Books India, Prayagraj.'),
+      firstPageExcerpt: 'Authentic unabridged publisher edition of ' + finalTitle + '.',
+      highlights: [
+        '100% Authentic Publisher Original Edition',
+        'Direct express dispatch from Prayagraj warehouse',
+        'Protective bookstore packaging',
+        'Cash on Delivery available nationwide'
+      ]
+    };
+  }
+
+  return null;
+};
+
+// Aliases

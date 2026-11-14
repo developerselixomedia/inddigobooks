@@ -1,0 +1,13 @@
+<details class="disclosure-block" {{ block.shopify_attributes }}>
+  <summary>{{ block.settings.title | default: 'Frequently Asked Questions' }}</summary>
+  <div class="rte">{{ block.settings.content }}</div>
+</details>
+{% schema %}
+{
+  "name": "Disclosure",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Shipping & Delivery" },
+    { "type": "richtext", "id": "content", "label": "Content" }
+  ]
+}
+{% endschema %}

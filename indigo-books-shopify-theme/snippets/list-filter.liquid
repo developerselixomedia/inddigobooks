@@ -1,0 +1,5 @@
+<ul class="list-filter-ul">
+  {%- for value in filter.values -%}
+    <li><label><input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" {% if value.active %}checked{% endif %}> {{ value.label }}</label></li>
+  {%- endfor -%}
+</ul>

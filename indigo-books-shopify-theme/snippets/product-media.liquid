@@ -1,0 +1,5 @@
+<div class="product-single-media">
+  {%- if media -%}
+    <img src="{{ media | image_url: width: 800 }}" alt="{{ media.alt | escape }}">
+  {%- endif -%}
+</div>

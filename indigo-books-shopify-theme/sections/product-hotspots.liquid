@@ -1,0 +1,79 @@
+{% comment %}
+  Product Hotspots / "Shop the Reading Collection" Section
+{% endcomment %}
+
+<section class="section section-product-hotspots" id="ProductHotspots-{{ section.id }}">
+  <div class="page-width">
+    {%- if section.settings.title != blank -%}
+      <div class="section-header text-center">
+        <h2 class="section-header__title">{{ section.settings.title | escape }}</h2>
+        {%- if section.settings.subtitle != blank -%}
+          <p class="section-header__subheading">{{ section.settings.subtitle | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="hotspots-container">
+      <div class="hotspots-image-wrap">
+        {%- if section.settings.image != blank -%}
+          <img src="{{ section.settings.image | image_url: width: 1200 }}" alt="{{ section.settings.title | escape }}" loading="lazy">
+        {%- else -%}
+          <div class="hotspots-placeholder">
+            <span>Reading Nook Curated Collection</span>
+          </div>
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          {%- assign product = all_products[block.settings.product] -%}
+          {%- if product != blank -%}
+            <div
+              class="hotspot-pin"
+              style="top: {{ block.settings.top }}%; left: {{ block.settings.left }}%;"
+              {{ block.shopify_attributes }}
+            >
+              <button class="hotspot-dot" aria-label="View {{ product.title | escape }}"></button>
+              <div class="hotspot-card-popup">
+                {%- if product.featured_media -%}
+                  <img src="{{ product.featured_media | image_url: width: 100 }}" alt="{{ product.title | escape }}" loading="lazy">
+                {%- endif -%}
+                <div class="hotspot-card-info">
+                  <strong>{{ product.title | escape }}</strong>
+                  <span>{{ product.price | money }}</span>
+                  <a href="{{ product.url }}" class="hotspot-card-link">View Book &rarr;</a>
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Book Hotspots",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Shop the Ultimate Reading Shelf" },
+    { "type": "text", "id": "subtitle", "label": "Subheading", "default": "Click on any book in the shelf to preview" },
+    { "type": "image_picker", "id": "image", "label": "Background Image (Bookshelf/Reading Room)" }
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Book Hotspot",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "range", "id": "top", "min": 5, "max": 95, "step": 1, "unit": "%", "default": 50, "label": "Top Position" },
+        { "type": "range", "id": "left", "min": 5, "max": 95, "step": 1, "unit": "%", "default": 50, "label": "Left Position" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Book Hotspots"
+    }
+  ]
+}
+{% endschema %}
+
