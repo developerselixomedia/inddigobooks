@@ -7399,3 +7399,246 @@ header > nav {
     transform: rotateY(-128deg) !important;
     box-shadow: -14px 18px 28px rgba(0,0,0,0.35) !important;
   }
+
+/* ==========================================================================
+     FUTURE ARCHIVE CYBER-THEME DESIGN SYSTEM (Obsidian & Neon Glassmorphism)
+     ========================================================================== */
+  :root {
+    --cyber-bg: #030712;
+    --cyber-surface: rgba(15, 23, 42, 0.75);
+    --cyber-surface-hover: rgba(30, 41, 59, 0.85);
+    --cyber-border: rgba(0, 245, 255, 0.22);
+    --cyber-border-glow: rgba(0, 245, 255, 0.6);
+    --cyber-cyan: #00F5FF;
+    --cyber-gold: #FFD700;
+    --cyber-violet: #A855F7;
+    --cyber-text: #F8FAFC;
+    --cyber-muted: #94A3B8;
+  }
+
+  /* Global Page Background & Typography */
+  html, body {
+    background-color: var(--cyber-bg) !important;
+    color: var(--cyber-text) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Animated Starfield / Cyber Grid Background Effect */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle at 20% 30%, rgba(0, 245, 255, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.04) 0%, transparent 40%),
+      linear-gradient(to right, rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Master 1320px Alignment Spine */
+  .navbar-inner, .ivh-container, .ihm-container, .stats-grid,
+  .podium-container, .rekhta-container, .voices-container,
+  .category-bento-showcase, .vault-container, .catalog-container,
+  .phs-container, .footer-container,
+  #bestsellers-podium > div, #mehfil-e-rekhta > div,
+  #indian-voices-section > div, #law-academic-vault > div, #shop-all-catalog > div {
+    width: 100% !important;
+    max-width: 1320px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 28px !important;
+    padding-right: 28px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Cyberpunk Glassmorphism Navigation Bar */
+  nav, .navbar, header {
+    background: rgba(3, 7, 18, 0.88) !important;
+    backdrop-filter: blur(16px) !important;
+    border-bottom: 1px solid var(--cyber-border) !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+  }
+
+  /* Futuristic Glowing Hero Section */
+  #indigo-video-hero, #indigo-hero-master, .ivh-section {
+    background: radial-gradient(circle at 50% 20%, rgba(15, 23, 42, 0.9) 0%, var(--cyber-bg) 80%) !important;
+    border-bottom: 1px solid var(--cyber-border) !important;
+    position: relative !important;
+    overflow: visible !important;
+  }
+
+  /* Unclipped Cyber Search Pill & Live Dropdown */
+  #indigo-video-hero form, #indigo-hero-master form, .ivh-search-box, .ihm-search-wrap {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 580px !important;
+    height: 54px !important;
+    background: rgba(15, 23, 42, 0.9) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1.5px solid var(--cyber-border) !important;
+    border-radius: 999px !important;
+    padding: 4px 6px 4px 16px !important;
+    box-shadow: 0 0 25px rgba(0, 245, 255, 0.15) !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    z-index: 9999 !important;
+    transition: all 0.3s ease !important;
+  }
+  #indigo-video-hero form:focus-within, #indigo-hero-master form:focus-within {
+    border-color: var(--cyber-cyan) !important;
+    box-shadow: 0 0 35px rgba(0, 245, 255, 0.35) !important;
+  }
+  #indigo-video-hero form select, #indigo-hero-master form select {
+    flex: 0 0 auto !important;
+    width: 120px !important;
+    border: none !important;
+    border-right: 1px solid rgba(255,255,255,0.12) !important;
+    background: transparent !important;
+    color: var(--cyber-text) !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    padding: 0 10px 0 4px !important;
+    outline: none !important;
+    cursor: pointer !important;
+  }
+  #indigo-video-hero form input, #indigo-hero-master form input {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 42px !important;
+    border: none !important;
+    background: transparent !important;
+    color: var(--cyber-text) !important;
+    font-size: 15px !important;
+    padding: 0 12px !important;
+    outline: none !important;
+  }
+  #indigo-video-hero form button[type="submit"], #indigo-hero-master form button[type="submit"] {
+    flex: 0 0 auto !important;
+    height: 42px !important;
+    padding: 0 24px !important;
+    border-radius: 999px !important;
+    background: linear-gradient(135deg, #00F5FF 0%, #3B82F6 100%) !important;
+    color: #030712 !important;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    border: none !important;
+    cursor: pointer !important;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.4) !important;
+  }
+
+  /* Neural Live Suggestion Dropdown */
+  .indigo-live-suggest-box {
+    position: absolute !important;
+    top: calc(100% + 12px) !important;
+    left: 0 !important;
+    width: 100% !important;
+    min-width: 380px !important;
+    max-height: 440px !important;
+    overflow-y: auto !important;
+    background: rgba(3, 7, 18, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--cyber-cyan) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 25px 60px rgba(0, 245, 255, 0.25) !important;
+    z-index: 9999999 !important;
+    padding: 10px !important;
+    color: var(--cyber-text) !important;
+    text-align: left !important;
+  }
+
+  /* Mathematical Holographic Book Card Grid */
+  .catalog-card, .vault-card, .rekhta-card, .indigo-book-card, .bento-horiz-card, .bento-left-spotlight {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    height: 100% !important;
+    padding: 20px !important;
+    border-radius: 16px !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    background: rgba(15, 23, 42, 0.65) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid var(--cyber-border) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+    transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+  .catalog-card:hover, .vault-card:hover, .rekhta-card:hover, .indigo-book-card:hover {
+    border-color: var(--cyber-cyan) !important;
+    box-shadow: 0 0 30px rgba(0, 245, 255, 0.25) !important;
+    transform: translateY(-5px) !important;
+  }
+  .card-cover-frame, .indigo-3d-book-stage {
+    width: 100% !important;
+    aspect-ratio: 2 / 3 !important;
+    height: auto !important;
+    margin-bottom: 16px !important;
+    border-radius: 8px !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+  }
+  .card-book-title {
+    font-family: 'Merriweather', Georgia, serif !important;
+    font-size: 15.5px !important;
+    font-weight: 700 !important;
+    line-height: 1.4 !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+    margin: 0 0 6px 0 !important;
+    color: var(--cyber-text) !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  .card-bottom-footer {
+    margin-top: auto !important;
+    padding-top: 14px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    width: 100% !important;
+  }
+
+  /* Holographic Product Details Page (PDP) & Glass Cards */
+  #single-product-page-view, #indigo-solo-product-view {
+    background: var(--cyber-bg) !important;
+    color: var(--cyber-text) !important;
+  }
+  .pdp-cover-card, .pdp-info-header-card, .pdp-tabs-container, .pdp-buy-box, .pdp-trust-card {
+    background: rgba(15, 23, 42, 0.8) !important;
+    backdrop-filter: blur(16px) !important;
+    border: 1px solid var(--cyber-border) !important;
+    color: var(--cyber-text) !important;
+  }
+  .pdp-book-title {
+    color: #FFFFFF !important;
+  }
+  .pdp-selling-price {
+    color: var(--cyber-cyan) !important;
+    text-shadow: 0 0 12px rgba(0, 245, 255, 0.4) !important;
+  }
+  .pdp-genre-pill {
+    background: rgba(0, 245, 255, 0.12) !important;
+    color: var(--cyber-cyan) !important;
+    border: 1px solid rgba(0, 245, 255, 0.3) !important;
+  }
+  .pdp-tab-btn.active {
+    color: var(--cyber-cyan) !important;
+    border-bottom: 2px solid var(--cyber-cyan) !important;
+  }
+  .pdp-tech-table th {
+    background: rgba(30, 41, 59, 0.6) !important;
+    color: var(--cyber-muted) !important;
+  }
+  .pdp-tech-table td {
+    color: var(--cyber-text) !important;
+  }
