@@ -1,4 +1,5 @@
 from prepare_master_blocks import MASTER_STYLE, MASTER_SCRIPT
+from cyber_theme_block import CYBER_STYLE, CYBER_SCRIPT
 # -*- coding: utf-8 -*-
 """
 sync_preview_to_shopify.py
@@ -781,7 +782,7 @@ window.SHOPIFY_LIVE_PRODUCTS = [
       }});
     </script>
 
-""" + "\n\n" + MASTER_STYLE + "\n\n" + MASTER_SCRIPT + "\n  </body>\n</html>\n"
+""" + "\n\n" + MASTER_STYLE + "\n\n" + MASTER_SCRIPT + "\n\n" + CYBER_STYLE + "\n\n" + CYBER_SCRIPT + "\n  </body>\n</html>\n"
 
     os.makedirs("layout", exist_ok=True)
     with open("layout/theme.liquid", "w", encoding="utf-8") as f:

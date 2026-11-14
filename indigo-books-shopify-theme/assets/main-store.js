@@ -3857,3 +3857,349 @@ if (typeof window !== 'undefined') {
   }
   setTimeout(initMaster, 500);
 })();
+
+(function() {
+  /* ==========================================================================
+     1. VERIFIED CSV DATASET (Zero Fake Discounts, Zero Fake Reviews)
+     ========================================================================== */
+  var HERO_BOOKS_CSV = [
+    {
+      id: 'godan-premchand',
+      handle: 'godan-premchand',
+      matchKey: 'godan',
+      title: 'Godan (गोदान)',
+      author: 'Premchand',
+      vendor: 'Lokbharti Prakashan',
+      category: 'Fiction : Novel',
+      binding: 'Paperback',
+      price: 299,
+      isbn: '9789389742152',
+      pages: '312p',
+      weight: '270 g',
+      year: '4th (1936)',
+      language: 'Hindi',
+      image: 'https://images.rajkamalprakashan.com/products/2026/08/07/d18d896b-e17d-4c03-b26c-0525c9675e05-godan-text-book.jpg',
+      description: 'Munshi Premchand’s immortal masterpiece depicting the life, struggles, and resilience of Indian peasantry.'
+    },
+    {
+      id: 'raag-darbari-shrilal-shukla',
+      handle: 'raag-darbari-shrilal-shukla',
+      matchKey: 'raag',
+      title: 'Raag Darbari (राग दरबारी)',
+      author: 'Shrilal Shukla',
+      vendor: 'Rajkamal Prakashan',
+      category: 'Fiction : Novel',
+      binding: 'Paperback',
+      price: 499,
+      isbn: '9788126713967',
+      pages: '423p',
+      weight: '490 g',
+      year: '55th (1983)',
+      language: 'Hindi',
+      image: 'https://images.rajkamalprakashan.com/products/--1776279294489.jpg',
+      description: 'Sahitya Akademi Award-winning satirical masterpiece by Shrilal Shukla exposing rural politics in Shivpalganj.'
+    },
+    {
+      id: 'chitralekha-bhagwaticharan-verma',
+      handle: 'chitralekha-bhagwaticharan-verma',
+      matchKey: 'chitralekha',
+      title: 'Chitralekha (चित्रलेखा)',
+      author: 'Bhagwaticharan Verma',
+      vendor: 'Rajkamal Prakashan',
+      category: 'Fiction : Novel',
+      binding: 'Paperback',
+      price: 299,
+      isbn: '9788126715855',
+      pages: '200p',
+      weight: '225 g',
+      year: '32nd (1993)',
+      language: 'Hindi',
+      image: 'https://images.rajkamalprakashan.com/products/--1776278166396.jpg',
+      description: 'A timeless philosophical novel exploring sin, virtue, love, and asceticism.'
+    },
+    {
+      id: 'rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar',
+      handle: 'rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar',
+      matchKey: 'rashmirathi',
+      title: 'Rashmirathi : Dinkar Granthmala',
+      author: "Ramdhari Singh 'Dinkar'",
+      vendor: 'Lokbharti Prakashan',
+      category: 'Poetry',
+      binding: 'Paperback',
+      price: 299,
+      isbn: '9788180313639',
+      pages: '192p',
+      weight: '216 g',
+      year: '46th (1952)',
+      language: 'Hindi',
+      image: 'https://images.rajkamalprakashan.com/products/--1776278887188.jpg',
+      description: 'Rashtrakavi Ramdhari Singh Dinkar’s epic poetic saga celebrating the valor and dignity of Karna.'
+    },
+    {
+      id: 'kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra',
+      handle: 'kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra',
+      matchKey: 'kuchh',
+      title: 'Kuchh Ishq Kiya Kuchh Kaam Kiya',
+      author: 'Piyush Mishra',
+      vendor: 'Rajkamal Prakashan',
+      category: 'Poetry/Shayari',
+      binding: 'Paperback',
+      price: 250,
+      isbn: '9788126728435',
+      pages: '147p',
+      weight: '160 g',
+      year: '5th (2016)',
+      language: 'Hindi',
+      image: 'https://images.rajkamalprakashan.com/products/--1776279062739.jpg',
+      description: 'Raw, heartfelt poetry, theatre songs, and ghazals by Piyush Mishra capturing youth and revolution.'
+    },
+    {
+      id: 'gypsy-ila-chandra-joshi',
+      handle: 'gypsy-ila-chandra-joshi',
+      matchKey: 'gypsy',
+      title: 'Gypsy (जिप्सी)',
+      author: 'Ila Chandra Joshi',
+      vendor: 'Lokbharti Prakashan',
+      category: 'Fiction : Novel',
+      binding: 'Paperback',
+      price: 499,
+      isbn: '9789352210053',
+      pages: '375p',
+      weight: '400 g',
+      year: '1st (2015)',
+      language: 'Hindi',
+      image: 'https://images.rajkamalprakashan.com/products/--1776282566523.jpeg',
+      description: 'Ila Chandra Joshi’s landmark psychological Hindi novel exploring human consciousness.'
+    }
+  ];
+
+  /* ==========================================================================
+     2. 2-CHARACTER DEBOUNCED PREDICTIVE SEARCH ENGINE
+     ========================================================================== */
+  function getMasterBookPool() {
+    return [].concat(HERO_BOOKS_CSV)
+      .concat(window.MASTER_BOOKS || [])
+      .concat(window.SHOPIFY_LIVE_PRODUCTS || [])
+      .concat(window.CATALOG_BOOKS || []);
+  }
+
+  function fuzzyTokenScore(haystack, token) {
+    if (!haystack || !token) return 0;
+    if (haystack.indexOf(token) !== -1) return 100;
+    if (token.length >= 4 && haystack.indexOf(token.slice(0, -1)) !== -1) return 75;
+    return 0;
+  }
+
+  window.searchIndigoBooks = function(rawQuery) {
+    var q = String(rawQuery || '').trim().toLowerCase();
+    if (!q) return [];
+    var tokens = q.split(/\s+/).filter(Boolean);
+    var pool = getMasterBookPool();
+    var scored = [];
+
+    pool.forEach(function(b) {
+      var title = String(b.title || '').toLowerCase();
+      var author = String(b.author || '').toLowerCase();
+      var vendor = String(b.vendor || '').toLowerCase();
+      var isbn = String(b.isbn || '').toLowerCase();
+      var combined = title + ' ' + author + ' ' + vendor + ' ' + isbn;
+
+      var totalScore = 0;
+      var matchedAll = true;
+
+      tokens.forEach(function(tok) {
+        var sTitle = fuzzyTokenScore(title, tok);
+        var sAuthor = fuzzyTokenScore(author, tok) * 1.2;
+        var sIsbn = isbn.indexOf(tok) !== -1 ? 130 : 0;
+        var best = Math.max(sTitle, sAuthor, sIsbn, fuzzyTokenScore(combined, tok));
+        if (best === 0) matchedAll = false;
+        else totalScore += best;
+      });
+
+      if (matchedAll && totalScore > 0) scored.push({ book: b, score: totalScore });
+    });
+
+    scored.sort(function(a, b) { return b.score - a.score; });
+    var seen = {};
+    return scored.map(function(x) { return x.book; }).filter(function(b) {
+      var k = (b.title + '-' + b.author).toLowerCase();
+      if (seen[k]) return false;
+      seen[k] = true;
+      return true;
+    });
+  };
+
+  /* ==========================================================================
+     3. BULLETPROOF MODAL UNSTICKING & SOLO PAGE ROUTER
+     ========================================================================== */
+  window.forceCloseOverviewAndModals = function() {
+    document.querySelectorAll('#indigo-overview-modal, #overview-modal, #indigo-order-success-modal, .indigo-modal-overlay, [id*="overview"]').forEach(function(el) {
+      el.classList.remove('is-active', 'active', 'open', 'show');
+      el.style.setProperty('display', 'none', 'important');
+      el.style.setProperty('opacity', '0', 'important');
+      el.style.setProperty('pointer-events', 'none', 'important');
+    });
+    document.body.style.overflow = '';
+  };
+  window.closeOverviewModal = window.forceCloseOverviewAndModals;
+  window.closeAllIndigoModals = window.forceCloseOverviewAndModals;
+
+  window.findBookInMasterPool = function(bookOrId, imgSrcHint, triggerEl) {
+    var pool = getMasterBookPool();
+    if (bookOrId && typeof bookOrId === 'object' && bookOrId.title && bookOrId.title !== 'Selected Book') return bookOrId;
+
+    var q = String(bookOrId || '').trim().toLowerCase();
+    if (q && q !== 'selected book') {
+      var match = pool.find(function(b) {
+        if (!b || !b.title || b.title === 'Selected Book') return false;
+        return (b.id && b.id.toLowerCase() === q) || (b.title && b.title.toLowerCase().indexOf(q) !== -1) || (b.author && b.author.toLowerCase().indexOf(q) !== -1);
+      });
+      if (match) return match;
+    }
+
+    if (triggerEl) {
+      var card = triggerEl.closest('[data-book-id], [data-title], .ihm-book-item, .ivh-book-card, .catalog-card, .vault-card, .rekhta-card');
+      if (card) {
+        var heroGrid = card.closest('#hero-books-3x2, #ivh-books-grid, .ihm-books-grid-3x2');
+        if (heroGrid) {
+          var idx = Array.from(heroGrid.children).indexOf(card);
+          if (idx >= 0 && idx < HERO_BOOKS_CSV.length) return Object.assign({}, HERO_BOOKS_CSV[idx]);
+        }
+        var cTitle = card.getAttribute('data-title') || (card.querySelector('h3, h4, .card-title, .book-title') ? card.querySelector('h3, h4, .card-title, .book-title').textContent.trim() : '');
+        var found = pool.find(function(b) { return b && b.title && cTitle && b.title.toLowerCase().indexOf(cTitle.toLowerCase()) !== -1; });
+        if (found) return found;
+      }
+    }
+    return HERO_BOOKS_CSV[0];
+  };
+
+  window.forceOpenSoloPageWithBook = function(book) {
+    if (!book) return;
+    window.CURRENT_SOLO_BOOK = book;
+
+    document.querySelectorAll('.indigo-live-suggest-box').forEach(function(d) { d.style.setProperty('display', 'none', 'important'); });
+    document.querySelectorAll('#indigo-search-results-view').forEach(function(sr) { sr.style.setProperty('display', 'none', 'important'); });
+
+    var soloView = document.getElementById('indigo-solo-product-view') || document.getElementById('single-product-page-view');
+    if (soloView) soloView.style.setProperty('display', 'block', 'important');
+
+    var realCover = book.image || HERO_BOOKS_CSV[0].image;
+    var cleanPrice = parseFloat(String(book.price || 299).replace(/[^0-9.]/g, '')) || 299;
+
+    document.querySelectorAll('h1, h2, .solo-book-title').forEach(function(el) {
+      if ((el.textContent || '').trim() === 'Selected Book' || el.id.indexOf('title') !== -1) {
+        el.textContent = book.title;
+      }
+    });
+
+    document.querySelectorAll('img').forEach(function(img) {
+      var src = img.getAttribute('src') || '';
+      if (!src || src.indexOf('Selected%20Book') !== -1) {
+        img.src = realCover;
+      }
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.openSoloBookPage = function(bookOrId, triggerEl) {
+    var resolved = window.findBookInMasterPool(bookOrId, '', triggerEl) || HERO_BOOKS_CSV[0];
+    window.forceOpenSoloPageWithBook(resolved);
+  };
+
+  /* ==========================================================================
+     4. UNIVERSAL SEARCH LISTENER (Fires at >= 2 chars)
+     ========================================================================== */
+  function attachUniversalSearchListeners() {
+    var inputs = document.querySelectorAll('input[placeholder*="Search"], input[placeholder*="search"], #hero-search-input, #liveSearchInput');
+    inputs.forEach(function(input) {
+      if (input.dataset.indigoSearchBound === '1') return;
+      input.dataset.indigoSearchBound = '1';
+
+      var form = input.closest('form') || input.parentElement;
+      form.style.setProperty('position', 'relative', 'important');
+      form.style.setProperty('overflow', 'visible', 'important');
+
+      var box = form.querySelector('.indigo-live-suggest-box');
+      if (!box) {
+        box = document.createElement('div');
+        box.className = 'indigo-live-suggest-box';
+        box.style.display = 'none';
+        form.appendChild(box);
+      }
+
+      var timer = null;
+      input.addEventListener('input', function() {
+        clearTimeout(timer);
+        var val = (input.value || '').trim();
+        if (val.length < 2) {
+          box.style.display = 'none';
+          return;
+        }
+        timer = setTimeout(function() {
+          var matches = window.searchIndigoBooks(val).slice(0, 8);
+          if (matches.length === 0) {
+            box.innerHTML = '<div style="padding:14px;text-align:center;color:#94A3B8;font-size:13.5px;">No neural matches for "<b>' + val + '</b>".</div>';
+            box.style.display = 'block';
+            return;
+          }
+          var html = '';
+          matches.forEach(function(b) {
+            var p = parseFloat(String(b.price || 299).replace(/[^0-9.]/g, '')) || 299;
+            var safeId = String(b.id || b.title).replace(/'/g, "\\'");
+            html += '<div class="indigo-suggest-row" data-book-id="' + safeId + '" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;border-radius:8px;" onmouseover="this.style.background=\'rgba(0,245,255,0.1)\'" onmouseout="this.style.background=\'transparent\'">' +
+              '<img src="' + b.image + '" style="width:40px;height:58px;object-fit:cover;border-radius:4px;flex-shrink:0;border:1px solid var(--cyber-border);" />' +
+              '<div style="flex:1;min-width:0;">' +
+                '<div style="font-size:14px;font-weight:700;color:var(--cyber-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + b.title + '</div>' +
+                '<div style="font-size:12px;color:var(--cyber-muted);">by <b style="color:var(--cyber-cyan);">' + b.author + '</b></div>' +
+              '</div>' +
+              '<div style="font-size:14.5px;font-weight:800;color:var(--cyber-gold);min-width:75px;text-align:right;">₹' + p.toFixed(2) + '</div>' +
+            '</div>';
+          });
+          box.innerHTML = html;
+          box.style.display = 'block';
+
+          box.querySelectorAll('.indigo-suggest-row').forEach(function(row) {
+            row.addEventListener('click', function(e) {
+              e.stopPropagation();
+              box.style.display = 'none';
+              window.openSoloBookPage(this.getAttribute('data-book-id'), this);
+            });
+          });
+        }, 200);
+      });
+    });
+  }
+
+  /* ==========================================================================
+     5. WIRE "BROWSE ALL 5,500+ BOOKS" & CATALOG EXPANSION
+     ========================================================================== */
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('a, button');
+    if (!btn) return;
+    var txt = (btn.textContent || '').trim().toLowerCase();
+    if (txt.indexOf('browse all') !== -1 || txt.indexOf('shop all') !== -1 || txt.indexOf('all books (5,500') !== -1) {
+      e.preventDefault();
+      window.forceCloseOverviewAndModals();
+      if (typeof window.closeSoloBookPage === 'function') window.closeSoloBookPage();
+
+      window.CATALOG_VISIBLE_LIMIT = (window.CATALOG_VISIBLE_LIMIT || 12) + 24;
+      if (typeof window.filterCatalog === 'function') window.filterCatalog('all');
+      if (typeof window.renderCatalog === 'function') window.renderCatalog();
+
+      var catSec = document.getElementById('shop-all-catalog') || document.querySelector('[id*="catalog"]');
+      if (catSec) catSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  function initMaster() {
+    attachUniversalSearchListeners();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMaster);
+  } else {
+    initMaster();
+  }
+  setTimeout(initMaster, 500);
+})();

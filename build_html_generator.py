@@ -6,6 +6,7 @@ Ensures ZERO raw Liquid tags, ZERO fake discounts, ZERO strikethroughs, and 100%
 """
 
 from prepare_master_blocks import MASTER_STYLE, MASTER_SCRIPT
+from cyber_theme_block import CYBER_STYLE, CYBER_SCRIPT
 import json
 from store_data import (
     PODIUM_BOOKS,
@@ -3568,7 +3569,7 @@ Many of my longings were fulfilled, yet so few they were.</div>
       }}
     }}
   </script>
-""" + "\n\n" + MASTER_STYLE + "\n\n" + MASTER_SCRIPT + "\n\n</body>\n</html>"
+""" + "\n\n" + MASTER_STYLE + "\n\n" + MASTER_SCRIPT + "\n\n" + CYBER_STYLE + "\n\n" + CYBER_SCRIPT + "\n\n</body>\n</html>"
 
     html = head_str + UNIFIED_STORE_CSS + "\n</style>\n" + body_str + script_content
     return html
