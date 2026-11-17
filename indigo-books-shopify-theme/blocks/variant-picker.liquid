@@ -1,0 +1,13 @@
+<div class="variant-picker-block" {{ block.shopify_attributes }}>
+  {%- unless product.has_only_default_variant -%}
+    <label>Select Format:</label>
+    <div class="format-chips">
+      {%- for variant in product.variants -%}
+        <span class="chip {% if forloop.first %}chip--active{% endif %}">{{ variant.title }}</span>
+      {%- endfor -%}
+    </div>
+  {%- endunless -%}
+</div>
+{% schema %}
+{ "name": "Variant Picker", "settings": [] }
+{% endschema %}

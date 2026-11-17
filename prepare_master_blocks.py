@@ -1272,7 +1272,7 @@ MASTER_SCRIPT = """<script id="indigo-master-production-script">
 
   /* Home Button and Logo Navigation to Homepage */
   document.addEventListener('click', function(e) {
-    var brand = e.target.closest('.brand-link, .brand-wordmark, [aria-label*="Homepage"]');
+    var brand = e.target.closest('.brand-link, .brand-wordmark, .brand-editorial-title, [aria-label*="Homepage"]');
     if (brand) {
       e.preventDefault();
       if (typeof window.returnToHome === 'function') {
@@ -1313,9 +1313,9 @@ MASTER_SCRIPT = """<script id="indigo-master-production-script">
   });
 
   function initMaster() {
-    // Ensure solo product page is wired directly to full engine
-    if (typeof openDedicatedProductPage === 'function') {
-      window.openSoloBookPage = openDedicatedProductPage;
+    // Solo product page is handled by authoritative editorial video engine
+    if (typeof window.openSoloBookPage === 'function') {
+      window.openDedicatedProductPage = window.openSoloBookPage;
     }
     // Wire 2-character debounced search inputs
     ['hero-search-input', 'catalog-search-input', 'results-search-input'].forEach(function(id) {

@@ -1,0 +1,6 @@
+<div class="sku-block" {{ block.shopify_attributes }}>
+  <small>ISBN: <strong>{{ product.selected_or_first_available_variant.sku | default: '978-0143453' }}</strong></small>
+</div>
+{% schema %}
+{ "name": "ISBN / SKU", "settings": [] }
+{% endschema %}

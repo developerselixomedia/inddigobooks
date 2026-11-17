@@ -1,0 +1,25 @@
+<div class="button-block" {{ block.shopify_attributes }}>
+  <a href="{{ block.settings.link | default: '/collections/all' }}" class="btn btn--{{ block.settings.style | default: 'primary' }}">
+    {{ block.settings.label | default: 'Explore Books' }} &rarr;
+  </a>
+</div>
+{% schema %}
+{
+  "name": "Button",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Button Label", "default": "Explore Books" },
+    { "type": "url", "id": "link", "label": "Button URL" },
+    {
+      "type": "select",
+      "id": "style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
+        { "value": "whatsapp", "label": "WhatsApp Green" }
+      ],
+      "default": "primary",
+      "label": "Button Style"
+    }
+  ]
+}
+{% endschema %}

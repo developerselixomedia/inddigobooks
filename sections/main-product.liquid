@@ -1,392 +1,319 @@
 {% comment %}
-  Indigo Books India - Dedicated Amazon-Style Single Book Product Details Page
+  Indigo Books India - Video 2 Split-Screen 3D Spread Solo Book Page
   Single Source of Truth Template for /products/*
-  Optimized for Desktop (3-Column Amazon Layout) and Mobile (Stacked)
+  Matches video_2.mp4 motion choreography:
+  - Left 42% atmospheric art panel with backdrop blur, quote, and audio bars icon
+  - Center-straddling 3D book that flips -180deg into an open 2-page spread
+  - Back of cover leaf features authentic geometric endpaper art matching video 2
+  - Inside right page features typeset cream book page with dropped cap
+  - Right 58% details card that swaps between metadata/buy actions and reading excerpt
+  - Right vertical action dock (Save, Preview, Get Book)
   Official WhatsApp Concierge: +91 8933063306
 {% endcomment %}
 
-<section class="section section-main-product" id="MainProduct-{{ section.id }}" data-product-id="{{ product.id }}" style="background: #FAF8F5; min-height: 80vh; padding: 24px 0 60px;">
-  <div class="product-page-wrapper" style="max-width: 1280px; margin: 0 auto; padding: 0 20px; box-sizing: border-box;">
-    
-    <!-- Top Breadcrumb Bar -->
-    <div class="product-breadcrumb-bar" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0 20px; border-bottom: 1px solid #E2E8F0; margin-bottom: 28px; font-size: 13px; color: #64748B; flex-wrap: wrap; gap: 12px;">
-      <div class="breadcrumb-nav" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-        <a href="/" style="color: #0066B3; text-decoration: none; font-weight: 500;">Home</a>
-        <span style="color: #94A3B8; font-size: 12px;">&rsaquo;</span>
-        {%- if product.collections.first -%}
-          <a href="{{ product.collections.first.url }}" style="color: #0066B3; text-decoration: none; font-weight: 500;">{{ product.collections.first.title }}</a>
-          <span style="color: #94A3B8; font-size: 12px;">&rsaquo;</span>
-        {%- elsif product.type != blank -%}
-          <span style="color: #64748B;">{{ product.type }}</span>
-          <span style="color: #94A3B8; font-size: 12px;">&rsaquo;</span>
-        {%- endif -%}
-        <span style="color: #0F172A; font-weight: 600;">{{ product.title | escape }}</span>
-      </div>
-      <a href="/" class="btn-back-to-store" style="display: inline-flex; align-items: center; gap: 6px; background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none;">
-        <i data-lucide="arrow-left" style="width: 15px; height: 15px;"></i> Back to Bookstore
-      </a>
-    </div>
+<section class="section section-main-product v2-solo-product-view is-active" id="MainProduct-{{ section.id }}" data-product-id="{{ product.id }}" style="position: relative; min-height: calc(100vh - 72px); background: #EFECE6; overflow-y: auto; overflow-x: hidden; display: flex !important; flex-direction: column; align-items: center; justify-content: flex-start; padding: 28px 20px 48px 20px; box-sizing: border-box;">
+  <style>
+    .section-main-product::-webkit-scrollbar,
+    .v2-solo-product-view::-webkit-scrollbar {
+      width: 6px !important;
+    }
+    .section-main-product::-webkit-scrollbar-thumb,
+    .v2-solo-product-view::-webkit-scrollbar-thumb {
+      background: rgba(18, 18, 18, 0.18) !important;
+      border-radius: 999px !important;
+    }
+    .v2-solo-right-panel::-webkit-scrollbar {
+      width: 6px !important;
+    }
+    .v2-solo-right-panel::-webkit-scrollbar-track {
+      background: transparent !important;
+    }
+    .v2-solo-right-panel::-webkit-scrollbar-thumb {
+      background: rgba(18, 18, 18, 0.18) !important;
+      border-radius: 999px !important;
+    }
+    .v2-solo-right-panel::-webkit-scrollbar-thumb:hover {
+      background: rgba(18, 18, 18, 0.35) !important;
+    }
+    .v2-solo-right-panel {
+      scrollbar-width: thin !important;
+      scrollbar-color: rgba(18, 18, 18, 0.18) transparent !important;
+    }
+  </style>
 
-    <!-- 3-Column Amazon-Style Grid -->
-    <div class="product-pdp-grid">
-      
-      <!-- LEFT COLUMN: Sticky Book Cover & Preview Excerpt -->
-      <div class="pdp-left-col">
-        <div class="pdp-cover-card">
-          <div class="pdp-cover-img-wrap">
-            {%- if product.featured_image -%}
-              <img
-                src="{{ product.featured_image | image_url: width: 800 }}"
-                alt="{{ product.featured_image.alt | default: product.title | escape }}"
-                class="pdp-cover-img"
-                id="ProductMainCover"
-                loading="eager"
-              >
-            {%- else -%}
-              <img
-                src="{{ 'hero-godan.jpg' | asset_url }}"
-                alt="{{ product.title | escape }}"
-                class="pdp-cover-img"
-                id="ProductMainCover"
-              >
-            {%- endif -%}
-          </div>
+  <div class="v2-solo-stage-container" style="position: relative; width: 100%; max-width: 1240px; height: min(86vh, 760px); min-height: 560px; display: flex; border-radius: 20px; overflow: hidden; box-shadow: 0 24px 70px rgba(0, 0, 0, 0.14); background: #FFFFFF; margin: auto 0; flex-shrink: 0;">
 
-          <button type="button" class="pdp-look-inside-btn" onclick="toggleMainProductExcerpt()">
-            <i data-lucide="book-open" style="width: 16px; height: 16px;"></i> Look Inside / First Page Excerpt
+    <!-- Left Atmospheric Art & Quote Panel (36% Width) -->
+    <div class="v2-solo-left-panel">
+      <div class="v2-solo-left-bg-art" id="v2SoloBgArt" style="background-image: url('{{ product.featured_image | image_url: width: 800 }}');"></div>
+      <div class="v2-solo-left-content">
+        <div class="v2-solo-top-nav">
+          <a href="/" class="v2-solo-back-btn" style="text-decoration: none;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back
+          </a>
+          <button type="button" class="v2-solo-search-btn" id="v2SoloCardSearchBtn" onclick="event.stopPropagation(); window.activateUniversalSearch(event);" title="Search books">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </button>
-
-          <!-- Collapsible First Page Excerpt Box -->
-          <div id="MainProductExcerptBox" class="pdp-excerpt-box">
-            <div style="font-size: 11px; font-weight: 700; color: #B45309; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 6px;">
-              अध्याय १ • FIRST PAGE PREVIEW
+        </div>
+        <div class="v2-solo-quote-block">
+          <div class="v2-solo-quote-mark">&ldquo;</div>
+          <p class="v2-solo-quote-text" id="v2SoloQuoteText">
+            {% if product.metafields.custom.quote %}
+              {{ product.metafields.custom.quote }}
+            {% else %}
+              A celebrated work of modern Indian literature from our authenticated 5,559-book archive.
+            {% endif %}
+          </p>
+          <div class="v2-solo-quote-source" id="v2SoloQuoteSource">&mdash; {{ product.vendor | default: "Indigo Editorial Archive" }} &bull; Prayagraj</div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="v2-equalizer-bars">
+              <span></span><span></span><span></span>
             </div>
-            <p style="margin: 0; font-size: 13.5px; line-height: 1.7; color: #334155;">
-              {{ product.description | strip_html | truncate: 350 | default: 'First page preview available upon book dispatch. Authorized unabridged edition.' }}
-            </p>
+            <span style="font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.7);">
+              Authenticated Publisher Edition
+            </span>
           </div>
-
-          <!-- Trust Perks -->
-          <ul class="pdp-perks-checklist">
-            <li>
-              <i data-lucide="shield-check" style="width: 15px; height: 15px; color: #16A34A; flex-shrink: 0; margin-top: 2px;"></i>
-              <span><strong>100% Genuine Edition:</strong> Direct authorized publisher copy with crisp binding.</span>
-            </li>
-            <li>
-              <i data-lucide="truck" style="width: 15px; height: 15px; color: #16A34A; flex-shrink: 0; margin-top: 2px;"></i>
-              <span><strong>Prayagraj Hub Dispatch:</strong> Same-day dispatch with moisture-proof packing.</span>
-            </li>
-            <li>
-              <i data-lucide="check-circle" style="width: 15px; height: 15px; color: #16A34A; flex-shrink: 0; margin-top: 2px;"></i>
-              <span><strong>Cash on Delivery:</strong> Pay at your doorstep across 19,000+ PIN codes.</span>
-            </li>
-          </ul>
         </div>
       </div>
+    </div>
 
-      <!-- CENTER COLUMN: Editorial Description & Technical Specifications -->
-      <div class="pdp-center-col">
-        <span class="pdp-genre-pill">{{ product.type | default: product.collections.first.title | default: 'NATIONAL BESTSELLER' }}</span>
-        <h1 class="pdp-book-title">{{ product.title | escape }}</h1>
+    <!-- Center-Straddling 3D Book (Spans across the 42% seam) -->
+    <div class="v2-solo-book-center-stage">
+      <div class="v2-book-spread-stage" id="v2BookSpreadStage" onmouseenter="window.toggleSoloBookSpread(true)" onmouseleave="window.toggleSoloBookSpread(false)" onclick="window.toggleSoloBookSpread()" title="Hover to flip open 2-page preview spread">
+        <div class="v2-solo-3d-book" id="v2Solo3dBook">
+          <!-- Flipping Front Cover Leaf -->
+          <div class="v2-cover-leaf" id="v2CoverLeaf">
+            <div class="v2-cover-leaf-front">
+              <img id="v2CoverLeafImg" src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title | escape }}" onerror="this.src='{{ 'hero-godan.jpg' | asset_url }}'" />
+              <div class="v2-cover-spine-shadow"></div>
+            </div>
+            <!-- Back of Cover Leaf: Geometric Endpaper Art (matching video_2.mp4) -->
+            <div class="v2-cover-leaf-back">
+              <svg class="v2-endpaper-svg" viewBox="0 0 270 400" preserveAspectRatio="none">
+                <polygon points="0,0 270,0 270,250 0,170" fill="#E65832" />
+                <polygon points="0,170 270,250 270,400 0,400" fill="#23343B" />
+                <circle cx="170" cy="115" r="50" fill="#F4E8D6" opacity="0.9" />
+                <circle cx="170" cy="115" r="48" fill="none" stroke="#23343B" stroke-width="1.5" />
+                <circle cx="115" cy="285" r="30" fill="#F4E8D6" opacity="0.95" />
+                <line x1="40" y1="80" x2="190" y2="340" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4,2" />
+              </svg>
+              <div class="v2-endpaper-overlay">
+                <div class="v2-endpaper-seal">INDIGO BOOKS &bull; PRAYAGRAJ</div>
+                <div class="v2-endpaper-title" id="v2LeafBackTitle">{{ product.title | escape }}</div>
+                <div style="font-size: 10px; color: #F4E8D6; letter-spacing: 0.14em; text-transform: uppercase;">
+                  PAN-INDIA CENTRAL REPOSITORY
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Inside Right Cream Typeset Page -->
+          <div class="v2-inside-right-page" id="v2InsideRightPage">
+            <div class="v2-inside-page-header">INDIGO CLASSICS &bull; CHAPTER I</div>
+            <h4 class="v2-spread-chapter-heading" id="v2SpreadChapterHeading">{{ product.title | escape }}</h4>
+            <div class="v2-spread-columns-wrap">
+              <div class="v2-drop-cap" id="v2DropCap">A</div>
+              <div class="v2-spread-excerpt-snippet" id="v2SpreadExcerptSnippet">
+                {% if product.description != blank %}
+                  {{ product.description | strip_html | truncate: 320 }}
+                {% else %}
+                  कथा का आरंभ उस मोड़ से होता है जहाँ मानवीय नियति और सामाजिक यथार्थ आमने-सामने खड़े होते हैं। हर पृष्ठ पर जीवन की सच्ची अनुभूतियाँ और विचारोत्तेजक प्रसंग जीवंत हो उठते हैं।
+                {% endif %}
+              </div>
+            </div>
+            <div class="v2-inside-page-footer">&mdash; 1 &mdash;</div>
+            <div class="v2-spine-crease-shadow"></div>
+          </div>
+        </div>
+      </div>
+      <div class="v2-spread-hint-badge" onmouseenter="window.toggleSoloBookSpread(true)" onmouseleave="window.toggleSoloBookSpread(false)" onclick="window.toggleSoloBookSpread()">
+        <span id="v2SpreadHintText">📖 Hover Book or Click &ldquo;Preview&rdquo; to Flip 2-Page Spread</span>
+      </div>
+    </div>
+
+    <!-- Right White Details & Excerpt Card (64% Width) -->
+    <div class="v2-solo-right-panel">
+      <!-- State A: Book Metadata & Buy Actions -->
+      <div class="v2-solo-details-content" id="v2ViewDetails">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <span class="v2-solo-badge" id="v2MetaPublisherBadge">{{ product.vendor | default: "LOKBHARTI PRAKASHAN" | upcase }}</span>
+          <span style="font-size: 12px; color: #16A34A; font-weight: 600;">&bull; In Stock (Fast Dispatch)</span>
+        </div>
+        <h2 class="v2-solo-book-title" id="v2SoloTitle">{{ product.title }}</h2>
+        <div class="v2-solo-book-author" id="v2SoloAuthorWrap">
+          <span style="color:#777;">Author:</span> <a href="/search?q={{ product.vendor | url_encode }}" id="v2SoloAuthor" class="v2-solo-author-link" style="color: #E04F33; text-decoration: underline; text-underline-offset: 3px; font-weight: 600;">{{ product.vendor | default: "Celebrated Author" }}</a>
+        </div>
         
-        <div class="pdp-author-row">
-          By <a href="javascript:void(0)" onclick="filterCatalogByAuthor('{{ product.vendor | escape }}')" style="color: #D99B26; font-weight: 600; text-decoration: underline; cursor: pointer;">{{ product.metafields.custom.author.value | default: product.vendor | default: 'Celebrated Author' }}</a> &bull; Authorized Indian Edition
+        <div class="v2-solo-stars-row">
+          <span style="color: #F59E0B; font-size: 16px;">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span style="font-size: 13px; color: #555; font-weight: 600;">4.9 / 5.0 (328 verified reader reviews)</span>
         </div>
 
-        <div class="pdp-rating-row">
-          <div class="pdp-stars">
-            <i data-lucide="star" style="width: 15px; height: 15px; fill: currentColor;"></i>
-            <i data-lucide="star" style="width: 15px; height: 15px; fill: currentColor;"></i>
-            <i data-lucide="star" style="width: 15px; height: 15px; fill: currentColor;"></i>
-            <i data-lucide="star" style="width: 15px; height: 15px; fill: currentColor;"></i>
-            <i data-lucide="star" style="width: 15px; height: 15px; fill: currentColor;"></i>
-          </div>
-          <span class="pdp-rating-text">4.9 / 5.0 (12,840 verified readers)</span>
-        </div>
+        <div class="v2-solo-price" id="v2SoloPrice">{{ product.price | money }}</div>
 
-        <!-- Price Section -->
-        <div class="pdp-price-wrap">
-          <span class="pdp-selling-price">{{ product.price | money }}</span>
-          {%- if product.compare_at_price > product.price -%}
-            <span class="pdp-compare-price">{{ product.compare_at_price | money }}</span>
-            {%- assign discount = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
-            <span class="pdp-discount-badge">{{ discount }}% OFF</span>
-          {%- endif -%}
-          <span style="font-size: 12px; color: #64748B; margin-left: 4px;">(Inclusive of all taxes)</span>
-        </div>
-
-        <!-- Format Pill -->
-        <div class="pdp-format-row">
-          <div class="pdp-format-label">Binding &amp; Format:</div>
-          <div class="pdp-format-pill">
-            <i data-lucide="book" style="width: 16px; height: 16px;"></i>
-            <span>{{ product.selected_or_first_available_variant.title | default: 'Paperback Edition' }}</span>
-          </div>
-        </div>
-
-        <!-- Description -->
-        <div class="pdp-description-wrap">
-          <h3 class="pdp-sec-heading">Editorial Overview &amp; Synopsis</h3>
-          <div class="pdp-description-text">
-            {{ product.description | default: 'Authentic publisher edition curated by Indigo Books India.' }}
-          </div>
-        </div>
-
-        <!-- Bibliographic Details Table -->
-        <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px;">
-          <h4 style="font-family: 'Merriweather', serif; font-size: 15px; font-weight: 700; color: #0F172A; margin: 0 0 12px;">
-            Bibliographic Details
-          </h4>
-          <table class="pdp-tech-table">
-            <tbody>
-              <tr>
-                <th>ISBN-13 / SKU:</th>
-                <td>{{ product.selected_or_first_available_variant.sku | default: product.selected_or_first_available_variant.barcode | default: '978-IND-EDITION' }}</td>
-              </tr>
-              <tr>
-                <th>Publisher:</th>
-                <td>{{ product.vendor | default: 'Authorized Publisher' }}</td>
-              </tr>
-              <tr>
-                <th>Category:</th>
-                <td>{{ product.type | default: 'General Literature' }}</td>
-              </tr>
-              <tr>
-                <th>Language:</th>
-                <td>{{ product.metafields.custom.language.value | default: 'Hindi (देवनागरी) / English' }}</td>
-              </tr>
-              <tr>
-                <th>Available Stock:</th>
-                <td style="color: #059669; font-weight: 600;">
-                  {% if product.selected_or_first_available_variant.inventory_quantity > 0 %}
-                    {{ product.selected_or_first_available_variant.inventory_quantity }} copies (Prayagraj Warehouse)
-                  {% elsif product.available %}
-                    In Stock • Ready to Dispatch
-                  {% else %}
-                    Temporarily Out of Stock
-                  {% endif %}
-                </td>
-              </tr>
-              <tr>
-                <th>Dimensions (L &times; B &times; H):</th>
-                <td>{{ product.metafields.custom.dimensions.value | default: '21.5 × 14.0 × 1.0 cm' }}</td>
-              </tr>
-              <tr>
-                <th>Dispatch Hub:</th>
-                <td>Prayagraj, Uttar Pradesh (Same-Day)</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-
-      <!-- RIGHT COLUMN: Amazon-Style Sticky Buy Box -->
-      <div class="pdp-right-col">
-        <div class="pdp-buy-box">
-          <div class="pdp-bb-price">{{ product.price | money }}</div>
-          
-          <div class="pdp-bb-stock">
-            <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
-            <span>{% if product.available %}In Stock • Ready to Dispatch{% else %}Temporarily Out of Stock{% endif %}</span>
-          </div>
-
-          <div class="pdp-bb-delivery">
-            Delivery to your location within <strong>2-5 Business Days</strong> via Express Courier.
-          </div>
-
-          {%- form 'product', product, id: 'MainProductForm' -%}
-            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-
-            <!-- Quantity Selector -->
-            <div class="pdp-qty-row">
-              <label class="pdp-qty-label" for="LiquidProductQuantity">Quantity:</label>
-              <div class="pdp-qty-control">
-                <button type="button" class="pdp-qty-btn" onclick="decrementLiquidQty()">-</button>
-                <input type="number" id="LiquidProductQuantity" name="quantity" value="1" min="1" max="99" class="pdp-qty-input" />
-                <button type="button" class="pdp-qty-btn" onclick="incrementLiquidQty()">+</button>
-              </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="pdp-btn-stack">
-              <button
-                type="submit"
-                class="pdp-btn-add-cart"
-                {% unless product.available %}disabled{% endunless %}
-              >
-                <i data-lucide="shopping-bag" style="width: 16px; height: 16px;"></i>
-                <span>{% if product.available %}Add to Cart{% else %}Out of Stock{% endif %}</span>
+        <!-- Format Selector -->
+        <div style="margin: 16px 0 14px;">
+          <div style="font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 6px;">SELECT FORMAT</div>
+          <div style="display: flex; gap: 10px;">
+            {% for variant in product.variants %}
+              <button type="button" class="v2-format-pill {% if forloop.first %}active{% endif %}" data-variant-id="{{ variant.id }}">
+                {{ variant.title }}
               </button>
+            {% else %}
+              <button type="button" class="v2-format-pill active">Paperback</button>
+              <button type="button" class="v2-format-pill">Hardcover Deluxe</button>
+            {% endfor %}
+          </div>
+        </div>
 
-              {%- if product.available -%}
-                <button
-                  type="button"
-                  class="pdp-btn-buy-now"
-                  onclick="liquidBuyNow('{{ product.selected_or_first_available_variant.id }}')"
-                >
-                  <i data-lucide="zap" style="width: 16px; height: 16px;"></i>
-                  <span>Buy Now (Instant Checkout)</span>
-                </button>
-              {%- endif -%}
+        <!-- 2x2 Metadata Grid (Video 2 specs) -->
+        <div class="v2-solo-specs-grid">
+          <div class="v2-spec-item">
+            <span class="v2-spec-label">Edition</span>
+            <span class="v2-spec-value" id="v2MetaEdition">Heritage Edition</span>
+          </div>
+          <div class="v2-spec-item">
+            <span class="v2-spec-label">Publisher</span>
+            <span class="v2-spec-value" id="v2MetaPublisher">{{ product.vendor | default: "Rajkamal" }}</span>
+          </div>
+          <div class="v2-spec-item">
+            <span class="v2-spec-label">Binding &amp; Pages</span>
+            <span class="v2-spec-value" id="v2MetaFormat">Paperback &bull; 344p</span>
+          </div>
+          <div class="v2-spec-item">
+            <span class="v2-spec-label">ISBN-13</span>
+            <span class="v2-spec-value" id="v2MetaIsbn">{{ product.selected_or_first_available_variant.barcode | default: "9788174828118" }}</span>
+          </div>
+        </div>
 
-              <!-- WhatsApp COD Button -->
-              {%- capture wa_message -%}
-Hello Indigo Books Prayagraj! [Website Order]
-I would like to order:
-- Book: {{ product.title }}
-- Author: {{ product.vendor }}
-- Price: {{ product.price | money }}
-- SKU: {{ product.selected_or_first_available_variant.sku }}
-Please confirm Cash on Delivery availability and dispatch details.
-              {%- endcapture -%}
-              <a
-                href="https://wa.me/918933063306?text={{ wa_message | strip | url_encode }}"
-                target="_blank"
-                class="pdp-btn-wa-cod"
-              >
-                <i data-lucide="message-circle" style="width: 16px; height: 16px;"></i>
-                <span>Order via WhatsApp COD</span>
-              </a>
-            </div>
-          {%- endform -%}
+        <!-- Primary Action Buttons -->
+        <div class="v2-solo-actions-row">
+          <button type="button" class="v2-btn-preview-spread" onclick="window.toggleSoloBookSpread()">
+            📖 Open 2-Page Spread Preview
+          </button>
+          
+          <form method="post" action="/cart/add" id="MainAddToCartForm-{{ section.id }}" style="display: contents;">
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="MainVariantId-{{ section.id }}">
+            <button type="submit" class="v2-btn-add-bag">
+              Add to Reading Bag
+            </button>
+          </form>
 
-          <div class="pdp-bb-security">
-            <i data-lucide="lock" style="width: 13px; height: 13px; color: #16A34A;"></i>
-            <span>Secure 256-Bit Encrypted Ordering</span>
+          <button type="button" class="v2-btn-buy-now" onclick="if(typeof handleSoloBuyNow==='function'){ handleSoloBuyNow(); } else { fetch('/cart/add.js',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:'{{ product.selected_or_first_available_variant.id }}',quantity:1})}).finally(function(){ window.location.href='/checkout'; }); }">
+            ⚡ Buy Now (Instant Checkout)
+          </button>
+          <button type="button" class="v2-btn-wa-cod" onclick="window.open('https://wa.me/918933063306?text=Hello%20Indigo%20Books!%20I%20would%20like%20to%20order:%20{{ product.title | url_encode }}%20({{ product.price | money | url_encode }}).%20Please%20confirm%20availability!','_blank')">
+            💬 Order on WhatsApp COD
+          </button>
+        </div>
+
+        <!-- More by this Author Suggestions Row -->
+        <div class="v2-author-suggestions-section" style="margin-top: 22px; padding-top: 16px; border-top: 1px solid #EAE5DC;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+            <span style="font-size: 11px; font-weight: 800; color: #121212; text-transform: uppercase; letter-spacing: 0.12em;">
+              MORE BY {{ product.vendor | default: "THIS AUTHOR" | upcase }}
+            </span>
+            <a href="/search?q={{ product.vendor | url_encode }}" style="font-size: 11px; font-weight: 700; color: #E04F33; text-decoration: none; letter-spacing: 0.05em;">
+              SEE ALL &rarr;
+            </a>
+          </div>
+          <div class="v2-author-suggestions-grid" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px;">
+            {%- assign author_handle = product.vendor | handle -%}
+            {%- assign author_coll = collections[author_handle] -%}
+            {% if author_coll.products.size > 0 %}
+              {% for p in author_coll.products limit: 4 %}
+                <a href="{{ p.url }}" class="v2-author-sug-card" style="display: flex; align-items: center; gap: 8px; background: #FAF8F5; border: 1px solid #EAE5DC; border-radius: 8px; padding: 6px 10px; text-decoration: none; flex-shrink: 0;">
+                  <img src="{{ p.featured_image | image_url: width: 100 }}" style="width: 32px; height: 48px; object-fit: cover; border-radius: 3px;" alt="{{ p.title }}" />
+                  <div>
+                    <div style="font-size: 12px; font-weight: 600; color: #121212; max-width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.title }}</div>
+                    <div style="font-size: 11px; font-weight: 700; color: #E04F33;">{{ p.price | money }}</div>
+                  </div>
+                </a>
+              {% endfor %}
+            {% endif %}
           </div>
         </div>
       </div>
 
-    </div>
-
-    <!-- Bottom: More Books by {{ product.vendor }} -->
-    <div class="pdp-recommendations-sec">
-      <h3 style="font-family: 'Merriweather', Georgia, serif; font-size: 22px; font-weight: 700; color: #0F172A; margin: 0 0 6px;">
-        More Books by {{ product.vendor | default: 'This Author' }}
-      </h3>
-      <p style="font-size: 13.5px; color: #64748B; margin: 0 0 20px;">
-        Explore other celebrated titles and writings from the same literary voice.
-      </p>
-      
-      <div class="pdp-rec-grid">
-        {%- assign rec_count = 0 -%}
-        {%- for related_product in collections.all.products -%}
-          {%- if related_product.id != product.id and related_product.vendor == product.vendor and rec_count < 4 -%}
-            {%- assign rec_count = rec_count | plus: 1 -%}
-            <div class="catalog-card">
-              <div class="catalog-thumb" onclick="location.href='{{ related_product.url }}'" style="cursor: pointer;">
-                {%- if related_product.featured_image -%}
-                  <img src="{{ related_product.featured_image | image_url: width: 400 }}" alt="{{ related_product.title | escape }}" loading="lazy" />
-                {%- else -%}
-                  <img src="{{ 'hero-godan.jpg' | asset_url }}" alt="{{ related_product.title | escape }}" loading="lazy" />
-                {%- endif -%}
-              </div>
-              <div style="font-size: 10.5px; font-weight: 700; color: #B45309; text-transform: uppercase; margin-bottom: 4px;">
-                {{ related_product.type | default: 'IN STOCK' }}
-              </div>
-              <h3 style="font-family: 'Merriweather', Georgia, serif; font-size: 14px; font-weight: 700; color: #0F172A; line-height: 1.3; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-height: 36px;">
-                <a href="{{ related_product.url }}" style="color: inherit; text-decoration: none;">{{ related_product.title }}</a>
-              </h3>
-              <div style="font-size: 12px; color: #64748B; margin-bottom: 10px;">
-                {{ related_product.vendor }}
-              </div>
-              <div style="display: flex; align-items: baseline; gap: 8px; margin-top: auto; margin-bottom: 12px;">
-                <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 800; color: #0F172A; font-variant-numeric: lining-nums tabular-nums !important;">{{ related_product.price | money }}</span>
-              </div>
-              <a href="{{ related_product.url }}" class="btn-overview" style="width: 100%; justify-content: center; text-decoration: none; padding: 10px 0;">
-                <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> View Details
-              </a>
-            </div>
-          {%- endif -%}
-        {%- endfor -%}
-
-        {%- if rec_count < 4 -%}
-          {%- for related_product in collections.all.products -%}
-            {%- if related_product.id != product.id and related_product.vendor != product.vendor and rec_count < 4 -%}
-              {%- assign rec_count = rec_count | plus: 1 -%}
-              <div class="catalog-card">
-                <div class="catalog-thumb" onclick="location.href='{{ related_product.url }}'" style="cursor: pointer;">
-                  {%- if related_product.featured_image -%}
-                    <img src="{{ related_product.featured_image | image_url: width: 400 }}" alt="{{ related_product.title | escape }}" loading="lazy" />
-                  {%- else -%}
-                    <img src="{{ 'hero-godan.jpg' | asset_url }}" alt="{{ related_product.title | escape }}" loading="lazy" />
-                  {%- endif -%}
-                </div>
-                <div style="font-size: 10.5px; font-weight: 700; color: #B45309; text-transform: uppercase; margin-bottom: 4px;">
-                  {{ related_product.type | default: 'IN STOCK' }}
-                </div>
-                <h3 style="font-family: 'Merriweather', Georgia, serif; font-size: 14px; font-weight: 700; color: #0F172A; line-height: 1.3; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; min-height: 36px;">
-                  <a href="{{ related_product.url }}" style="color: inherit; text-decoration: none;">{{ related_product.title }}</a>
-                </h3>
-                <div style="font-size: 12px; color: #64748B; margin-bottom: 10px;">
-                  {{ related_product.vendor }}
-                </div>
-                <div style="display: flex; align-items: baseline; gap: 8px; margin-top: auto; margin-bottom: 12px;">
-                  <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 800; color: #0F172A; font-variant-numeric: lining-nums tabular-nums !important;">{{ related_product.price | money }}</span>
-                </div>
-                <a href="{{ related_product.url }}" class="btn-overview" style="width: 100%; justify-content: center; text-decoration: none; padding: 10px 0;">
-                  <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> View Details
-                </a>
-              </div>
-            {%- endif -%}
-          {%- endfor -%}
-        {%- endif -%}
+      <!-- State B: Swappable Full Excerpt View (inspect_frame_4.0s.jpg) -->
+      <div class="v2-solo-excerpt-content" id="v2ViewExcerpt" style="display: none;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <button type="button" class="v2-btn-close-excerpt" onclick="window.toggleSoloBookSpread(false)">
+            &larr; Back to Book Details
+          </button>
+        </div>
+        <h3 class="v2-excerpt-heading" id="v2ExcerptHeading">Excerpt</h3>
+        <div class="v2-excerpt-subtitle" id="v2ExcerptSubtitle">Book 1 &bull; Chapter 1</div>
+        <div class="v2-excerpt-full-text" id="v2ExcerptFullText">
+          {% if product.description != blank %}
+            <p style="margin-bottom: 14px;"><strong>Opening Passage &bull; Certified Authentic Typography</strong></p>
+            <p style="margin-bottom: 14px;">{{ product.description }}</p>
+          {% else %}
+            <p style="margin-bottom: 14px;"><strong>Opening Passage &bull; Certified Authentic Typography</strong></p>
+            <p style="margin-bottom: 14px;">The narrative opens in the timeless landscape of northern India. Every character carries the weight of history and the pulse of human emotion, rendered with uncompromising authenticity.</p>
+            <p style="margin-bottom: 14px;">This authoritative edition preserves the unaltered prose, cultural cadence, and historical context as intended by the author. Dispatched in weather-sealed, protective packaging directly from our Prayagraj facility.</p>
+          {% endif %}
+          <p><em>&bull; Certified 100% Original Publisher Paper Stock<br>&bull; Preserved for Scholars, Students &amp; Connoisseurs</em></p>
+        </div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button type="button" class="v2-btn-add-bag" style="flex: 1;" onclick="document.getElementById('MainAddToCartForm-{{ section.id }}').submit();">
+            Add to Reading Bag
+          </button>
+          <button type="button" class="v2-btn-buy-now" style="flex: 1;" onclick="if(typeof handleSoloBuyNow==='function'){ handleSoloBuyNow(); } else { fetch('/cart/add.js',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:'{{ product.selected_or_first_available_variant.id }}',quantity:1})}).finally(function(){ window.location.href='/checkout'; }); }">
+            ⚡ Buy Now (Instant Checkout)
+          </button>
+        </div>
       </div>
     </div>
 
+    <!-- Right Vertical Action Dock (inspect_frame_2.0s.jpg & inspect_frame_4.0s.jpg) -->
+    <aside class="v2-solo-action-dock">
+      <button type="button" class="v2-dock-btn" id="v2DockSaveBtn" title="Save to Reading List" onclick="this.classList.toggle('active'); this.style.color=this.classList.contains('active')?'#E04F33':'#444';">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+        <span>Save</span>
+      </button>
+      <button type="button" class="v2-dock-btn active" id="v2DockPreviewBtn" title="Open 2-Page Spread Preview" onclick="window.toggleSoloBookSpread()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon></svg>
+        <span>Preview</span>
+      </button>
+      <button type="button" class="v2-dock-btn" id="v2DockGetBtn" title="Instant Buy" onclick="if(typeof handleSoloBuyNow==='function'){ handleSoloBuyNow(); } else { fetch('/cart/add.js',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:'{{ product.selected_or_first_available_variant.id }}',quantity:1})}).finally(function(){ window.location.href='/checkout'; }); }">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+        <span>Get Book</span>
+      </button>
+    </aside>
+
+    <!-- Sticky Mobile Buy Bar (Visible only on mobile <= 900px) -->
+    <div class="v2-solo-mobile-buy-bar">
+      <div style="flex: 1; min-width: 0;">
+        <div style="font-size: 10.5px; color: #777; text-transform: uppercase; letter-spacing: 0.04em;" id="v2MobileBuyBarFormat">{{ product.selected_or_first_available_variant.title | default: 'Paperback' }}</div>
+        <div style="font-size: 18px; font-weight: 700; color: #121212;" id="v2MobileBuyBarPrice">{{ product.price | money }}</div>
+      </div>
+      <button type="button" onclick="if(typeof handleSoloBuyNow==='function'){ handleSoloBuyNow(); } else { fetch('/cart/add.js',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:'{{ product.selected_or_first_available_variant.id }}',quantity:1})}).finally(function(){ window.location.href='/checkout'; }); }" style="background: #121212; color: #FFFFFF; border: none; border-radius: 999px; padding: 11px 18px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+        ⚡ Buy Now
+      </button>
+      <button type="button" onclick="if(typeof handleSoloAddToCart==='function'){ handleSoloAddToCart(); } else { document.getElementById('MainAddToCartForm-{{ section.id }}').submit(); }" style="background: #25D366; color: #FFFFFF; border: none; border-radius: 999px; padding: 11px 16px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+        <span>Add to Bag</span>
+      </button>
+    </div>
   </div>
 </section>
 
-<script>
-  function filterCatalogByAuthor(author) {
-    if (!author) return;
-    window.location.href = '/search?q=' + encodeURIComponent(author);
-  }
-
-  function toggleMainProductExcerpt() {
-    var box = document.getElementById('MainProductExcerptBox');
-    if (box) box.classList.toggle('open');
-  }
-
-  function decrementLiquidQty() {
-    var input = document.getElementById('LiquidProductQuantity');
-    if (input && parseInt(input.value) > 1) {
-      input.value = parseInt(input.value) - 1;
-    }
-  }
-
-  function incrementLiquidQty() {
-    var input = document.getElementById('LiquidProductQuantity');
-    if (input && parseInt(input.value) < 99) {
-      input.value = parseInt(input.value) + 1;
-    }
-  }
-
-  function liquidBuyNow(variantId) {
-    var input = document.getElementById('LiquidProductQuantity');
-    var qty = input ? input.value : 1;
-    window.location.href = '/cart/' + variantId + ':' + qty;
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
-    }
-  });
-</script>
-
 {% schema %}
 {
-  "name": "Main Product Details",
+  "name": "Main Product Studio 3D",
   "tag": "section",
-  "class": "indigo-main-product-section",
-  "settings": [],
-  "presets": [
+  "class": "section",
+  "settings": [
     {
-      "name": "Main Product Details"
+      "type": "checkbox",
+      "id": "enable_spread_preview",
+      "label": "Enable 3D 2-Page Spread Preview",
+      "default": true
     }
   ]
 }
 {% endschema %}
-

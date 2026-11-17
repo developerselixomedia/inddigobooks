@@ -162,7 +162,7 @@ header > nav {
   max-height: none !important;
   background-color: #FAF8F5 !important;
   border-bottom: 1px solid rgba(15, 23, 42, 0.12) !important;
-  z-index: 99999 !important;
+  z-index: 10000000 !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
   display: block !important;
   visibility: visible !important;
@@ -2306,16 +2306,13 @@ header > nav {
     background-color: #FAF8F5 !important;
     border-bottom: 1px solid rgba(15, 23, 42, 0.12) !important;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
-    z-index: 99999 !important;
+    z-index: 10000000 !important;
     height: auto !important;
     min-height: unset !important;
     overflow: visible !important;
   }
 
-  header > div,
-  header nav,
-  .navbar-container,
-  .navbar-inner {
+  .navbar-container {
     display: flex !important;
     flex-wrap: wrap !important;
     align-items: center !important;
@@ -2333,7 +2330,7 @@ header > nav {
   /* ROW 1 LEFT: Official INDIGO BOOKS Blue Emblem + Wordmark (Always 100% Visible!) */
   .brand-logo-wrap,
   .brand-link,
-  header a:first-of-type,
+  .legacy-brand-link,
   .navbar-container > div:first-child {
     order: 1 !important;
     display: inline-flex !important;
@@ -4439,7 +4436,7 @@ header > nav {
   inset: 0 !important;
   background: rgba(15, 23, 42, 0.6) !important;
   backdrop-filter: blur(4px) !important;
-  z-index: 9999998 !important;
+  z-index: 24999999 !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -4467,7 +4464,7 @@ header > nav {
   max-height: 100vh !important;
   background: #FFFFFF !important;
   box-shadow: -8px 0 36px rgba(15, 23, 42, 0.3) !important;
-  z-index: 9999999 !important;
+  z-index: 25000000 !important;
   display: flex !important;
   flex-direction: column !important;
   transform: translateX(100%) !important;
@@ -4528,7 +4525,7 @@ header > nav {
 
 .btn-checkout {
   width: 100% !important;
-  background: #0066B3 !important;
+  background: #121212 !important;
   color: #FFFFFF !important;
   border: none !important;
   border-radius: 8px !important;
@@ -4540,11 +4537,11 @@ header > nav {
   justify-content: center !important;
   gap: 10px !important;
   cursor: pointer !important;
-  transition: background 0.2s ease, transform 0.15s ease !important;
-  box-shadow: 0 4px 12px rgba(0, 102, 179, 0.25) !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 4px 14px rgba(18, 18, 18, 0.25) !important;
 }
 .btn-checkout:hover {
-  background: #004D86 !important;
+  background: #E04F33 !important;
   transform: translateY(-1px) !important;
 }
 
@@ -5292,7 +5289,7 @@ header > nav {
   background: rgba(15, 23, 42, 0.75) !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
-  z-index: 1000000 !important;
+  z-index: 30000000 !important;
   align-items: center !important;
   justify-content: center !important;
   padding: 16px !important;
@@ -5324,7 +5321,7 @@ header > nav {
   box-sizing: border-box !important;
   box-shadow: 0 24px 48px rgba(0,0,0,0.3) !important;
   position: relative !important;
-  z-index: 1000001 !important;
+  z-index: 30000001 !important;
 }
 
 /* =========================================================================
@@ -5585,7 +5582,7 @@ header > nav {
   max-height: 100vh !important;
   background: #FFFFFF !important;
   box-shadow: -8px 0 36px rgba(15, 23, 42, 0.3) !important;
-  z-index: 9999999 !important;
+  z-index: 25000000 !important;
   display: flex !important;
   flex-direction: column !important;
   transform: translateX(100%) !important;
@@ -5610,7 +5607,7 @@ header > nav {
   background: rgba(15, 23, 42, 0.6) !important;
   backdrop-filter: blur(4px) !important;
   -webkit-backdrop-filter: blur(4px) !important;
-  z-index: 9999998 !important;
+  z-index: 24999999 !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -6161,7 +6158,53 @@ header > nav {
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45) !important;
     border: 1px solid #E2E8F0 !important;
     position: relative !important;
-    z-index: 1000001 !important;
+    z-index: 30000001 !important;
     margin: auto !important;
   }
+
+/* Luxury Editorial Search Results & Cart Drawer Styles */
+.v2-search-book-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
+  border-color: #E04F33 !important;
+}
+.v2-search-book-card .v2-card-preview-btn:hover {
+  background: #FFFFFF !important;
+  border-color: #E04F33 !important;
+  color: #E04F33 !important;
+}
+.v2-search-book-card .v2-card-quick-btn:hover {
+  background: #E04F33 !important;
+}
+#search-results-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+  gap: 24px !important;
+  padding: 24px 0 60px !important;
+}
+
+/* Dedicated Views & Modal Stacking Order Guarantees */
+#indigo-search-results-view {
+  position: relative !important;
+  z-index: 20000000 !important;
+}
+#indigo-solo-product-view {
+  z-index: 20000000 !important;
+}
+#cartDrawer, .cart-drawer, .cart-drawer-panel {
+  z-index: 25000000 !important;
+}
+#cartOverlay, .cart-overlay, .cart-drawer-overlay {
+  z-index: 24999999 !important;
+}
+.indigo-modal-overlay,
+.express-checkout-modal-backdrop,
+#expressPhoneCheckoutModal,
+#orderConfirmationModal,
+#indigo-express-checkout-modal,
+#indigo-order-success-modal,
+#overviewModalOverlay,
+#loginModalOverlay {
+  z-index: 30000000 !important;
+}
 """

@@ -143,14 +143,32 @@ window.returnToHome = function(event) {
     if (typeof event.preventDefault === 'function') event.preventDefault();
     if (typeof event.stopPropagation === 'function') event.stopPropagation();
   }
+
+  // 1. Unify and reset navigation state back to homepage
+  window.previousViewBeforeSolo = 'home';
+  if (typeof previousViewBeforeSolo !== 'undefined') previousViewBeforeSolo = 'home';
+
+  // 2. Hide single product views & reset body/HTML scrolling
   const pdpView = document.getElementById('single-product-page-view');
   if (pdpView) pdpView.style.display = 'none';
 
+  const soloView = document.getElementById('indigo-solo-product-view');
+  if (soloView) {
+    soloView.classList.remove('is-active');
+    soloView.style.display = 'none';
+  }
+  document.documentElement.classList.remove('solo-page-active');
+  document.body.classList.remove('solo-page-active');
+  document.body.style.removeProperty('overflow');
+  document.documentElement.style.removeProperty('overflow');
+
+  // 3. Explicitly hide dedicated search results view & clear queries
   const searchView = document.getElementById('indigo-search-results-view');
   if (searchView) searchView.style.display = 'none';
   if (typeof activeSearchQuery !== 'undefined') activeSearchQuery = '';
   if (typeof currentSearchResultsList !== 'undefined') currentSearchResultsList = [];
 
+  // 4. Close any overview or quick-order modals
   if (typeof window.forceCloseOverviewAndModals === 'function') {
     window.forceCloseOverviewAndModals();
   }
@@ -158,17 +176,24 @@ window.returnToHome = function(event) {
     closeOverviewModal();
   }
 
+  // 5. Hide all search dropdowns & suggestion boxes
   if (typeof hideAllSearchDropdowns === 'function') {
     hideAllSearchDropdowns();
   }
-  ['hero-search-input', 'catalog-search-input', 'results-search-input'].forEach(function(id) {
+  const editResults = document.getElementById('editorialSearchResults');
+  if (editResults) editResults.style.display = 'none';
+
+  // 6. Clear ALL search inputs across the whole bookstore
+  ['editorialSearchInput', 'hero-search-input', 'catalog-search-input', 'results-search-input', 'v2ArchiveSearchInput'].forEach(function(id) {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
 
+  // 7. Reveal homepage view cleanly
   const homeView = document.getElementById('homepage-view');
   if (homeView) homeView.style.display = 'block';
 
+  // 8. Clean URL hash
   try {
     history.pushState(null, null, window.location.pathname);
   } catch(err) {

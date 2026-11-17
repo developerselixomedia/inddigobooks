@@ -1,0 +1,6 @@
+with open('editorial_video_theme.py', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+idx = text.find("document.getElementById('v2MetaPublisher')")
+if idx != -1:
+    print(text[idx-100:idx+800])

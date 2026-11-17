@@ -1,0 +1,8 @@
+<div class="add-to-cart-block" {{ block.shopify_attributes }}>
+  <button type="submit" name="add" class="btn btn--primary btn--full-width" {% unless product.available %}disabled{% endunless %}>
+    {% if product.available %}Add to Cart{% else %}Sold Out{% endif %}
+  </button>
+</div>
+{% schema %}
+{ "name": "Add To Cart", "settings": [] }
+{% endschema %}

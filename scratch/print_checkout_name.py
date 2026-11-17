@@ -1,0 +1,6 @@
+with open('store_modals_and_search.py', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+idx = text.find('Full Delivery Name')
+if idx != -1:
+    print(text[idx-100:idx+400])

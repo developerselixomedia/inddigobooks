@@ -1,0 +1,11 @@
+<div class="contact-form-block" {{ block.shopify_attributes }}>
+  {% form 'contact' %}
+    <input type="text" name="contact[name]" placeholder="Your Name" required class="form-input">
+    <input type="email" name="contact[email]" placeholder="Your Email" required class="form-input">
+    <textarea name="contact[body]" placeholder="Your Message or Bulk Book Requirement" rows="4" class="form-input"></textarea>
+    <button type="submit" class="btn btn--primary">Send Message</button>
+  {% endform %}
+</div>
+{% schema %}
+{ "name": "Contact Form", "settings": [] }
+{% endschema %}

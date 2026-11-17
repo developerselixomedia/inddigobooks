@@ -1,0 +1,5 @@
+{%- if article.image -%}
+  <div class="blog-post-featured-image" {{ block.shopify_attributes }}>
+    <img src="{{ article.image | image_url: width: 1200 }}" alt="{{ article.title | escape }}" loading="eager">
+  </div>
+{%- endif -%}

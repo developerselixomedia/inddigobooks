@@ -1,0 +1,11 @@
+<a href="#" class="popup-link-block" data-action="open-popup" {{ block.shopify_attributes }}>
+  {{ block.settings.label | default: 'Size & Reading Guide' }}
+</a>
+{% schema %}
+{
+  "name": "Popup Link",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "Size & Reading Guide" }
+  ]
+}
+{% endschema %}

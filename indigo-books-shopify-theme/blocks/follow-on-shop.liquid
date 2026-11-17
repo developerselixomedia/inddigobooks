@@ -1,0 +1,6 @@
+<div class="follow-on-shop-block" {{ block.shopify_attributes }}>
+  {{ shop | login_button: action: 'follow' }}
+</div>
+{% schema %}
+{ "name": "Follow on Shop", "settings": [] }
+{% endschema %}

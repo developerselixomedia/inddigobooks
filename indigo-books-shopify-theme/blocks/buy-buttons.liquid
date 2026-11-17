@@ -1,0 +1,9 @@
+<div class="buy-buttons-block" {{ block.shopify_attributes }}>
+  <button type="submit" class="btn btn--primary btn--full-width">
+    Add to Cart &bull; {{ product.price | money }}
+  </button>
+  {% render 'whatsapp-button', mode: 'product', product: product, class: 'mt-2' %}
+</div>
+{% schema %}
+{ "name": "Buy Buttons & WhatsApp", "settings": [] }
+{% endschema %}

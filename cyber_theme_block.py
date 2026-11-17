@@ -25,9 +25,14 @@ CYBER_STYLE = """<style id="indigo-futuristic-cyber-theme">
   /* Global Page Background & Typography */
   html, body {
     background-color: var(--cyber-bg) !important;
+    background: var(--cyber-bg) !important;
     color: var(--cyber-text) !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
     overflow-x: hidden !important;
+  }
+  main {
+    background-color: var(--cyber-bg) !important;
+    background: var(--cyber-bg) !important;
   }
 
   /* Animated Starfield / Cyber Grid Background Effect */
@@ -50,7 +55,7 @@ CYBER_STYLE = """<style id="indigo-futuristic-cyber-theme">
   .podium-container, .rekhta-container, .voices-container,
   .category-bento-showcase, .vault-container, .catalog-container,
   .phs-container, .footer-container,
-  #bestsellers-podium > div, #mehfil-e-rekhta > div,
+  #bestsellers-podium > div, #mehfil-rekhta > div, #mehfil-e-rekhta > div,
   #indian-voices-section > div, #law-academic-vault > div, #shop-all-catalog > div {
     width: 100% !important;
     max-width: 1320px !important;
@@ -62,21 +67,94 @@ CYBER_STYLE = """<style id="indigo-futuristic-cyber-theme">
   }
 
   /* Cyberpunk Glassmorphism Navigation Bar */
-  nav, .navbar, header {
-    background: rgba(3, 7, 18, 0.88) !important;
+  .site-navbar, .main-navbar, header > nav, .site-header, header, nav, .navbar {
+    background: rgba(3, 7, 18, 0.92) !important;
+    background-color: rgba(3, 7, 18, 0.92) !important;
     backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
     border-bottom: 1px solid var(--cyber-border) !important;
     position: sticky !important;
     top: 0 !important;
-    z-index: 1000 !important;
+    z-index: 99999 !important;
+    box-shadow: 0 4px 30px rgba(0, 245, 255, 0.08) !important;
+  }
+  .site-navbar a, .navbar-inner a, .nav-menu a, .brand-link, .brand-title, .brand-text, .nav-item a, .nav-link, .nav-text {
+    color: var(--cyber-text) !important;
+  }
+  .site-navbar .indigo-emblem-svg path {
+    fill: var(--cyber-cyan) !important;
+  }
+  .site-navbar .nav-menu a:hover, .navbar-inner a:hover {
+    color: var(--cyber-cyan) !important;
+  }
+  .nav-action-btn, .cart-button, .header-cart-btn, .btn-back-to-store {
+    background: rgba(15, 23, 42, 0.85) !important;
+    border: 1px solid var(--cyber-border) !important;
+    color: var(--cyber-text) !important;
+  }
+  .nav-action-btn:hover, .cart-button:hover, .btn-back-to-store:hover {
+    border-color: var(--cyber-cyan) !important;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.3) !important;
   }
 
   /* Futuristic Glowing Hero Section */
-  #indigo-video-hero, #indigo-hero-master, .ivh-section {
-    background: radial-gradient(circle at 50% 20%, rgba(15, 23, 42, 0.9) 0%, var(--cyber-bg) 80%) !important;
+  #indigo-video-hero, #indigo-hero-master, .ivh-section, .hero-section {
+    background: radial-gradient(circle at 50% 20%, rgba(15, 23, 42, 0.95) 0%, var(--cyber-bg) 85%) !important;
     border-bottom: 1px solid var(--cyber-border) !important;
     position: relative !important;
     overflow: visible !important;
+  }
+
+  /* Hide Old Marigold Wave, Diya Lamps, and Catenary Bulbs */
+  #indigo-video-hero svg[style*="marigoldFloorGrad"],
+  #indigo-video-hero svg[viewBox="0 0 680 260"],
+  #indigo-video-hero svg[viewBox="0 0 450 160"],
+  #indigo-video-hero svg[viewBox="0 0 260 100"],
+  #indigo-video-hero .hero-bg-clip > svg:not(:first-child) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  #indigo-video-hero .hero-topleft-watermark svg {
+    stroke: rgba(0, 245, 255, 0.2) !important;
+  }
+  #indigo-video-hero h1, .ivh-title, .hero-title {
+    color: var(--cyber-text) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+  }
+  #indigo-video-hero h1 .ivh-story-italic, #indigo-video-hero h1 em {
+    color: var(--cyber-cyan) !important;
+    text-shadow: 0 0 20px rgba(0, 245, 255, 0.6) !important;
+    font-style: normal !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+  }
+  #indigo-video-hero p, .ivh-subtitle {
+    color: var(--cyber-muted) !important;
+  }
+
+  /* Hero Book Cards */
+  .hero-book-card, .ivh-book-card {
+    background: rgba(15, 23, 42, 0.75) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid var(--cyber-border) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 0 20px rgba(0, 245, 255, 0.1) !important;
+    color: var(--cyber-text) !important;
+  }
+  .hero-book-card:hover, .ivh-book-card:hover {
+    border-color: var(--cyber-cyan) !important;
+    box-shadow: 0 0 25px rgba(0, 245, 255, 0.35) !important;
+    transform: translateY(-4px) !important;
+  }
+  .hero-book-title {
+    color: var(--cyber-text) !important;
+  }
+  .hero-book-author {
+    color: var(--cyber-muted) !important;
+  }
+  .hero-book-price {
+    color: var(--cyber-cyan) !important;
   }
 
   /* Unclipped Cyber Search Pill & Live Dropdown */
@@ -161,23 +239,56 @@ CYBER_STYLE = """<style id="indigo-futuristic-cyber-theme">
     text-align: left !important;
   }
 
-  /* Mathematical Holographic Book Card Grid */
-  .catalog-card, .vault-card, .rekhta-card, .indigo-book-card, .bento-horiz-card, .bento-left-spotlight {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    height: 100% !important;
-    padding: 20px !important;
-    border-radius: 16px !important;
-    box-sizing: border-box !important;
-    position: relative !important;
+  /* Marquee & Stats */
+  .marquee-ribbon {
+    background: rgba(3, 7, 18, 0.95) !important;
+    border-top: 1px solid var(--cyber-border) !important;
+    border-bottom: 1px solid var(--cyber-border) !important;
+    color: var(--cyber-cyan) !important;
+  }
+  .marquee-item {
+    color: var(--cyber-cyan) !important;
+    text-shadow: 0 0 8px rgba(0, 245, 255, 0.4) !important;
+  }
+  .stats-bar {
+    background: rgba(3, 7, 18, 0.95) !important;
+    border-bottom: 1px solid var(--cyber-border) !important;
+  }
+  .stat-card {
     background: rgba(15, 23, 42, 0.65) !important;
+    border: 1px solid var(--cyber-border) !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(10px) !important;
+  }
+  .stat-number {
+    color: var(--cyber-cyan) !important;
+    text-shadow: 0 0 15px rgba(0, 245, 255, 0.5) !important;
+  }
+  .stat-label {
+    color: var(--cyber-muted) !important;
+  }
+
+  /* All Catalog Sections & Cards */
+  section, .site-section, main > section,
+  #bestsellers-podium, #mehfil-rekhta, #category-bento-showcase, #law-academic-vault, #shop-all-catalog {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: var(--cyber-text) !important;
+  }
+  .podium-card, .podium-right-card, .podium-center-card,
+  .rekhta-card, .rekhta-books-grid > div,
+  .bento-card, .bento-horiz-card, .bento-left-spotlight,
+  .vault-card, .catalog-card, .indigo-book-card {
+    background: rgba(15, 23, 42, 0.7) !important;
     backdrop-filter: blur(12px) !important;
     border: 1px solid var(--cyber-border) !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+    color: var(--cyber-text) !important;
     transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
-  .catalog-card:hover, .vault-card:hover, .rekhta-card:hover, .indigo-book-card:hover {
+  .podium-card:hover, .podium-right-card:hover, .rekhta-card:hover, .rekhta-books-grid > div:hover,
+  .bento-card:hover, .vault-card:hover, .catalog-card:hover, .indigo-book-card:hover {
     border-color: var(--cyber-cyan) !important;
     box-shadow: 0 0 30px rgba(0, 245, 255, 0.25) !important;
     transform: translateY(-5px) !important;
@@ -191,21 +302,21 @@ CYBER_STYLE = """<style id="indigo-futuristic-cyber-theme">
     flex-shrink: 0 !important;
     position: relative !important;
   }
-  .card-book-title {
+  h2, h3, .section-title, .podium-title, .rekhta-title {
+    color: var(--cyber-text) !important;
+  }
+  .section-subtitle, .rekhta-subtitle, .section-desc {
+    color: var(--cyber-muted) !important;
+  }
+  .card-book-title, .podium-book-heading, .rekhta-card-title, .catalog-card-title, .bento-title, .vault-card-title {
     font-family: 'Merriweather', Georgia, serif !important;
     font-size: 15.5px !important;
     font-weight: 700 !important;
     line-height: 1.4 !important;
-    height: 44px !important;
-    min-height: 44px !important;
-    max-height: 44px !important;
-    margin: 0 0 6px 0 !important;
     color: var(--cyber-text) !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+  }
+  .podium-book-author, .rekhta-card-author, .catalog-card-author, .vault-card-author {
+    color: var(--cyber-muted) !important;
   }
   .card-bottom-footer {
     margin-top: auto !important;
@@ -213,40 +324,82 @@ CYBER_STYLE = """<style id="indigo-futuristic-cyber-theme">
     border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
     width: 100% !important;
   }
-
-  /* Holographic Product Details Page (PDP) & Glass Cards */
-  #single-product-page-view, #indigo-solo-product-view {
-    background: var(--cyber-bg) !important;
-    color: var(--cyber-text) !important;
+  .podium-book-price, .rekhta-card-price, .catalog-card-price, .vault-card-price {
+    color: var(--cyber-cyan) !important;
   }
-  .pdp-cover-card, .pdp-info-header-card, .pdp-tabs-container, .pdp-buy-box, .pdp-trust-card {
+  .vault-tab-btn {
+    background: rgba(15, 23, 42, 0.8) !important;
+    border: 1px solid var(--cyber-border) !important;
+    color: var(--cyber-muted) !important;
+  }
+  .vault-tab-btn.active {
+    background: rgba(0, 245, 255, 0.15) !important;
+    border-color: var(--cyber-cyan) !important;
+    color: var(--cyber-cyan) !important;
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.3) !important;
+  }
+
+  /* PDP Laptop View Layout Optimization & Glassmorphism */
+  @media (min-width: 901px) {
+    .product-pdp-grid {
+      display: grid !important;
+      grid-template-columns: 340px 1fr 310px !important;
+      gap: 24px !important;
+      align-items: start !important;
+      margin-bottom: 20px !important;
+    }
+    .pdp-center-col {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 16px !important;
+    }
+    .pdp-description-card, .pdp-specs-card, #pdpTabPaneDescription, #pdpTabPaneSpecs {
+      min-height: auto !important;
+      margin-bottom: 0 !important;
+    }
+    .pdp-recommendations-sec {
+      margin-top: 24px !important;
+      padding-top: 20px !important;
+      border-top: 1px solid var(--cyber-border) !important;
+    }
+  }
+  .product-page-wrapper, .pdp-cover-card, .pdp-trust-card, .pdp-buy-box, .pdp-description-card, .pdp-specs-card {
     background: rgba(15, 23, 42, 0.8) !important;
     backdrop-filter: blur(16px) !important;
     border: 1px solid var(--cyber-border) !important;
     color: var(--cyber-text) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
   }
-  .pdp-book-title {
-    color: #FFFFFF !important;
+  .pdp-book-title, .pdp-bb-price, #pdpAuthorShelfHeading {
+    color: var(--cyber-text) !important;
   }
-  .pdp-selling-price {
-    color: var(--cyber-cyan) !important;
-    text-shadow: 0 0 12px rgba(0, 245, 255, 0.4) !important;
+  .pdp-specs-table td, .pdp-specs-table th {
+    color: var(--cyber-text) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
   }
-  .pdp-genre-pill {
-    background: rgba(0, 245, 255, 0.12) !important;
-    color: var(--cyber-cyan) !important;
-    border: 1px solid rgba(0, 245, 255, 0.3) !important;
+  .pdp-specs-table th {
+    background: rgba(30, 41, 59, 0.6) !important;
+  }
+  .pdp-tab-btn {
+    color: var(--cyber-muted) !important;
+    background: transparent !important;
   }
   .pdp-tab-btn.active {
     color: var(--cyber-cyan) !important;
-    border-bottom: 2px solid var(--cyber-cyan) !important;
+    border-bottom-color: var(--cyber-cyan) !important;
   }
-  .pdp-tech-table th {
-    background: rgba(30, 41, 59, 0.6) !important;
+
+  /* Global Footer */
+  footer, .site-footer {
+    background: #02040A !important;
+    border-top: 1px solid var(--cyber-border) !important;
     color: var(--cyber-muted) !important;
   }
-  .pdp-tech-table td {
-    color: var(--cyber-text) !important;
+  footer a, .site-footer a {
+    color: var(--cyber-muted) !important;
+  }
+  footer a:hover, .site-footer a:hover {
+    color: var(--cyber-cyan) !important;
   }
 </style>"""
 

@@ -1,0 +1,13 @@
+<div class="image-block" {{ block.shopify_attributes }}>
+  {%- if block.settings.image != blank -%}
+    <img src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.image.alt | escape }}" loading="lazy">
+  {%- endif -%}
+</div>
+{% schema %}
+{
+  "name": "Image",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" }
+  ]
+}
+{% endschema %}

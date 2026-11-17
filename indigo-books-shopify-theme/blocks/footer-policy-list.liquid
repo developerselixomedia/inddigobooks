@@ -1,0 +1,8 @@
+<ul class="footer-policy-list" {{ block.shopify_attributes }}>
+  {%- for policy in shop.policies -%}
+    <li><a href="{{ policy.url }}">{{ policy.title }}</a></li>
+  {%- endfor -%}
+</ul>
+{% schema %}
+{ "name": "Policy List", "settings": [] }
+{% endschema %}

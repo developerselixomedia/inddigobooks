@@ -1,0 +1,3 @@
+{%- if collection.image -%}
+  <img src="{{ collection.image | image_url: width: 600 }}" alt="{{ collection.title | escape }}" loading="lazy" {{ block.shopify_attributes }}>
+{%- endif -%}

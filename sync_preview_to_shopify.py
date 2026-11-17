@@ -1,5 +1,5 @@
 from prepare_master_blocks import MASTER_STYLE, MASTER_SCRIPT
-from cyber_theme_block import CYBER_STYLE, CYBER_SCRIPT
+from editorial_video_theme import EDITORIAL_STYLE, EDITORIAL_SCRIPT
 # -*- coding: utf-8 -*-
 """
 sync_preview_to_shopify.py
@@ -55,7 +55,7 @@ def sync_preview_to_shopify():
     script_js = '\n\n'.join([s.strip() for s in raw_scripts if s.strip()])
 
     # 3. Extract Navbar
-    nav_start = html.find('<header class="site-navbar"')
+    nav_start = html.find('<header class="site-navbar')
     nav_end = html.find('</header>', nav_start) + len('</header>')
     assert nav_start != -1 and nav_end != -1, "Could not find <header class='site-navbar'>"
     navbar_html = html[nav_start:nav_end].strip()
@@ -112,7 +112,7 @@ def sync_preview_to_shopify():
 
     assert '<div id="homepage-view"' in main_content_html, 'homepage-view missing from main content!'
     assert '<div id="indigo-search-results-view"' in main_content_html, 'indigo-search-results-view missing from main content!'
-    assert '<div id="single-product-page-view"' in main_content_html, 'single-product-page-view missing from main content!'
+    assert '<div id="indigo-solo-product-view"' in main_content_html or '<div id="single-product-page-view"' in main_content_html, 'solo product view missing from main content!'
     print("All 3 views (homepage, search results, single product) verified in main content!")
 
     print(f"Extracted CSS: {len(css_content)} chars")
@@ -178,33 +178,44 @@ def sync_preview_to_shopify():
     live_products_injection = """// Dynamic Shopify Asset Root (Points JavaScript getAssetUrl to Shopify CDN)
 window.SHOPIFY_ASSET_URL_ROOT = "{{ 'theme.css' | asset_url }}".replace(/theme\\.css(\\?.*)?$/, '');
 
-// Dynamic Shopify Live Products Injection (Paginated 250 products from Shopify Admin)
+// Dynamic Shopify Live Products Injection (250 products from Shopify Admin with variants)
 window.SHOPIFY_LIVE_PRODUCTS = [
   {%- paginate collections.all.products by 250 -%}
-    {%- for product in collections.all.products -%}
-      {
-        id: {{ product.id | json }},
-        variantId: {{ product.selected_or_first_available_variant.id | default: product.variants.first.id | json }},
-        variant_id: {{ product.selected_or_first_available_variant.id | default: product.variants.first.id | json }},
-        title: {{ product.title | json }},
-        handle: {{ product.handle | json }},
-        author: {{ product.vendor | default: "Indigo Books" | json }},
-        vendor: {{ product.vendor | default: "Indigo Books" | json }},
-        type: {{ product.type | json }},
-        price: "₹{{ product.price | money_without_currency }}",
-        compare_at_price: "",
-        oldPrice: "",
-        priceNum: {{ product.price | divided_by: 100.0 }},
-        discount: "",
-        image: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
-        coverUrl: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
-        cover: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
-        format: {% if product.variants.first.title != 'Default Title' %}{{ product.variants.first.title | json }}{% else %}"Paperback"{% endif %},
-        url: {{ product.url | json }},
-        tags: {{ product.tags | json }},
-        description: {{ product.description | strip_html | truncate: 280 | json }}
-      }{%- unless forloop.last -%},{%- endunless -%}
-    {%- endfor -%}
+  {%- for product in collections.all.products -%}
+    {
+      id: {{ product.id | json }},
+      variantId: {{ product.selected_or_first_available_variant.id | default: product.variants.first.id | json }},
+      variant_id: {{ product.selected_or_first_available_variant.id | default: product.variants.first.id | json }},
+      title: {{ product.title | json }},
+      handle: {{ product.handle | json }},
+      author: {{ product.vendor | default: "Indigo Books" | json }},
+      vendor: {{ product.vendor | default: "Indigo Books" | json }},
+      type: {{ product.type | json }},
+      price: "₹{{ product.price | money_without_currency }}",
+      compare_at_price: "",
+      oldPrice: "",
+      priceNum: {{ product.price | divided_by: 100.0 }},
+      discount: "",
+      image: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
+      coverUrl: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
+      cover: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
+      format: {% if product.variants.first.title != 'Default Title' %}{{ product.variants.first.title | json }}{% else %}"Paperback"{% endif %},
+      variants: [
+        {%- for v in product.variants -%}
+          {
+            id: {{ v.id | json }},
+            title: {{ v.title | json }},
+            price: {{ v.price | divided_by: 100.0 }},
+            available: {{ v.available | json }},
+            sku: {{ v.sku | json }}
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ],
+      url: {{ product.url | json }},
+      tags: {{ product.tags | json }},
+      description: {{ product.description | strip_html | truncate: 280 | json }}
+    }{%- unless forloop.last -%},{%- endunless -%}
+  {%- endfor -%}
   {%- endpaginate -%}
 ];"""
 
@@ -218,28 +229,26 @@ window.SHOPIFY_LIVE_PRODUCTS = [
 <script>
   if (typeof window !== 'undefined' && (!window.SHOPIFY_LIVE_PRODUCTS || window.SHOPIFY_LIVE_PRODUCTS.length === 0)) {
     window.SHOPIFY_LIVE_PRODUCTS = [
-      {%- paginate collections.all.products by 250 -%}
-        {%- for product in collections.all.products -%}
-          {
-            id: {{ product.id | json }},
-            title: {{ product.title | json }},
-            handle: {{ product.handle | json }},
-            author: {{ product.vendor | default: "Indigo Books" | json }},
-            vendor: {{ product.vendor | default: "Indigo Books" | json }},
-            type: {{ product.type | json }},
-            price: "₹{{ product.price | money_without_currency }}",
-            compare_at_price: "",
-            oldPrice: "",
-            image: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
-            coverUrl: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
-            cover: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
-            variant_id: {{ product.selected_or_first_available_variant.id | json }},
-            variantId: {{ product.selected_or_first_available_variant.id | json }},
-            url: {{ product.url | json }},
-            description: {{ product.description | strip_html | truncate: 280 | json }}
-          }{%- unless forloop.last -%},{%- endunless -%}
-        {%- endfor -%}
-      {%- endpaginate -%}
+      {%- for product in collections.all.products limit: 250 -%}
+        {
+          id: {{ product.id | json }},
+          title: {{ product.title | json }},
+          handle: {{ product.handle | json }},
+          author: {{ product.vendor | default: "Indigo Books" | json }},
+          vendor: {{ product.vendor | default: "Indigo Books" | json }},
+          type: {{ product.type | json }},
+          price: "₹{{ product.price | money_without_currency }}",
+          compare_at_price: "",
+          oldPrice: "",
+          image: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
+          coverUrl: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
+          cover: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
+          variant_id: {{ product.selected_or_first_available_variant.id | json }},
+          variantId: {{ product.selected_or_first_available_variant.id | json }},
+          url: {{ product.url | json }},
+          description: {{ product.description | strip_html | truncate: 280 | json }}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
     ];
   }
 </script>\n\n"""
@@ -273,126 +282,283 @@ window.SHOPIFY_LIVE_PRODUCTS = [
     print("STEP 6: Writing True Global layout/theme.liquid (Navbar, Footer, Modals, CSS)")
     print("=================================================================")
 
-    # Verified CDN Image Map for Instant Zero-404 Image Resolution
-    cdn_covers_map = """      window.SHOPIFY_ASSET_URL_ROOT = "{{ 'theme.css' | asset_url }}".replace(/theme\\.css(\\?.*)?$/, '');
-      window.PODIUM_CDN_COVERS = {
-        "podium-godan": "{{ 'hero-godan.jpg' | asset_url }}",
-        "hero-godan.jpg": "{{ 'hero-godan.jpg' | asset_url }}",
-        "assets/hero-godan.jpg": "{{ 'hero-godan.jpg' | asset_url }}",
-        "godan": "{{ 'hero-godan.jpg' | asset_url }}",
-        "godan-premchand": "{{ 'hero-godan.jpg' | asset_url }}",
-        
-        "podium-raag-darbari": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
-        "hero-raag-darbari.jpg": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
-        "assets/hero-raag-darbari.jpg": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
-        "raag-darbari": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
-        "raag-darbari-shrilal-shukla": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
+    # Dynamic Shopify Asset Map for all image assets in assets/
+    asset_files = sorted([
+        f for f in os.listdir("assets")
+        if f.lower().endswith(('.jpg', '.jpeg', '.png', '.svg', '.webp', '.gif'))
+    ])
+    print(f"Found {len(asset_files)} asset image files for Shopify CDN mapping.")
 
-        "podium-chitralekha": "{{ 'hero-chitralekha.jpg' | asset_url }}",
-        "hero-chitralekha.jpg": "{{ 'hero-chitralekha.jpg' | asset_url }}",
-        "assets/hero-chitralekha.jpg": "{{ 'hero-chitralekha.jpg' | asset_url }}",
-        "chitralekha": "{{ 'hero-chitralekha.jpg' | asset_url }}",
-        "chitralekha-bhagwaticharan-verma": "{{ 'hero-chitralekha.jpg' | asset_url }}",
+    cdn_lines = [
+        '      window.SHOPIFY_ASSET_URL_ROOT = "{{ \'theme.css\' | asset_url }}".replace(/theme\\.css(\\?.*)?$/, \'\');',
+        '      window.PODIUM_CDN_COVERS = {'
+    ]
+    
+    # Pre-populate specific ID aliases for instant lookup
+    id_aliases = {
+        "podium-godan": "hero-godan.jpg",
+        "godan": "hero-godan.jpg",
+        "godan-premchand": "hero-godan.jpg",
+        "hero-book-godan": "hero-godan.jpg",
+        "podium-raag-darbari": "hero-raag-darbari.jpg",
+        "raag-darbari": "hero-raag-darbari.jpg",
+        "raag-darbari-shrilal-shukla": "hero-raag-darbari.jpg",
+        "hero-book-raag": "hero-raag-darbari.jpg",
+        "podium-chitralekha": "hero-chitralekha.jpg",
+        "chitralekha": "hero-chitralekha.jpg",
+        "chitralekha-bhagwaticharan-verma": "hero-chitralekha.jpg",
+        "hero-book-chitralekha": "hero-chitralekha.jpg",
+        "podium-rashmirathi": "hero-rashmirathi.jpg",
+        "rashmirathi": "hero-rashmirathi.jpg",
+        "rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar": "hero-rashmirathi.jpg",
+        "hero-book-rashmirathi": "hero-rashmirathi.jpg",
+        "podium-ishq-mishra": "hero-kuchh-ishq.jpg",
+        "podium-kuchh-ishq": "hero-kuchh-ishq.jpg",
+        "kuchh-ishq": "hero-kuchh-ishq.jpg",
+        "kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra": "hero-kuchh-ishq.jpg",
+        "hero-book-kuchh-ishq": "hero-kuchh-ishq.jpg",
+        "rekhta-kuchh-ishq": "hero-kuchh-ishq.jpg",
+        "hero-book-gypsy": "hero-gypsy.jpg",
+        "hindi-gypsy": "hero-gypsy.jpg",
+        "gypsy-ila-chandra-joshi": "hero-gypsy.jpg",
+        "book-tarkash": "book-tarkash.jpg",
+        "rekhta-tarkash": "book-tarkash.jpg",
+        "book-aadha-gaon": "book-aadha-gaon.jpg",
+        "aadha-gaon": "book-aadha-gaon.jpg",
+        "book-mahabhoj": "book-mahabhoj.jpg",
+        "mahabhoj": "book-mahabhoj.jpg",
+        "book-shekhar": "book-shekhar.jpg",
+        "shekhar": "book-shekhar.jpg",
+        "book-gaban": "book-gaban.jpg",
+        "gaban": "book-gaban.jpg",
+        "book-nirmala": "book-nirmala.jpg",
+        "nirmala": "book-nirmala.jpg",
+        "hero-book-murakami": "hero-book-murakami.jpg",
+        "book-murakami": "hero-book-murakami.jpg",
+        "book-samvidhan": "book-samvidhan.jpg",
+        "vault-law-constitution": "book-samvidhan.jpg",
+        "vault-law-highcourt": "book-highcourt.jpg",
+        "vault-law-ucc": "book-sanhita.jpg",
+        "vault-law-judiciary": "book-kasauti.jpg",
+        "rekhta-rashmirathi": "hero-rashmirathi.jpg",
+        "rekhta-dhuaan": "hero-book-dhuaan.jpg",
+        "rekhta-guzare-lamhe": "book-guzare-lamhe.jpg"
+    }
 
-        "podium-rashmirathi": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
-        "hero-rashmirathi.jpg": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
-        "assets/hero-rashmirathi.jpg": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
-        "rashmirathi": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
-        "rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
+    for alias, target_img in id_aliases.items():
+        if os.path.exists(os.path.join("assets", target_img)):
+            cdn_lines.append(f'        "{alias}": "{{{{ \'{target_img}\' | asset_url }}}}",')
 
-        "podium-ishq-mishra": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
-        "podium-kuchh-ishq": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
-        "hero-kuchh-ishq.jpg": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
-        "assets/hero-kuchh-ishq.jpg": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
-        "kuchh-ishq": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
-        "kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
+    for fname in asset_files:
+        base_name = os.path.splitext(fname)[0]
+        cdn_lines.append(f'        "{fname}": "{{{{ \'{fname}\' | asset_url }}}}",')
+        cdn_lines.append(f'        "assets/{fname}": "{{{{ \'{fname}\' | asset_url }}}}",')
+        cdn_lines.append(f'        "./assets/{fname}": "{{{{ \'{fname}\' | asset_url }}}}",')
+        cdn_lines.append(f'        "{base_name}": "{{{{ \'{fname}\' | asset_url }}}}",')
 
-        "rekhta-kuchh-ishq": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
-        "rekhta-tarkash": "{{ 'book-tarkash.jpg' | asset_url }}",
-        "book-tarkash.jpg": "{{ 'book-tarkash.jpg' | asset_url }}",
-        "assets/book-tarkash.jpg": "{{ 'book-tarkash.jpg' | asset_url }}",
-        "rekhta-rashmirathi": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
-        "rekhta-dhuaan": "{{ 'hero-book-dhuaan.jpg' | asset_url }}",
-        "hero-book-dhuaan.jpg": "{{ 'hero-book-dhuaan.jpg' | asset_url }}",
-        "assets/hero-book-dhuaan.jpg": "{{ 'hero-book-dhuaan.jpg' | asset_url }}",
-        "rekhta-guzare-lamhe": "{{ 'book-guzare-lamhe.jpg' | asset_url }}",
-        "book-guzare-lamhe.jpg": "{{ 'book-guzare-lamhe.jpg' | asset_url }}",
-        "assets/book-guzare-lamhe.jpg": "{{ 'book-guzare-lamhe.jpg' | asset_url }}",
-        "hindi-gypsy": "{{ 'hero-gypsy.jpg' | asset_url }}",
-        "hero-gypsy.jpg": "{{ 'hero-gypsy.jpg' | asset_url }}",
-        "assets/hero-gypsy.jpg": "{{ 'hero-gypsy.jpg' | asset_url }}",
-        "gypsy-ila-chandra-joshi": "{{ 'hero-gypsy.jpg' | asset_url }}",
+    cdn_lines.append('        "hero-godan.jpg": "{{ \'hero-godan.jpg\' | asset_url }}"')
+    cdn_lines.append('      };')
 
-        "book-highcourt.jpg": "{{ 'book-highcourt.jpg' | asset_url }}",
-        "book-samvidhan.jpg": "{{ 'book-samvidhan.jpg' | asset_url }}",
-        "book-sanhita.jpg": "{{ 'book-sanhita.jpg' | asset_url }}",
-        "book-kasauti.jpg": "{{ 'book-kasauti.jpg' | asset_url }}",
-        "book-shilp-vidhi.jpg": "{{ 'book-shilp-vidhi.jpg' | asset_url }}",
-        "book-anusandhan.jpg": "{{ 'book-anusandhan.jpg' | asset_url }}",
-        "book-badalata-desh.jpg": "{{ 'book-badalata-desh.jpg' | asset_url }}",
-        "book-nyay-sangharsh.jpg": "{{ 'book-nyay-sangharsh.jpg' | asset_url }}",
-        "book-soochana.jpg": "{{ 'book-soochana.jpg' | asset_url }}",
-        "book-azad.jpg": "{{ 'book-azad.jpg' | asset_url }}",
-        "vault-law-highcourt": "{{ 'book-highcourt.jpg' | asset_url }}",
-        "vault-law-constitution": "{{ 'book-samvidhan.jpg' | asset_url }}",
-        "vault-law-ucc": "{{ 'book-sanhita.jpg' | asset_url }}",
-        "vault-law-judiciary": "{{ 'book-kasauti.jpg' | asset_url }}",
-        "book-bench-bar.jpg": "{{ 'book-bench-bar.jpg' | asset_url }}",
-        "book-10-faisle.jpg": "{{ 'book-10-faisle.jpg' | asset_url }}",
-        "book-lawful-awful.jpg": "{{ 'book-lawful-awful.jpg' | asset_url }}",
-        "book-gyan-aur-karm.jpg": "{{ 'book-gyan-aur-karm.jpg' | asset_url }}",
-        "book-hindi-vyakaran.jpg": "{{ 'book-hindi-vyakaran.jpg' | asset_url }}",
-        "book-hindi-sahitya-itihas.jpg": "{{ 'book-hindi-sahitya-itihas.jpg' | asset_url }}",
-        "book-hindi-bhasha.jpg": "{{ 'book-hindi-bhasha.jpg' | asset_url }}",
-        "book-hadappa.jpg": "{{ 'book-hadappa.jpg' | asset_url }}",
-        "book-gyandan.jpg": "{{ 'book-gyandan.jpg' | asset_url }}",
-        "book-halant.jpg": "{{ 'book-halant.jpg' | asset_url }}",
-        "book-halyog.jpg": "{{ 'book-halyog.jpg' | asset_url }}",
-        "book-savarkar.jpg": "{{ 'book-savarkar.jpg' | asset_url }}",
-        "book-haashiye.jpg": "{{ 'book-haashiye.jpg' | asset_url }}",
-        "book-cheelwali-kothi.jpg": "{{ 'book-cheelwali-kothi.jpg' | asset_url }}",
-        "book-haadse.jpg": "{{ 'book-haadse.jpg' | asset_url }}",
-        "book-aadha-gaon.jpg": "{{ 'book-aadha-gaon.jpg' | asset_url }}",
-        "book-mahabhoj.jpg": "{{ 'book-mahabhoj.jpg' | asset_url }}",
-        "book-shekhar.jpg": "{{ 'book-shekhar.jpg' | asset_url }}",
-        "book-halaq.jpg": "{{ 'book-halaq.jpg' | asset_url }}",
-        "book-gyarahaveen.jpg": "{{ 'book-gyarahaveen.jpg' | asset_url }}",
-        "book-guzara-hua-zamana.jpg": "{{ 'book-guzara-hua-zamana.jpg' | asset_url }}"
-      };"""
+    cdn_lines.append("""
+      window.getFallbackCoverSvg = function(title, author) {
+        var t = (title || 'Indigo Books').replace(/<[^>]*>/g, '').substring(0, 32);
+        var a = (author || 'Indigo Classics').replace(/<[^>]*>/g, '').substring(0, 24);
+        var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" width="100%" height="100%">' +
+          '<defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2B1A17"/><stop offset="100%" stop-color="#140D0B"/></linearGradient></defs>' +
+          '<rect width="200" height="300" fill="url(#g)"/>' +
+          '<rect x="0" y="0" width="10" height="300" fill="rgba(255,255,255,0.12)"/>' +
+          '<rect x="16" y="16" width="168" height="268" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-dasharray="3 3"/>' +
+          '<circle cx="100" cy="76" r="28" fill="none" stroke="#D4AF37" stroke-width="1.2"/>' +
+          '<text x="100" y="82" fill="#D4AF37" font-family="serif" font-size="18" font-weight="bold" text-anchor="middle">IB</text>' +
+          '<text x="100" y="146" fill="#FAF8F5" font-family="serif" font-size="13" font-weight="bold" text-anchor="middle">' + t + '</text>' +
+          '<text x="100" y="176" fill="#D4AF37" font-family="sans-serif" font-size="10" text-anchor="middle">By ' + a + '</text>' +
+          '<text x="100" y="260" fill="#999999" font-family="sans-serif" font-size="8" letter-spacing="1.5" text-anchor="middle">INDIGO BOOKS INDIA</text>' +
+          '</svg>';
+        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+      };
+
+      window.getCoverUrl = function(coverPath, defaultTitle) {
+        if (!coverPath) {
+          if (defaultTitle && window.getFallbackCoverSvg) {
+            return window.getFallbackCoverSvg(defaultTitle, '');
+          }
+          return (window.PODIUM_CDN_COVERS && (window.PODIUM_CDN_COVERS['hero-godan.jpg'] || window.PODIUM_CDN_COVERS['assets/hero-godan.jpg'])) ||
+                 (window.SHOPIFY_ASSET_URL_ROOT ? window.SHOPIFY_ASSET_URL_ROOT + 'hero-godan.jpg' : 'assets/hero-godan.jpg');
+        }
+        // If already absolute HTTP/HTTPS, protocol-relative '//', or data URI, return DIRECTLY without tampering
+        if (coverPath.indexOf('http://') === 0 || coverPath.indexOf('https://') === 0 || coverPath.indexOf('//') === 0 || coverPath.indexOf('data:') === 0) {
+          return coverPath;
+        }
+        var clean = coverPath.replace(/^(\.\/)?assets\//, '').replace(/^\//, '');
+        if (window.PODIUM_CDN_COVERS) {
+          if (window.PODIUM_CDN_COVERS[coverPath]) return window.PODIUM_CDN_COVERS[coverPath];
+          if (window.PODIUM_CDN_COVERS[clean]) return window.PODIUM_CDN_COVERS[clean];
+          if (window.PODIUM_CDN_COVERS['assets/' + clean]) return window.PODIUM_CDN_COVERS['assets/' + clean];
+          var baseName = clean.split('.')[0];
+          if (window.PODIUM_CDN_COVERS[baseName]) return window.PODIUM_CDN_COVERS[baseName];
+        }
+        if (window.SHOPIFY_ASSET_URL_ROOT) {
+          return window.SHOPIFY_ASSET_URL_ROOT + clean;
+        }
+        return 'assets/' + clean;
+      };
+
+      window.handleBookCoverError = function(img, title, author) {
+        if (!img) return;
+        img.onerror = null;
+        var bookTitle = title || img.getAttribute('data-title') || img.alt || 'Indigo Books';
+        var bookAuthor = author || img.getAttribute('data-author') || '';
+        var fallback = (typeof window.getFallbackCoverSvg === 'function') ? window.getFallbackCoverSvg(bookTitle, bookAuthor) : (typeof getFallbackCover === 'function' ? getFallbackCover(bookTitle, bookAuthor) : '');
+        if (img.parentElement) {
+          img.parentElement.style.backgroundImage = 'url("' + fallback + '")';
+          img.parentElement.style.backgroundSize = 'cover';
+          img.parentElement.style.backgroundPosition = 'center';
+        }
+        img.style.display = 'none';
+        img.src = fallback;
+      };
+
+      // Universal self-healing image onerror handler for Shopify CDN
+      document.addEventListener('error', function(e) {
+        if (e.target && e.target.tagName === 'IMG') {
+          var img = e.target;
+          var raw = img.getAttribute('src');
+          // Only resolve if it explicitly starts with local relative path 'assets/' or './assets/'
+          if (raw && (raw.indexOf('assets/') === 0 || raw.indexOf('./assets/') === 0)) {
+            var resolved = window.getCoverUrl(raw);
+            if (resolved && resolved !== raw && img.src !== resolved) {
+              img.src = resolved;
+              return;
+            }
+          }
+          // Never force Godan for a different book! Generate book's own SVG cover
+          img.onerror = null;
+          if (window.getFallbackCoverSvg) {
+            img.src = window.getFallbackCoverSvg(img.alt || 'Indigo Books India', '');
+          }
+        }
+      }, true);
+""")
+    cdn_covers_map = "\n".join(cdn_lines)
 
     theme_liquid_full = f"""<!doctype html>
-<html class="no-js" lang="{{{{ request.locale.iso_code }}}}">
+<html class="no-js" lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="#0F172A">
     <meta name="referrer" content="no-referrer">
+    <meta http-equiv="content-language" content="en">
+    <meta name="google" content="notranslate">
     <link rel="canonical" href="{{{{ canonical_url }}}}">
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 
-    <!-- Official Vector SVG Favicon (Data URI: Zero 404 Console Errors) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%230066B3'/%3E%3Cpath d='M20 20h25v25H20zM55 20h25v25H55zM20 55h25v25H20zM55 55h25v25H55z' fill='none' stroke='%23ffffff' stroke-width='6'/%3E%3C/svg%3E">
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="-e_RVQPApfsjWvvXEfSgc-ttWxIqb9hqO7eUvZCF1ZI">
+    {{%- if settings.google_site_verification != blank -%}}
+      {{%- if settings.google_site_verification contains '<meta' -%}}
+        {{{{ settings.google_site_verification }}}}
+      {{%- else -%}}
+        <meta name="google-site-verification" content="{{{{ settings.google_site_verification | escape }}}}">
+      {{%- endif -%}}
+    {{%- endif -%}}
 
-    <title>{{{{ page_title | default: shop.name }}}}</title>
-    {{% if page_description %}}
-      <meta name="description" content="{{{{ page_description | escape }}}}">
-    {{% endif %}}
+    <!-- Google Search Verified Square Favicons & Web Manifest -->
+    {{%- if settings.favicon != blank -%}}
+      <link rel="icon" type="image/png" sizes="192x192" href="{{{{ settings.favicon | image_url: width: 192, height: 192 }}}}">
+      <link rel="icon" type="image/png" sizes="96x96" href="{{{{ settings.favicon | image_url: width: 96, height: 96 }}}}">
+      <link rel="icon" type="image/png" sizes="48x48" href="{{{{ settings.favicon | image_url: width: 48, height: 48 }}}}">
+      <link rel="icon" type="image/png" sizes="32x32" href="{{{{ settings.favicon | image_url: width: 32, height: 32 }}}}">
+      <link rel="shortcut icon" href="{{{{ settings.favicon | image_url: width: 48, height: 48 }}}}">
+      <link rel="apple-touch-icon" href="{{{{ settings.favicon | image_url: width: 180, height: 180 }}}}">
+    {{%- else -%}}
+      <link rel="icon" type="image/png" sizes="192x192" href="{{{{ 'favicon-192x192.png' | asset_url }}}}">
+      <link rel="icon" type="image/png" sizes="96x96" href="{{{{ 'favicon-96x96.png' | asset_url }}}}">
+      <link rel="icon" type="image/png" sizes="48x48" href="{{{{ 'favicon-48x48.png' | asset_url }}}}">
+      <link rel="icon" type="image/png" sizes="32x32" href="{{{{ 'favicon-32x32.png' | asset_url }}}}">
+      <link rel="shortcut icon" href="{{{{ 'favicon-48x48.png' | asset_url }}}}">
+      <link rel="apple-touch-icon" href="{{{{ 'apple-touch-icon.png' | asset_url }}}}">
+    {{%- endif -%}}
 
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:site_name" content="{{{{ shop.name }}}}">
+    {{%- assign page_title_clean = page_title | default: shop.name -%}}
+    {{%- if page_title_clean == 'My Store' or page_title_clean == blank -%}}
+      {{%- assign page_title_clean = 'Indigo Books India — Premier Online Bookstore Prayagraj' -%}}
+    {{%- endif -%}}
+    <title>{{{{ page_title_clean }}}}</title>
+    <meta name="description" content="Discover India's premier online bookstore. 5,500+ curated titles in Hindi classics, Urdu poetry, law, history, philosophy, and bestsellers from Prayagraj.">
+
+    <!-- Open Graph & Schema.org Structured Data -->
+    <meta property="og:site_name" content="Indigo Books India">
     <meta property="og:url" content="{{{{ canonical_url }}}}">
-    <meta property="og:title" content="{{{{ page_title | default: shop.name }}}}">
+    <meta property="og:title" content="{{{{ page_title_clean }}}}">
     <meta property="og:type" content="website">
-    <meta property="og:description" content="{{{{ page_description | default: shop.description | escape }}}}">
+    <meta property="og:image" content="{{{{ 'indigo-books-logo.png' | asset_url }}}}">
+    <meta property="og:description" content="Discover India's premier online bookstore. 5,500+ curated titles in Hindi classics, Urdu poetry, law, history, philosophy, and bestsellers from Prayagraj.">
+
+    <script type="application/ld+json">
+    {{
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Indigo Books",
+      "alternateName": ["Indigo Books India", "IndigoBooks"],
+      "url": "https://indigobooks.shop/",
+      "potentialAction": {{
+        "@type": "SearchAction",
+        "target": "https://indigobooks.shop/?q={{search_term_string}}",
+        "query-input": "required name=search_term_string"
+      }}
+    }}
+    </script>
+    <script type="application/ld+json">
+    {{
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Indigo Books India",
+      "url": "https://indigobooks.shop/",
+      "logo": "{{{{ 'favicon-192x192.png' | asset_url }}}}",
+      "sameAs": [
+        "https://www.instagram.com/indigobooksindia",
+        "https://www.facebook.com/indigobooks"
+      ]
+    }}
+    </script>
+    <script type="application/ld+json">
+    {{
+      "@context": "https://schema.org",
+      "@type": "BookStore",
+      "name": "Indigo Books India",
+      "url": "https://indigobooks.shop/",
+      "logo": "{{{{ 'indigo-books-logo.png' | asset_url }}}}",
+      "image": "{{{{ 'indigo-books-logo.png' | asset_url }}}}",
+      "description": "Premier bookstore in Prayagraj offering Hindi literature, UPSC, Law, and Urdu poetry.",
+      "telephone": "+918933063306",
+      "address": {{
+        "@type": "PostalAddress",
+        "addressLocality": "Prayagraj",
+        "addressRegion": "Uttar Pradesh",
+        "addressCountry": "IN"
+      }}
+    }}
+    </script>
 
     <!-- Google Fonts: Merriweather & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
 
+    <!-- Suppress Tailwind Production Warning BEFORE CDN Script Evaluation -->
+    <script>
+      (function() {{
+        var origWarn = console.warn;
+        console.warn = function() {{
+          if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+          origWarn.apply(console, arguments);
+        }};
+      }})();
+    </script>
     <!-- Tailwind CSS Engine -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com" defer="defer"></script>
 
     <!-- Global Unified Bookstore Stylesheets -->
     <link rel="stylesheet" href="{{{{ 'theme.css' | asset_url }}}}">
@@ -616,19 +782,62 @@ window.SHOPIFY_LIVE_PRODUCTS = [
         box-sizing: border-box !important;
       }}
 
-      /* STICKY CREAM NAVBAR AT ROOT LEVEL */
+      /* STICKY CREAM NAVBAR AT ROOT LEVEL (MAX STACKING & OVERFLOW VISIBLE) */
       header,
       .site-header,
       .site-navbar,
       .main-navbar,
+      .navbar-inner,
+      .editorial-search-wrap,
       header > nav {{
         position: sticky !important;
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;
-        z-index: 99999 !important;
+        overflow: visible !important;
+        z-index: 2147483647 !important;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+      }}
+
+      /* GUARANTEED FLOATING SEARCH DROPDOWN - FLOATS OVER ALL PAGES & MODALS */
+      .editorial-search-wrap {{
+        position: relative !important;
+        flex: 1 1 340px !important;
+        max-width: 440px !important;
+        overflow: visible !important;
+        z-index: 2147483647 !important;
+      }}
+
+      .editorial-search-results {{
+        position: absolute !important;
+        top: calc(100% + 8px) !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        min-width: 320px !important;
+        max-width: 480px !important;
+        background: #FFFFFF !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(18, 18, 18, 0.14) !important;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35) !important;
+        max-height: 480px !important;
+        overflow-y: auto !important;
+        display: none;
+        z-index: 2147483647 !important;
+      }}
+
+      .editorial-search-item {{
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        padding: 10px 16px !important;
+        cursor: pointer !important;
+        border-bottom: 1px solid #F5F5F5 !important;
+        transition: background 0.15s ease !important;
+      }}
+      .editorial-search-item:hover {{
+        background: #FAF8F5 !important;
       }}
 
       /* REMOVE CARETS / VERTICAL BARS IN STATS BAR */
@@ -721,7 +930,7 @@ window.SHOPIFY_LIVE_PRODUCTS = [
     </style>
 
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@latest" defer="defer"></script>
 
     <!-- Verified Shopify CDN Asset Map -->
     <script>
@@ -729,6 +938,10 @@ window.SHOPIFY_LIVE_PRODUCTS = [
     </script>
 
     {{{{ content_for_header }}}}
+
+    <!-- META ADS PIXEL & CONVERSIONS TRACKING -->
+    {{%- render 'meta-pixel-events' -%}}
+    <script src="{{{{ 'meta-ads-tracking.js' | asset_url }}}}" defer></script>
   </head>
   <body class="template-{{{{ template.name | handle }}}}">
     <!-- 1. GLOBAL STICKY CREAM NAVBAR -->
@@ -781,8 +994,9 @@ window.SHOPIFY_LIVE_PRODUCTS = [
         }}
       }});
     </script>
-
-""" + "\n\n" + MASTER_STYLE + "\n\n" + MASTER_SCRIPT + "\n\n" + CYBER_STYLE + "\n\n" + CYBER_SCRIPT + "\n  </body>\n</html>\n"
+  </body>
+</html>
+"""
 
     os.makedirs("layout", exist_ok=True)
     with open("layout/theme.liquid", "w", encoding="utf-8") as f:
@@ -882,6 +1096,7 @@ window.SHOPIFY_LIVE_PRODUCTS = [
 
     included_dirs = [
         "assets",
+        "blocks",
         "config",
         "layout",
         "locales",

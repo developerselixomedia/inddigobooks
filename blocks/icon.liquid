@@ -1,5 +1,6 @@
 <div class="icon-block" {{ block.shopify_attributes }}>
-  {% render 'icon', name: block.settings.icon | default: 'book' %}
+  {%- assign icon_name = block.settings.icon | default: 'book' -%}
+  {% render 'icon', name: icon_name %}
 </div>
 {% schema %}
 {

@@ -1,0 +1,15 @@
+<div class="featured-collection-block" {{ block.shopify_attributes }}>
+  {%- assign col = block.settings.collection -%}
+  {%- if col != blank -%}
+    <h3>{{ col.title }}</h3>
+    <span>{{ col.products_count }} Titles</span>
+  {%- endif -%}
+</div>
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection" }
+  ]
+}
+{% endschema %}

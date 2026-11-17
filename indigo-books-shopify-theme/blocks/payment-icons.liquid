@@ -1,0 +1,8 @@
+<div class="payment-icons-block" {{ block.shopify_attributes }}>
+  {%- for type in shop.enabled_payment_types -%}
+    {{ type | payment_type_svg_tag: class: 'payment-icon' }}
+  {%- endfor -%}
+</div>
+{% schema %}
+{ "name": "Payment Icons", "settings": [] }
+{% endschema %}

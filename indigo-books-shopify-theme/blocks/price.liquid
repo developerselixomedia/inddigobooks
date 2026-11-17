@@ -1,0 +1,6 @@
+<div class="price-block" {{ block.shopify_attributes }}>
+  {% render 'price', product: product, use_variant: true %}
+</div>
+{% schema %}
+{ "name": "Price Block", "settings": [] }
+{% endschema %}

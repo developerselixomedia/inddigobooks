@@ -23,14 +23,32 @@ window.returnToHome = function(event) {
     if (typeof event.preventDefault === 'function') event.preventDefault();
     if (typeof event.stopPropagation === 'function') event.stopPropagation();
   }
+
+  // 1. Unify and reset navigation state back to homepage
+  window.previousViewBeforeSolo = 'home';
+  if (typeof previousViewBeforeSolo !== 'undefined') previousViewBeforeSolo = 'home';
+
+  // 2. Hide single product views & reset body/HTML scrolling
   const pdpView = document.getElementById('single-product-page-view');
   if (pdpView) pdpView.style.display = 'none';
 
+  const soloView = document.getElementById('indigo-solo-product-view');
+  if (soloView) {
+    soloView.classList.remove('is-active');
+    soloView.style.display = 'none';
+  }
+  document.documentElement.classList.remove('solo-page-active');
+  document.body.classList.remove('solo-page-active');
+  document.body.style.removeProperty('overflow');
+  document.documentElement.style.removeProperty('overflow');
+
+  // 3. Explicitly hide dedicated search results view & clear queries
   const searchView = document.getElementById('indigo-search-results-view');
   if (searchView) searchView.style.display = 'none';
   if (typeof activeSearchQuery !== 'undefined') activeSearchQuery = '';
   if (typeof currentSearchResultsList !== 'undefined') currentSearchResultsList = [];
 
+  // 4. Close any overview or quick-order modals
   if (typeof window.forceCloseOverviewAndModals === 'function') {
     window.forceCloseOverviewAndModals();
   }
@@ -38,17 +56,24 @@ window.returnToHome = function(event) {
     closeOverviewModal();
   }
 
+  // 5. Hide all search dropdowns & suggestion boxes
   if (typeof hideAllSearchDropdowns === 'function') {
     hideAllSearchDropdowns();
   }
-  ['hero-search-input', 'catalog-search-input', 'results-search-input'].forEach(function(id) {
+  const editResults = document.getElementById('editorialSearchResults');
+  if (editResults) editResults.style.display = 'none';
+
+  // 6. Clear ALL search inputs across the whole bookstore
+  ['editorialSearchInput', 'hero-search-input', 'catalog-search-input', 'results-search-input', 'v2ArchiveSearchInput'].forEach(function(id) {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
 
+  // 7. Reveal homepage view cleanly
   const homeView = document.getElementById('homepage-view');
   if (homeView) homeView.style.display = 'block';
 
+  // 8. Clean URL hash
   try {
     history.pushState(null, null, window.location.pathname);
   } catch(err) {
@@ -86,17 +111,15 @@ window.closeAllIndigoModals = function() {
 
 // Global Helper: Open Solo Book Page
 window.openSoloBookPage = function(bookIdOrObj, triggerElOrEvent) {
-  var triggerEl = null;
-  if (triggerElOrEvent) {
-    if (triggerElOrEvent.preventDefault) {
-      triggerElOrEvent.preventDefault();
-      triggerEl = triggerElOrEvent.currentTarget || triggerElOrEvent.target;
-    } else if (triggerElOrEvent.nodeType) {
-      triggerEl = triggerElOrEvent;
-    }
+  var bId = (typeof bookIdOrObj === 'object' && bookIdOrObj !== null) ? (bookIdOrObj.id || bookIdOrObj.handle) : bookIdOrObj;
+  if (typeof window.openSoloStudioView === 'function') {
+    window.openSoloStudioView(bId);
+    return;
   }
-  if (typeof openDedicatedProductPage === 'function') {
-    openDedicatedProductPage(bookIdOrObj, triggerEl);
+  var soloView = document.getElementById('indigo-solo-product-view');
+  if (soloView) {
+    soloView.classList.add('is-active');
+    soloView.style.display = 'block';
   }
 };
 
@@ -110,49 +133,109 @@ window.addToCart = function(bookId, bookTitle, bookPrice, bookCover, event) {
 
 // --- UNIVERSAL VECTOR SVG FALLBACK COVER GENERATOR ---
 function getFallbackCover(title, author) {
-  let cleanTitle = (title || '').replace(/["'<>]/g, '').trim();
-  let cleanAuthor = (author || '').replace(/["'<>]/g, '').trim();
+  const palettes = [
+    { top: '#3E1715', bot: '#180706', gold: '#E5C07B', text: '#FAF7F2' },
+    { top: '#15263D', bot: '#0A131F', gold: '#D4AF37', text: '#F8FAFC' },
+    { top: '#1A2E22', bot: '#0B150F', gold: '#C5A059', text: '#F4F7F4' },
+    { top: '#2D182A', bot: '#140813', gold: '#E0B084', text: '#FBF5F8' },
+    { top: '#222035', bot: '#0D0C17', gold: '#DFB76C', text: '#F6F5FA' }
+  ];
+  let cleanTitle = (title || 'Indigo Books Edition').replace(/["'<>]/g, '').trim();
+  let cleanAuthor = (author || 'Prayagraj Classic').replace(/["'<>]/g, '').trim();
   if (!cleanTitle || cleanTitle.toLowerCase() === 'flanking book' || cleanTitle.toLowerCase() === 'inside cover' || cleanTitle.toLowerCase() === 'book') {
     cleanTitle = 'Indigo Books Edition';
   }
   if (!cleanAuthor) {
     cleanAuthor = 'Prayagraj Classic';
   }
-  cleanTitle = cleanTitle.slice(0, 26);
-  cleanAuthor = cleanAuthor.slice(0, 24);
 
-  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="420" viewBox="0 0 300 420">' +
-    '<defs>' +
-      '<linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">' +
-        '<stop offset="0%" stop-color="#0F172A"/>' +
-        '<stop offset="50%" stop-color="#1E293B"/>' +
-        '<stop offset="100%" stop-color="#0A1128"/>' +
-      '</linearGradient>' +
-    '</defs>' +
-    '<rect width="300" height="420" rx="6" fill="url(#bgGrad)"/>' +
-    '<rect x="12" y="12" width="276" height="396" rx="4" fill="none" stroke="#D99B26" stroke-width="2" stroke-dasharray="4,2"/>' +
-    '<rect x="20" y="20" width="260" height="380" rx="2" fill="none" stroke="#D99B26" stroke-width="0.75" opacity="0.6"/>' +
-    '<circle cx="150" cy="90" r="28" fill="#1E293B" stroke="#D99B26" stroke-width="1.5"/>' +
-    '<path d="M142 82h16v16H142z" fill="none" stroke="#D99B26" stroke-width="1.5"/>' +
-    '<text x="150" y="195" font-family="Georgia, serif" font-size="16" font-weight="bold" fill="#FEF3C7" text-anchor="middle">' + cleanTitle + '</text>' +
-    '<text x="150" y="235" font-family="sans-serif" font-size="12" font-weight="600" fill="#D99B26" text-anchor="middle">' + cleanAuthor + '</text>' +
-    '<line x1="80" y1="260" x2="220" y2="260" stroke="#D99B26" stroke-width="1" opacity="0.5"/>' +
-    '<text x="150" y="285" font-family="sans-serif" font-size="9" letter-spacing="2" fill="#94A3B8" text-anchor="middle">INDIGO HERITAGE EDITION</text>' +
-    '<text x="150" y="380" font-family="sans-serif" font-size="10" font-weight="bold" fill="#D99B26" text-anchor="middle">PRAYAGRAJ • INDIA</text>' +
-  '</svg>';
+  let h = 0;
+  for (let k = 0; k < cleanTitle.length; k++) h = (h + cleanTitle.charCodeAt(k)) % palettes.length;
+  const pal = palettes[h];
+
+  const words = cleanTitle.split(/\s+/);
+  const lines = [];
+  let curr = '';
+  for (let w = 0; w < words.length; w++) {
+    const word = words[w];
+    if ((curr + ' ' + word).trim().length <= 16) {
+      curr = (curr + ' ' + word).trim();
+    } else {
+      if (curr) lines.push(curr);
+      curr = word;
+    }
+  }
+  if (curr) lines.push(curr);
+  if (lines.length > 3) {
+    lines.splice(2, lines.length - 2, lines[2].slice(0, 13) + '...');
+  }
+
+  const startY = 135 - ((lines.length - 1) * 11);
+  let titleSvg = '';
+  for (let i = 0; i < lines.length; i++) {
+    const y = startY + (i * 22);
+    titleSvg += `<text x="100" y="${y}" fill="${pal.text}" font-family="Georgia, serif" font-size="13" font-weight="bold" text-anchor="middle">${lines[i]}</text>`;
+  }
+
+  const authorY = startY + (lines.length * 22) + 14;
+  const authorStr = cleanAuthor.slice(0, 22);
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="sc_g_${h}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${pal.top}"/>
+      <stop offset="100%" stop-color="${pal.bot}"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="300" rx="3" fill="url(#sc_g_${h})"/>
+  <rect x="0" y="0" width="10" height="300" fill="rgba(0,0,0,0.3)"/>
+  <line x1="10" y1="0" x2="10" y2="300" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+  <rect x="16" y="16" width="168" height="268" rx="2" fill="none" stroke="${pal.gold}" stroke-width="1.2" opacity="0.85"/>
+  <rect x="19" y="19" width="162" height="262" rx="1" fill="none" stroke="${pal.gold}" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.6"/>
+  <circle cx="100" cy="58" r="22" fill="none" stroke="${pal.gold}" stroke-width="1"/>
+  <circle cx="100" cy="58" r="18" fill="none" stroke="${pal.gold}" stroke-width="0.5" stroke-dasharray="2 2" opacity="0.7"/>
+  <text x="100" y="63" fill="${pal.gold}" font-family="Georgia, serif" font-size="14" font-weight="bold" text-anchor="middle">IB</text>
+  <text x="100" y="94" fill="${pal.gold}" font-family="sans-serif" font-size="7.5" font-weight="700" letter-spacing="1.5" text-anchor="middle">INDIGO ARCHIVE</text>
+  ${titleSvg}
+  <line x1="60" y1="${authorY - 6}" x2="140" y2="${authorY - 6}" stroke="${pal.gold}" stroke-width="0.75" opacity="0.5"/>
+  <text x="100" y="${authorY + 8}" fill="${pal.gold}" font-family="sans-serif" font-size="9.5" font-weight="600" text-anchor="middle">By ${authorStr}</text>
+  <text x="100" y="266" fill="#888888" font-family="sans-serif" font-size="7" letter-spacing="1.2" text-anchor="middle">PRAYAGRAJ &#8226; INDIA</text>
+</svg>`;
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
 }
 
+window.handleBookCoverError = function(img, title, author) {
+  if (!img) return;
+  img.onerror = null;
+  const t = title || img.getAttribute('data-title') || img.alt || 'Indigo Books Edition';
+  const a = author || img.getAttribute('data-author') || 'Indigo Archive';
+  if (typeof getFallbackCover === 'function') {
+    img.src = getFallbackCover(t, a);
+  } else if (typeof window.getFallbackCoverSvg === 'function') {
+    img.src = window.getFallbackCoverSvg(t, a);
+  }
+};
+
 // --- UNIVERSAL ASSET URL RESOLVER ---
-function getAssetUrl(url, bookId) {
-  if (!url && !bookId) return '';
+function getAssetUrl(url, bookId, defaultTitle, defaultAuthor) {
+  if (!url && !bookId) {
+    if (typeof getFallbackCover === 'function') {
+      return getFallbackCover(defaultTitle || 'Indigo Books Edition', defaultAuthor || 'Prayagraj Classic');
+    }
+    return '';
+  }
   if (bookId && typeof window !== 'undefined' && window.PODIUM_CDN_COVERS && window.PODIUM_CDN_COVERS[bookId]) {
     return window.PODIUM_CDN_COVERS[bookId];
   }
   if (url && typeof window !== 'undefined' && window.PODIUM_CDN_COVERS && window.PODIUM_CDN_COVERS[url]) {
     return window.PODIUM_CDN_COVERS[url];
   }
-  if (!url) return '';
+  if (!url) {
+    if (typeof getFallbackCover === 'function') {
+      return getFallbackCover(defaultTitle || bookId || 'Indigo Books Edition', defaultAuthor || 'Prayagraj Classic');
+    }
+    return '';
+  }
   if (url.startsWith('//')) {
     return 'https:' + url;
   }
@@ -189,8 +272,16 @@ function getAssetUrl(url, bookId) {
   );
 
   if (isIndianCatalogBook) {
-    const pubFile = clean.replace(/^products\//, '').replace(/^\/+/, '').replace(/\s+/g, '-');
-    return 'https://images.rajkamalprakashan.com/products/' + pubFile;
+    // Intercept dead remote host (zero net::ERR_CONNECTION_CLOSED)
+    if (typeof window !== 'undefined' && window.PODIUM_CDN_COVERS) {
+      if (window.PODIUM_CDN_COVERS[clean]) return window.PODIUM_CDN_COVERS[clean];
+      let cleanBase = clean.replace(/\.[^.]+$/, '');
+      if (window.PODIUM_CDN_COVERS[cleanBase]) return window.PODIUM_CDN_COVERS[cleanBase];
+    }
+    if (typeof getFallbackCover === 'function') {
+      return getFallbackCover(clean, 'Indigo Books Edition');
+    }
+    return '';
   }
 
   if (typeof window !== 'undefined' && window.SHOPIFY_ASSET_URL_ROOT) {
@@ -1253,6 +1344,21 @@ window.closeAllIndigoModals = closeOverviewModal;
 
 // --- 6. SHOPPING CART DRAWER ---
 let cart = [];
+try {
+  const savedCart = localStorage.getItem('indigo_cart');
+  if (savedCart) {
+    const parsed = JSON.parse(savedCart);
+    if (Array.isArray(parsed)) cart = parsed;
+  }
+} catch (e) {
+  cart = [];
+}
+
+function saveCartToStorage() {
+  try {
+    localStorage.setItem('indigo_cart', JSON.stringify(cart));
+  } catch (e) {}
+}
 
 function addShopifyVariantToCart(variantId, qty) {
   fetch('/cart/add.js', {
@@ -1340,10 +1446,14 @@ function executeAddToCart(bookId, bookTitle, bookPrice, bookCover, extra, event)
 
   if (existing) {
     existing.qty += 1;
+    if (!existing.handle && meta.handle) existing.handle = meta.handle;
+    if (!existing.variantId && (meta.variantId || meta.variant_id)) existing.variantId = meta.variantId || meta.variant_id;
   } else {
     const itemBinding = meta.binding || meta.format || extra || 'Paperback';
     cart.push({
       id: idStr,
+      handle: meta.handle || '',
+      variantId: meta.variantId || meta.variant_id || '',
       title: meta.title,
       author: meta.author || 'Indigo Books Author',
       price: cleanP,
@@ -1354,6 +1464,19 @@ function executeAddToCart(bookId, bookTitle, bookPrice, bookCover, extra, event)
     });
   }
 
+  // Meta Pixel AddToCart Event Tracking
+  if (typeof window.fbq === 'function') {
+    window.fbq('track', 'AddToCart', {
+      content_name: meta.title,
+      content_category: meta.genre || 'Books',
+      content_ids: [idStr],
+      content_type: 'product',
+      value: cleanP,
+      currency: 'INR'
+    });
+  }
+
+  saveCartToStorage();
   updateCartUI();
   toggleCartDrawer(true);
 }
@@ -1371,13 +1494,18 @@ function updateCartQty(bookId, delta) {
   if (item.qty <= 0) {
     cart = cart.filter(function(i) { return String(i.id) !== idStr; });
   }
+  saveCartToStorage();
   updateCartUI();
 }
 
 function removeFromCart(bookId) {
   const idStr = String(bookId);
   cart = cart.filter(function(i) { return String(i.id) !== idStr; });
+  saveCartToStorage();
   updateCartUI();
+  if (cart.length === 0 && typeof fetch === 'function') {
+    fetch('/cart/clear.js', { method: 'POST', headers: { 'Content-Type': 'application/json' } }).catch(function(){});
+  }
 }
 
 function updateCartUI() {
@@ -1402,6 +1530,10 @@ function updateCartUI() {
   if (navCountEl) navCountEl.textContent = totalCount;
   if (navTotalEl) navTotalEl.textContent = formattedPrice;
   if (drawerItemCountEl) drawerItemCountEl.textContent = totalCount;
+  const editorialCartCountEl = document.getElementById('cartCount');
+  if (editorialCartCountEl) editorialCartCountEl.textContent = totalCount;
+  const mobileBagCountEl = document.getElementById('v2MobileBagCount');
+  if (mobileBagCountEl) mobileBagCountEl.textContent = totalCount;
 
   if (!list) return;
 
@@ -1412,13 +1544,19 @@ function updateCartUI() {
   if (totalPrice >= 999) {
     if (freeText) freeText.textContent = 'FREE EXPRESS DISPATCH UNLOCKED!';
     if (freePct) freePct.textContent = '100%';
-    if (freeBar) freeBar.style.width = '100%';
+    if (freeBar) {
+      freeBar.style.width = '100%';
+      freeBar.style.backgroundColor = '#16A34A';
+    }
   } else {
     const diff = (999 - totalPrice).toFixed(0);
     const pct = Math.min(100, Math.round((totalPrice / 999) * 100));
     if (freeText) freeText.textContent = 'Add ₹' + diff + ' for Free Express Dispatch';
     if (freePct) freePct.textContent = pct + '%';
-    if (freeBar) freeBar.style.width = pct + '%';
+    if (freeBar) {
+      freeBar.style.width = pct + '%';
+      freeBar.style.backgroundColor = '#E04F33';
+    }
   }
 
   if (cart.length === 0) {
@@ -1441,31 +1579,33 @@ function updateCartUI() {
 
   list.innerHTML = cart.map(function(item) {
     const fmt = item.binding || item.format || 'Paperback';
+    const cCover = getAssetUrl(item.cover || item.image || 'hero-godan.jpg');
     return `
-      <div style="display: flex; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid #F1F5F9;">
-        <div style="width: 60px; height: 85px; border-radius: 4px; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
-          <img referrerpolicy="no-referrer" src="${getAssetUrl(item.cover)}" alt="${item.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src=getFallbackCover(this.alt);" />
+      <div style="display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid #EAE5DC; align-items: center;">
+        <div style="width: 58px; height: 84px; border-radius: 4px; overflow: hidden; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.12); background: #FAF7F0;">
+          <img referrerpolicy="no-referrer" src="${cCover}" alt="${item.title}" onerror="this.src='assets/hero-godan.jpg'" style="width: 100%; height: 100%; object-fit: cover;" />
         </div>
-        <div style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-              <span style="font-size: 9.5px; font-weight: 700; color: #B45309; background: #FEF3C7; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em;">
-                ${fmt}
-              </span>
-            </div>
-            <h4 style="font-family: 'Merriweather', Georgia, serif; font-size: 13.5px; font-weight: 700; color: #0F172A; line-height: 1.25; margin-bottom: 2px;">
-              ${item.title}
-            </h4>
-            <div style="font-size: 11px; color: #64748B;">By ${item.author}</div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 4px;">
+            <span style="font-size: 9.5px; font-weight: 800; color: #E04F33; background: rgba(224, 79, 51, 0.08); padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.08em;">${fmt}</span>
+            <button type="button" onclick="removeFromCart('${item.id}')" style="border: none; background: none; cursor: pointer; color: #888888; padding: 2px;" title="Remove">
+              <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+            </button>
           </div>
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
-            <div style="font-size: 14px; font-weight: 800; color: #0F172A;">
+          <h4 style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 16px; font-weight: 600; color: #121212; margin: 0 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.25;" title="${item.title}">
+            ${item.title}
+          </h4>
+          <div style="font-size: 12px; color: #777777; margin-bottom: 8px;">
+            By ${item.author || 'Author'}
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 16px; font-weight: 700; color: #121212;">
               ₹${(item.price * item.qty).toFixed(2)}
             </div>
-            <div style="display: flex; align-items: center; gap: 8px; background: #F1F5F9; border-radius: 6px; padding: 2px 8px;">
-              <button type="button" onclick="updateCartQty('${item.id}', -1)" style="border: none; background: none; cursor: pointer; font-size: 14px; font-weight: bold; color: #475569;">-</button>
-              <span style="font-size: 12px; font-weight: 700; color: #0F172A;">${item.qty}</span>
-              <button type="button" onclick="updateCartQty('${item.id}', 1)" style="border: none; background: none; cursor: pointer; font-size: 14px; font-weight: bold; color: #475569;">+</button>
+            <div style="display: inline-flex; align-items: center; border: 1px solid #D5CFC4; border-radius: 6px; background: #FAF8F5; overflow: hidden;">
+              <button type="button" onclick="updateCartQty('${item.id}', -1)" style="border: none; background: none; cursor: pointer; width: 26px; height: 26px; font-size: 13px; font-weight: 700; color: #121212; display: flex; align-items: center; justify-content: center;">-</button>
+              <span style="font-size: 12px; font-weight: 700; color: #121212; min-width: 22px; text-align: center;">${item.qty}</span>
+              <button type="button" onclick="updateCartQty('${item.id}', 1)" style="border: none; background: none; cursor: pointer; width: 26px; height: 26px; font-size: 13px; font-weight: 700; color: #121212; display: flex; align-items: center; justify-content: center;">+</button>
             </div>
           </div>
         </div>
@@ -1486,23 +1626,427 @@ function toggleCartDrawer(forceOpen) {
   else shouldOpen = drawer ? !drawer.classList.contains('is-open') : false;
 
   if (drawer) {
-    if (shouldOpen) drawer.classList.add('is-open');
-    else drawer.classList.remove('is-open');
+    if (shouldOpen) {
+      drawer.style.display = 'flex';
+      drawer.classList.add('is-open');
+      drawer.style.transform = 'translateX(0)';
+    } else {
+      drawer.classList.remove('is-open');
+      drawer.style.transform = 'translateX(100%)';
+      setTimeout(function() {
+        if (!drawer.classList.contains('is-open')) {
+          drawer.style.display = 'none';
+        }
+      }, 350);
+    }
   }
   if (overlay) {
-    if (shouldOpen) overlay.classList.add('is-open');
-    else overlay.classList.remove('is-open');
+    if (shouldOpen) {
+      overlay.style.display = 'block';
+      overlay.classList.add('is-open');
+    } else {
+      overlay.classList.remove('is-open');
+      overlay.style.display = 'none';
+    }
   }
   document.body.style.overflow = shouldOpen ? 'hidden' : '';
 }
 
+
+function getOrFetchVariantId(item, callback) {
+  if (!item) { callback(null); return; }
+  var fmt = String(item.selectedFormat || item.binding || item.format || '').toLowerCase();
+  
+  // 1. Direct variant ID on item
+  if (item.variantId && String(item.variantId).match(/^\d+$/)) {
+    callback(String(item.variantId));
+    return;
+  }
+  if (item.variant_id && String(item.variant_id).match(/^\d+$/)) {
+    callback(String(item.variant_id));
+    return;
+  }
+
+  // 2. Check resolveShopifyVariant in memory
+  if (typeof resolveShopifyVariant === 'function') {
+    var inMemVid = resolveShopifyVariant(item, fmt);
+    if (inMemVid && inMemVid.match(/^\d+$/)) {
+      callback(inMemVid);
+      return;
+    }
+  } else if (typeof window !== 'undefined' && typeof window.resolveShopifyVariant === 'function') {
+    var inMemVid2 = window.resolveShopifyVariant(item, fmt);
+    if (inMemVid2 && inMemVid2.match(/^\d+$/)) {
+      callback(inMemVid2);
+      return;
+    }
+  }
+
+  var EXACT_LIVE_VARIANTS = (typeof window !== 'undefined' && window.EXACT_LIVE_VARIANTS) || {
+    'raag-darbari-shrilal-shukla': {
+      'paperback': '67709913825570',
+      'hardcover': '67709913858338',
+      'default': '67709913825570'
+    },
+    'godan-premchand': {
+      'paperback': '67709593944354',
+      'hardcover': '67709593977122',
+      'default': '67709593944354'
+    },
+    'bharat-ka-samvidhan-sankshipt-parichay-subhash-kashyap': {
+      'paperback': '67709702504738',
+      'default': '67709702504738'
+    },
+    'tarkash-javed-akhtar': {
+      'hardcover': '67710011605282',
+      'paperback': '67710011638050',
+      'default': '67710011605282'
+    },
+    'chitralekha-bhagwaticharan-verma': {
+      'paperback': '67709745037602',
+      'default': '67709745037602'
+    },
+    'rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar': {
+      'hardcover': '67709930012962',
+      'paperback': '67709930045730',
+      'default': '67709930012962'
+    },
+    'kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra': {
+      'hardcover': '67709809230114',
+      'paperback': '67709809262882',
+      'default': '67709809230114'
+    },
+    'aadha-gaon-rahi-masoom-raza': {
+      'paperback': '67709594435874',
+      'hardcover': '67709594468642',
+      'default': '67709594435874'
+    },
+    'gaban-premchand': {
+      'hardcover': '67709780590882',
+      'default': '67709780590882'
+    },
+    'nirmala-premchand': {
+      'hardcover': '67709867196706',
+      'paperback': '67709867229474',
+      'default': '67709867196706'
+    },
+    '1984-george-orwell-tr-abhishek-srivastava': {
+      'paperback': '67709588472098',
+      'default': '67709588472098'
+    },
+    '1084ven-ki-maan-mahashweta-devi-tr-santwana-nigam': {
+      'hardcover': '67709588799778',
+      'default': '67709588799778'
+    }
+  };
+
+  // 3. Known Heritage Book Handles Map (Guaranteed Accurate Handle Resolution)
+  var KNOWN_HANDLES = (typeof window !== 'undefined' && window.KNOWN_HANDLES) || {
+    'book-samvidhan': 'bharat-ka-samvidhan-sankshipt-parichay-subhash-kashyap',
+    'samvidhan': 'bharat-ka-samvidhan-sankshipt-parichay-subhash-kashyap',
+    'bharat-ka-samvidhan': 'bharat-ka-samvidhan-sankshipt-parichay-subhash-kashyap',
+    'podium-godan': 'godan-premchand',
+    'godan': 'godan-premchand',
+    'hero-book-godan': 'godan-premchand',
+    'podium-raag-darbari': 'raag-darbari-shrilal-shukla',
+    'raag-darbari': 'raag-darbari-shrilal-shukla',
+    'podium-chitralekha': 'chitralekha-bhagwaticharan-verma',
+    'chitralekha': 'chitralekha-bhagwaticharan-verma',
+    'podium-rashmirathi': 'rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar',
+    'rashmirathi': 'rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar',
+    'podium-kuchh-ishq': 'kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra',
+    'kuchh-ishq': 'kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra',
+    'book-tarkash': 'tarkash-javed-akhtar',
+    'tarkash': 'tarkash-javed-akhtar'
+  };
+
+  var lookupH = item.handle || KNOWN_HANDLES[item.id] || '';
+  if (!lookupH && item.id && !String(item.id).startsWith('podium-') && !String(item.id).startsWith('book-') && !String(item.id).startsWith('hero-')) {
+    lookupH = item.id;
+  }
+  if (!lookupH && item.title) {
+    lookupH = String(item.title).toLowerCase().replace(/\(.*?\)/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    if (KNOWN_HANDLES[lookupH]) lookupH = KNOWN_HANDLES[lookupH];
+  }
+
+  if (lookupH && EXACT_LIVE_VARIANTS[lookupH]) {
+    var exMap = EXACT_LIVE_VARIANTS[lookupH];
+    var matchedVid = (fmt.indexOf('hard') !== -1 && exMap.hardcover) ? exMap.hardcover : ((fmt.indexOf('paper') !== -1 && exMap.paperback) ? exMap.paperback : (exMap.default || exMap.paperback || exMap.hardcover));
+    if (matchedVid) {
+      item.variantId = matchedVid;
+      item.variant_id = matchedVid;
+      callback(matchedVid);
+      return;
+    }
+  }
+
+  // Check window.SHOPIFY_LIVE_PRODUCTS for lookupH or title
+  if (typeof window !== 'undefined' && Array.isArray(window.SHOPIFY_LIVE_PRODUCTS) && window.SHOPIFY_LIVE_PRODUCTS.length > 0) {
+    var matchP = window.SHOPIFY_LIVE_PRODUCTS.find(function(p) {
+      if (!p) return false;
+      var ph = String(p.handle || '').toLowerCase();
+      var pt = String(p.title || '').toLowerCase();
+      var itT = String(item.title || '').toLowerCase();
+      return (lookupH && ph === lookupH.toLowerCase()) || (ph && lookupH && (ph.indexOf(lookupH) !== -1 || lookupH.indexOf(ph) !== -1)) || (pt && itT && (pt === itT || itT.indexOf(pt) !== -1 || pt.indexOf(itT) !== -1));
+    });
+    if (matchP) {
+      if (Array.isArray(matchP.variants) && matchP.variants.length > 0) {
+        if (fmt) {
+          for (var vIdx = 0; vIdx < matchP.variants.length; vIdx++) {
+            var mv = matchP.variants[vIdx];
+            var mvTitle = String(mv.title || '').toLowerCase();
+            if (mvTitle.indexOf(fmt) !== -1 || (fmt.indexOf('hard') !== -1 && mvTitle.indexOf('hard') !== -1) || (fmt.indexOf('paper') !== -1 && mvTitle.indexOf('paper') !== -1)) {
+              var foundMVid = String(mv.id);
+              item.variantId = foundMVid;
+              item.variant_id = foundMVid;
+              callback(foundMVid);
+              return;
+            }
+          }
+        }
+        var defVid = String(matchP.variants[0].id);
+        item.variantId = defVid;
+        item.variant_id = defVid;
+        callback(defVid);
+        return;
+      }
+      if (matchP.variantId || matchP.variant_id) {
+        var matchedVid2 = String(matchP.variantId || matchP.variant_id);
+        item.variantId = matchedVid2;
+        item.variant_id = matchedVid2;
+        callback(matchedVid2);
+        return;
+      }
+    }
+  }
+
+  function matchVariantFromData(d) {
+    if (!d || !d.variants || d.variants.length === 0) return null;
+    if (fmt) {
+      for (var i = 0; i < d.variants.length; i++) {
+        var vt = String(d.variants[i].title || '').toLowerCase();
+        if (vt.indexOf(fmt) !== -1 || (fmt.indexOf('hard') !== -1 && vt.indexOf('hard') !== -1) || (fmt.indexOf('paper') !== -1 && vt.indexOf('paper') !== -1)) {
+          return String(d.variants[i].id);
+        }
+      }
+    }
+    return String(d.variants[0].id);
+  }
+
+  function tryHandle(h, onDone) {
+    if (!h) { onDone(null); return; }
+    fetch('/products/' + h + '.js')
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(d) {
+        var foundVid = matchVariantFromData(d);
+        if (foundVid) {
+          item.variantId = foundVid;
+          item.variant_id = foundVid;
+          onDone(foundVid);
+        } else {
+          onDone(null);
+        }
+      })
+      .catch(function() { onDone(null); });
+  }
+
+  tryHandle(lookupH, function(vid) {
+    if (vid) {
+      callback(vid);
+      return;
+    }
+
+    // 4. Query predictive search for book title
+    var cleanT = String(item.title || '').replace(/\(.*?\)/g, '').trim();
+    if (!cleanT) { callback(null); return; }
+
+    fetch('/search/suggest.json?q=' + encodeURIComponent(cleanT) + '&resources[type]=product')
+      .then(function(sr) { return sr.ok ? sr.json() : null; })
+      .then(function(sd) {
+        var prods = (sd && sd.resources && sd.resources.results && sd.resources.results.products) || [];
+        if (prods.length > 0 && prods[0].handle) {
+          tryHandle(prods[0].handle, function(finalVid) {
+            callback(finalVid || null);
+          });
+        } else {
+          callback(null);
+        }
+      })
+      .catch(function() { callback(null); });
+  });
+}
+window.getOrFetchVariantId = getOrFetchVariantId;
 
 function proceedToCheckout() {
   if (cart.length === 0) {
     alert("Your shopping cart is empty!");
     return;
   }
-  window.location.href = '/checkout';
+
+  // 1. FORCIBLY CLOSE AND HIDE THE CART DRAWER IMMEDIATELY
+  if (typeof toggleCartDrawer === 'function') toggleCartDrawer(false);
+  if (typeof window.toggleCartDrawer === 'function') window.toggleCartDrawer(false);
+  var drawer = document.getElementById('cartDrawer') || document.querySelector('.cart-drawer') || document.querySelector('.cart-drawer-panel');
+  if (drawer) {
+    drawer.classList.remove('is-open');
+    drawer.style.transform = 'translateX(100%)';
+    drawer.style.display = 'none';
+  }
+  var overlay = document.getElementById('cartDrawerOverlay') || document.getElementById('cartOverlay') || document.querySelector('.cart-drawer-overlay');
+  if (overlay) {
+    overlay.classList.remove('is-open');
+    overlay.style.display = 'none';
+  }
+  document.body.style.overflow = '';
+
+  var btn = document.getElementById('CartDrawerCheckoutBtn') || (typeof window !== 'undefined' && window.event && window.event.currentTarget) || document.querySelector('.btn-checkout');
+  var origText = btn ? btn.innerHTML : '<span>Proceed to Checkout &rarr;</span>';
+  if (btn) {
+    btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;">⚡ Connecting to Secure Checkout...</span>';
+    btn.style.opacity = '0.75';
+    btn.style.pointerEvents = 'none';
+  }
+
+  function restoreBtn() {
+    if (btn) {
+      btn.innerHTML = origText;
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    }
+  }
+
+  // Meta Pixel InitiateCheckout Event Tracking
+  if (typeof window.fbq === 'function') {
+    var totVal = cart.reduce(function(acc, it) { return acc + (it.price * (it.qty || 1)); }, 0);
+    var totQty = cart.reduce(function(acc, it) { return acc + (it.qty || 1); }, 0);
+    window.fbq('track', 'InitiateCheckout', {
+      value: totVal,
+      currency: 'INR',
+      num_items: totQty,
+      content_type: 'product'
+    });
+  }
+
+  var isShopify = (typeof window !== 'undefined' && window.location && 
+    (window.location.hostname.indexOf('shopify') !== -1 || window.location.hostname.indexOf('indigobooks.shop') !== -1));
+
+  if (!isShopify) {
+    restoreBtn();
+    window.location.href = '/checkout';
+    return;
+  }
+
+  // Resolve all cart items to real Shopify variants
+  var resolvedItems = [];
+  var pending = cart.length;
+  var hasTriggeredCheckout = false;
+
+  function fallbackFormSubmit(items) {
+    try {
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/cart';
+      form.style.display = 'none';
+      items.forEach(function(it) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'updates[' + it.id + ']';
+        input.value = it.quantity;
+        form.appendChild(input);
+      });
+      var submitBtn = document.createElement('button');
+      submitBtn.type = 'submit';
+      submitBtn.name = 'checkout';
+      submitBtn.value = 'Checkout';
+      form.appendChild(submitBtn);
+      document.body.appendChild(form);
+      form.submit();
+    } catch(e) {
+      window.location.href = '/checkout';
+    }
+  }
+
+  function finalizeAndRedirect() {
+    if (hasTriggeredCheckout) return;
+    hasTriggeredCheckout = true;
+
+    // Aggregate by variant ID so duplicates are combined (prevents Shopify 422 errors)
+    var variantMap = {};
+    resolvedItems.forEach(function(it) {
+      if (!it.id) return;
+      var k = String(it.id);
+      if (!variantMap[k]) {
+        variantMap[k] = {
+          id: k,
+          quantity: 0,
+          properties: it.properties || {}
+        };
+      }
+      variantMap[k].quantity += (it.quantity || 1);
+    });
+
+    var payloadItems = Object.values(variantMap);
+    if (payloadItems.length === 0) {
+      restoreBtn();
+      if (typeof openExpressPhoneCheckout === 'function') {
+        openExpressPhoneCheckout(cart[cart.length - 1]);
+      } else {
+        window.location.href = '/checkout';
+      }
+      return;
+    }
+
+    fetch('/cart/clear.js', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+      .catch(function() {})
+      .finally(function() {
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: payloadItems })
+        })
+        .then(function(res) {
+          if (res.ok) {
+            window.location.href = '/checkout';
+          } else {
+            fallbackFormSubmit(payloadItems);
+          }
+        })
+        .catch(function(e) {
+          fallbackFormSubmit(payloadItems);
+        });
+      });
+  }
+
+  function cleanEnglishTitle(str) {
+    if (!str) return '';
+    return String(str).replace(/[\u0900-\u097F]/g, '').replace(/\(\s*\)/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  cart.forEach(function(cItem) {
+    getOrFetchVariantId(cItem, function(vid) {
+      if (vid) {
+        resolvedItems.push({
+          id: vid,
+          quantity: cItem.qty || cItem.quantity || 1,
+          properties: {
+            'Book Title': cleanEnglishTitle(cItem.title) || cItem.title,
+            'Author': cleanEnglishTitle(cItem.author) || cItem.author || 'Indigo Books',
+            'Format': cItem.binding || cItem.format || 'Paperback',
+            'Price': typeof cItem.price === 'number' ? ('₹' + cItem.price) : cItem.price
+          }
+        });
+      }
+      pending--;
+      if (pending === 0) {
+        finalizeAndRedirect();
+      }
+    });
+  });
+
+  // Failsafe timeout: always direct to /checkout within 3s
+  setTimeout(function() {
+    finalizeAndRedirect();
+  }, 3000);
 }
 
 function checkoutViaWhatsApp() {
@@ -1535,6 +2079,13 @@ function checkoutWhatsApp() {
   lines.push("Please confirm delivery time & COD address!");
 
   const text = lines.join("\\n");
+  if (typeof window.fbq === 'function') {
+    window.fbq('trackCustom', 'WhatsAppLead', {
+      value: total,
+      currency: 'INR',
+      num_items: cart.length
+    });
+  }
   window.open("https://wa.me/918933063306?text=" + encodeURIComponent(text), '_blank');
 }
 
@@ -2030,11 +2581,10 @@ function pdpBuyNow() {
   for (let i = 0; i < currentPdpQuantity; i++) {
     addToCart(b.id || b.handle || b.title, b.title, cleanP, b.cover || b.coverUrl);
   }
-  // If in Shopify environment, redirect to checkout
-  if (window.location.hostname.includes('shopify') || window.location.hostname.includes('indigobooks.shop')) {
-    window.location.href = '/checkout';
+  if (typeof window.proceedToCheckout === 'function') {
+    window.proceedToCheckout();
   } else {
-    toggleCartDrawer(true);
+    window.location.href = '/checkout';
   }
 }
 
@@ -2578,6 +3128,21 @@ function openExpressPhoneCheckout(bookId, qty) {
   const modal = document.getElementById('indigo-express-checkout-modal') || document.getElementById('expressPhoneCheckoutModal');
   if (!modal) return;
 
+  // CRITICAL: Close cart drawer and solo book view so checkout modal is 100% visible
+  if (typeof toggleCartDrawer === 'function') toggleCartDrawer(false);
+  if (typeof window.toggleCartDrawer === 'function') window.toggleCartDrawer(false);
+  const cartDrawer = document.getElementById('cartDrawer') || document.querySelector('.cart-drawer') || document.querySelector('.cart-drawer-panel');
+  if (cartDrawer) {
+    cartDrawer.classList.remove('is-open');
+    cartDrawer.style.transform = 'translateX(100%)';
+    cartDrawer.style.display = 'none';
+  }
+  const cartOverlay = document.getElementById('cartOverlay') || document.getElementById('cartDrawerOverlay') || document.querySelector('.cart-overlay') || document.querySelector('.cart-drawer-overlay');
+  if (cartOverlay) {
+    cartOverlay.classList.remove('is-open');
+    cartOverlay.style.display = 'none';
+  }
+
   // Make sure order confirmation modal is closed
   const confirmModal = document.getElementById('indigo-order-success-modal') || document.getElementById('orderConfirmationModal');
   if (confirmModal) {
@@ -2586,11 +3151,59 @@ function openExpressPhoneCheckout(bookId, qty) {
     confirmModal.style.display = 'none';
   }
 
-  // Calculate order total
+  // Resolve book if bookId provided (supports Object or string ID)
+  if (bookId) {
+    let resolved = null;
+    if (typeof bookId === 'object' && bookId !== null) {
+      resolved = bookId;
+    }
+    if (!resolved && typeof window.resolveBookObject === 'function') {
+      resolved = window.resolveBookObject(bookId);
+    }
+    if (!resolved && typeof POPULAR_BOOKS !== 'undefined') {
+      for (let i = 0; i < POPULAR_BOOKS.length; i++) {
+        if (POPULAR_BOOKS[i].id === bookId || POPULAR_BOOKS[i].isbn === bookId) { resolved = POPULAR_BOOKS[i]; break; }
+      }
+    }
+    if (!resolved && typeof MASTER_SEARCH_CATALOG !== 'undefined') {
+      for (let j = 0; j < MASTER_SEARCH_CATALOG.length; j++) {
+        if (MASTER_SEARCH_CATALOG[j].id === bookId || MASTER_SEARCH_CATALOG[j].handle === bookId || MASTER_SEARCH_CATALOG[j].isbn === bookId) {
+          resolved = MASTER_SEARCH_CATALOG[j]; break;
+        }
+      }
+    }
+    if (resolved) {
+      currentActivePdpBook = resolved;
+      currentPdpQuantity = qty || 1;
+    }
+  }
+
+  // Populate book preview strip in modal
+  const prevWrap = document.getElementById('checkoutBookPreview');
+  const prevThumb = document.getElementById('checkoutBookThumb');
+  const prevTitle = document.getElementById('checkoutBookTitle');
+  const prevMeta = document.getElementById('checkoutBookMeta');
+  if (currentActivePdpBook) {
+    if (prevWrap) prevWrap.style.display = 'flex';
+    if (prevThumb) {
+      prevThumb.src = currentActivePdpBook.cover || '';
+      prevThumb.style.display = currentActivePdpBook.cover ? 'block' : 'none';
+    }
+    if (prevTitle) prevTitle.textContent = currentActivePdpBook.title || 'Book';
+    if (prevMeta) {
+      const fmt = currentActivePdpBook.selectedFormat || currentActivePdpBook.binding || currentActivePdpBook.format || 'Paperback';
+      const auth = currentActivePdpBook.author || 'Indigo Books';
+      prevMeta.textContent = fmt + ' • ' + auth;
+    }
+  } else {
+    if (prevWrap) prevWrap.style.display = 'none';
+  }
+
+  // Calculate order total with authentic pricing
   let total = 299;
   if (currentActivePdpBook) {
-    const p = currentActivePdpVariant ? currentActivePdpVariant.price : (currentActivePdpBook.raw_price || 299);
-    total = p * (currentPdpQuantity || 1);
+    const rawP = currentActivePdpBook.selectedPrice || (currentActivePdpVariant ? currentActivePdpVariant.price : (currentActivePdpBook.rawPrice || currentActivePdpBook.raw_price || currentActivePdpBook.mrp || currentActivePdpBook.price || 299));
+    total = window.cleanPrice(rawP, 299) * (currentPdpQuantity || 1);
   } else if (cart && cart.length > 0) {
     total = cart.reduce(function(acc, item) {
       const pr = typeof item.price === 'number' ? item.price : parseFloat(String(item.price).replace(/[^0-9.]/g, '') || 299);
@@ -2616,7 +3229,60 @@ function openExpressPhoneCheckout(bookId, qty) {
   modal.classList.add('is-active');
   modal.style.setProperty('display', 'flex', 'important');
   modal.style.display = 'flex';
+  modal.style.setProperty('z-index', '30000000', 'important');
+  modal.style.zIndex = '30000000';
   document.body.style.overflow = 'hidden';
+
+  // Ensure Form has novalidate to prevent browser "Please match the format requested" popover
+  const checkoutForm = document.getElementById('expressPhoneCheckoutForm');
+  if (checkoutForm) checkoutForm.setAttribute('novalidate', 'true');
+
+  // Phone input handling: REMOVE blocking pattern attributes & gracefully sanitize
+  const pInput = document.getElementById('checkoutPhone');
+  if (pInput) {
+    pInput.removeAttribute('pattern');
+    pInput.removeAttribute('minlength');
+    pInput.removeAttribute('title');
+    pInput.setAttribute('maxlength', '15');
+    if (!pInput.dataset.cleanerBound) {
+      pInput.dataset.cleanerBound = 'true';
+      pInput.addEventListener('input', function() {
+        let val = this.value.replace(/\D/g, '');
+        if (val.startsWith('91') && val.length > 10) val = val.slice(2);
+        else if (val.startsWith('0') && val.length > 10) val = val.slice(1);
+        this.value = val.slice(0, 10);
+      });
+      pInput.addEventListener('paste', function(e) {
+        setTimeout(function() {
+          let val = pInput.value.replace(/\D/g, '');
+          if (val.startsWith('91') && val.length > 10) val = val.slice(2);
+          else if (val.startsWith('0') && val.length > 10) val = val.slice(1);
+          pInput.value = val.slice(0, 10);
+        }, 10);
+      });
+    }
+  }
+
+  // Pincode input handling: REMOVE blocking pattern attributes & gracefully sanitize
+  const pinInput = document.getElementById('checkoutPincode');
+  if (pinInput) {
+    pinInput.removeAttribute('pattern');
+    pinInput.removeAttribute('minlength');
+    pinInput.removeAttribute('title');
+    pinInput.setAttribute('maxlength', '10');
+    if (!pinInput.dataset.cleanerBound) {
+      pinInput.dataset.cleanerBound = 'true';
+      pinInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '').slice(0, 6);
+      });
+      pinInput.addEventListener('paste', function(e) {
+        setTimeout(function() {
+          pinInput.value = pinInput.value.replace(/\D/g, '').slice(0, 6);
+        }, 10);
+      });
+    }
+  }
+
   if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
@@ -2627,6 +3293,14 @@ function closeExpressPhoneCheckout() {
     modal.style.setProperty('display', 'none', 'important');
     modal.style.display = 'none';
   }
+  const cartDrawer = document.getElementById('cartDrawer') || document.querySelector('.cart-drawer') || document.querySelector('.cart-drawer-panel');
+  if (cartDrawer) {
+    cartDrawer.style.display = '';
+  }
+  const cartOverlay = document.getElementById('cartOverlay') || document.getElementById('cartDrawerOverlay') || document.querySelector('.cart-overlay') || document.querySelector('.cart-drawer-overlay');
+  if (cartOverlay) {
+    cartOverlay.style.display = '';
+  }
   const confirmModal = document.getElementById('indigo-order-success-modal') || document.getElementById('orderConfirmationModal');
   if (!confirmModal || !confirmModal.classList.contains('is-active')) {
     document.body.style.overflow = '';
@@ -2636,16 +3310,54 @@ function closeExpressPhoneCheckout() {
 function submitExpressPhoneOrder(event) {
   if (event && event.preventDefault) event.preventDefault();
   
-  const phone = document.getElementById('checkoutPhone').value.trim();
-  const name = document.getElementById('checkoutName').value.trim();
-  const address = document.getElementById('checkoutAddress').value.trim();
-  const city = document.getElementById('checkoutCity').value.trim();
-  const pincode = document.getElementById('checkoutPincode').value.trim();
+  const phoneEl = document.getElementById('checkoutPhone');
+  const rawPhone = phoneEl ? phoneEl.value.trim() : '';
+  let phone = rawPhone.replace(/\D/g, '');
+  if (phone.startsWith('91') && phone.length > 10) phone = phone.slice(2);
+  else if (phone.startsWith('0') && phone.length > 10) phone = phone.slice(1);
+  phone = phone.slice(-10);
+
+  if (phone.length !== 10) {
+    alert('Please enter a valid 10-digit mobile number (e.g. 8840818783).');
+    if (phoneEl) phoneEl.focus();
+    return false;
+  }
+
+  const nameEl = document.getElementById('checkoutName');
+  const name = nameEl ? nameEl.value.trim() : '';
+  if (!name) {
+    alert('Please enter your full delivery name.');
+    if (nameEl) nameEl.focus();
+    return false;
+  }
+
+  const addressEl = document.getElementById('checkoutAddress');
+  const address = addressEl ? addressEl.value.trim() : '';
+  if (!address) {
+    alert('Please enter your delivery address (House / Street / Area).');
+    if (addressEl) addressEl.focus();
+    return false;
+  }
+
+  const cityEl = document.getElementById('checkoutCity');
+  const city = cityEl ? cityEl.value.trim() : 'Prayagraj';
+
+  const pinEl = document.getElementById('checkoutPincode');
+  const pincode = pinEl ? pinEl.value.trim().replace(/\D/g, '').slice(0, 6) : '';
+  if (pincode.length !== 6) {
+    alert('Please enter a valid 6-digit postal PIN code (e.g. 211003).');
+    if (pinEl) pinEl.focus();
+    return false;
+  }
   
   const paymentMethod = document.querySelector('input[name="checkoutPayment"]:checked') ? document.querySelector('input[name="checkoutPayment"]:checked').value : 'cod';
 
   const orderId = '#IND-' + Math.floor(100000 + Math.random() * 900000);
-  const total = document.getElementById('checkoutOrderTotal') ? document.getElementById('checkoutOrderTotal').textContent : '₹299.00';
+  const totalEl = document.getElementById('checkoutOrderTotal');
+  const total = totalEl ? totalEl.textContent : '₹299.00';
+  const numericTotal = parseFloat(total.replace(/[^0-9.]/g, '')) || 299;
+
+  const bookInfo = currentActivePdpBook ? (currentActivePdpBook.title + ' (' + (currentActivePdpBook.selectedFormat || currentActivePdpBook.binding || currentActivePdpBook.format || 'Book') + ')') : 'Indigo Books Collection';
 
   const orderRecord = {
     orderId: orderId,
@@ -2654,6 +3366,7 @@ function submitExpressPhoneOrder(event) {
     address: address + ', ' + city + ' - ' + pincode,
     paymentMethod: paymentMethod.toUpperCase(),
     total: total,
+    book: bookInfo,
     date: new Date().toISOString()
   };
 
@@ -2665,37 +3378,88 @@ function submitExpressPhoneOrder(event) {
 
   // Meta Pixel conversion event
   if (typeof window.fbq === 'function') {
-    window.fbq('track', 'Purchase', { currency: 'INR', value: parseFloat(total.replace(/[^0-9.]/g, '')) });
+    window.fbq('track', 'Purchase', { currency: 'INR', value: numericTotal });
   }
 
   // STEP 1: Fully close and hide the checkout modal FIRST so it does not stay underneath!
   closeExpressPhoneCheckout();
 
-  // Clear cart
-  cart = [];
-  try { localStorage.setItem('indigo_cart', JSON.stringify([])); } catch (e) {}
-  updateCartUI();
+  // Clear cart if ordered from general cart
+  if (!currentActivePdpBook) {
+    cart = [];
+    try { localStorage.setItem('indigo_cart', JSON.stringify([])); } catch (e) {}
+    updateCartUI();
+  }
 
   // STEP 2: Show Order Confirmation Modal cleanly
   const confirmModal = document.getElementById('indigo-order-success-modal') || document.getElementById('orderConfirmationModal');
   if (confirmModal) {
     const idEl = document.getElementById('orderConfirmId');
     if (idEl) idEl.textContent = orderId;
+
+    const headingEl = document.getElementById('orderConfirmHeading');
+    const badgeEl = document.getElementById('orderConfirmBadge');
     const textEl = document.getElementById('orderConfirmText');
-    if (textEl) {
-      textEl.textContent = 'Thank you, ' + name + '! Your order ' + orderId + ' (' + total + ', ' + (paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment') + ') has been registered for delivery to ' + city + ' (' + pincode + ').';
-    }
+    const payActionWrap = document.getElementById('orderConfirmPayActionWrap');
+    const upiPayBtn = document.getElementById('orderConfirmUpiBtn');
+    const upiQrImg = document.getElementById('orderConfirmUpiQr');
     const waLink = document.getElementById('orderConfirmWaLink');
-    if (waLink) {
-      const waMsg = encodeURIComponent('Hello Indigo Books India! I placed Order ' + orderId + ' for ' + total + '. Please share tracking updates.');
-      waLink.href = 'https://wa.me/918933063306?text=' + waMsg;
+
+    const isUpi = (paymentMethod === 'upi' || paymentMethod === 'online');
+
+    if (badgeEl) {
+      badgeEl.textContent = isUpi ? 'ORDER PLACED • COMPLETE PAYMENT' : 'ORDER CONFIRMED • CASH ON DELIVERY';
+      badgeEl.style.color = isUpi ? '#B45309' : '#16A34A';
     }
+    if (headingEl) {
+      headingEl.textContent = isUpi ? 'Complete Instant UPI Payment' : 'Thank You for Your Order!';
+    }
+    if (textEl) {
+      if (isUpi) {
+        textEl.innerHTML = 'Thank you, <strong>' + name + '</strong>! Your order <strong>' + orderId + '</strong> for <strong>' + bookInfo + '</strong> (' + total + ') is reserved. Tap below to pay via GPay / PhonePe / Paytm / BHIM, or scan the QR code.';
+      } else {
+        textEl.innerHTML = 'Thank you, <strong>' + name + '</strong>! Your order <strong>' + orderId + '</strong> for <strong>' + bookInfo + '</strong> (' + total + ') has been registered for <strong>Cash on Delivery</strong> to ' + city + ' (' + pincode + ').';
+      }
+    }
+
+    // Dynamic UPI Intent Link for mobile & dynamic QR code
+    const upiUrl = 'upi://pay?pa=8933063306@paytm&pn=Indigo%20Books%20India&am=' + numericTotal.toFixed(2) + '&cu=INR&tn=' + encodeURIComponent('Order ' + orderId);
+
+    if (payActionWrap) {
+      payActionWrap.style.display = isUpi ? 'block' : 'none';
+    }
+    if (upiPayBtn) {
+      upiPayBtn.href = upiUrl;
+      upiPayBtn.innerHTML = '⚡ Pay ' + total + ' via UPI App (GPay / PhonePe / Paytm)';
+    }
+    if (upiQrImg) {
+      upiQrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(upiUrl);
+    }
+
+    if (waLink) {
+      const waMsg = isUpi 
+        ? encodeURIComponent('Hello Indigo Books India! I placed Order ' + orderId + ' for ' + bookInfo + ' (' + total + ') via UPI. Attaching payment screenshot.')
+        : encodeURIComponent('Hello Indigo Books India! I placed Order ' + orderId + ' for ' + bookInfo + ' (' + total + ') with Cash on Delivery. Please confirm dispatch.');
+      waLink.href = 'https://wa.me/918933063306?text=' + waMsg;
+      waLink.innerHTML = isUpi 
+        ? '<i data-lucide="message-circle" style="width: 16px; height: 16px;"></i> Send UPI Confirmation on WhatsApp (+91 8933063306)'
+        : '<i data-lucide="message-circle" style="width: 16px; height: 16px;"></i> Track Order via WhatsApp (+91 8933063306)';
+    }
+
     confirmModal.classList.add('is-active');
     confirmModal.style.setProperty('display', 'flex', 'important');
     confirmModal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    // If mobile UPI, auto-open UPI payment intent
+    if (isUpi && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      setTimeout(function() {
+        window.location.href = upiUrl;
+      }, 500);
+    }
   }
+  return false;
 }
 
 function closeOrderConfirmationModal() {
@@ -2712,7 +3476,6 @@ function closeOrderConfirmationModal() {
     checkoutModal.style.display = 'none';
   }
   document.body.style.overflow = '';
-  closeDedicatedProductPage();
 }
 
 // Global Escape Key Listener for Immediate Modal Dismissal
@@ -3192,11 +3955,30 @@ function openSearchResultsPage(query) {
   // 1. Hide other views, show search results view
   if (homeView) homeView.style.display = 'none';
   if (pdpView) pdpView.style.display = 'none';
+  const soloV = document.getElementById('indigo-solo-product-view');
+  if (soloV) {
+    soloV.classList.remove('is-active');
+    soloV.style.display = 'none';
+  }
+  document.documentElement.classList.remove('solo-page-active');
+  document.body.classList.remove('solo-page-active');
+  document.body.style.removeProperty('overflow');
+  document.documentElement.style.removeProperty('overflow');
+
+  window.previousViewBeforeSolo = 'search';
+  if (typeof previousViewBeforeSolo !== 'undefined') previousViewBeforeSolo = 'search';
+
   searchView.style.display = 'block';
 
-  // 2. Sync all search input boxes
+  // 2. Sync all search input boxes and hide any open dropdowns
+  const editResults = document.getElementById('editorialSearchResults');
+  if (editResults) editResults.style.display = 'none';
+  if (typeof hideAllSearchDropdowns === 'function') hideAllSearchDropdowns();
+
   const qDisplay = document.getElementById('search-query-display');
   if (qDisplay) qDisplay.textContent = activeSearchQuery;
+  const editInput = document.getElementById('editorialSearchInput');
+  if (editInput) editInput.value = activeSearchQuery;
   const resInput = document.getElementById('results-search-input');
   if (resInput) resInput.value = activeSearchQuery;
   const heroInput = document.getElementById('hero-search-input');
@@ -3290,17 +4072,49 @@ function closeSearchResultsPage() {
 window.closeSearchResultsPage = closeSearchResultsPage;
 
 window.closeSearchResultsView = function() {
+  // 1. Reset navigation state back to homepage
+  window.previousViewBeforeSolo = 'home';
+  if (typeof previousViewBeforeSolo !== 'undefined') previousViewBeforeSolo = 'home';
+
   const homeView = document.getElementById('homepage-view');
   const pdpView = document.getElementById('single-product-page-view');
   const searchView = document.getElementById('indigo-search-results-view');
-  if (!homeView || !searchView) return;
+  const soloView = document.getElementById('indigo-solo-product-view');
 
-  searchView.style.display = 'none';
+  if (searchView) searchView.style.display = 'none';
   if (pdpView) pdpView.style.display = 'none';
-  homeView.style.display = 'block';
+  if (soloView) {
+    soloView.classList.remove('is-active');
+    soloView.style.display = 'none';
+  }
+  document.documentElement.classList.remove('solo-page-active');
+  document.body.classList.remove('solo-page-active');
+  document.body.style.removeProperty('overflow');
+  document.documentElement.style.removeProperty('overflow');
 
-  if (window.location.hash.startsWith('#/search')) {
-    history.pushState(null, null, ' ');
+  if (homeView) homeView.style.display = 'block';
+
+  // Clear all search queries and active lists
+  if (typeof activeSearchQuery !== 'undefined') activeSearchQuery = '';
+  if (typeof currentSearchResultsList !== 'undefined') currentSearchResultsList = [];
+
+  // Hide any search suggestion popups
+  const editResults = document.getElementById('editorialSearchResults');
+  if (editResults) editResults.style.display = 'none';
+  if (typeof hideAllSearchDropdowns === 'function') {
+    hideAllSearchDropdowns();
+  }
+
+  // Clear all search inputs across the store
+  ['editorialSearchInput', 'hero-search-input', 'catalog-search-input', 'results-search-input', 'v2ArchiveSearchInput'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
+  try {
+    history.pushState(null, null, window.location.pathname);
+  } catch(e) {
+    window.location.hash = '';
   }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -3388,40 +4202,51 @@ function renderCurrentSearchResults() {
   container.innerHTML = list.map(function(book) {
     const rawCover = book.image || book.coverUrl || book.cover || '';
     let cover = getAssetUrl(rawCover, book.id);
-    const authorSafe = (book.author || book.vendor || 'Indigo Books').replace(/['"]/g, ' ');
+    const authorSafe = (book.author || book.vendor || 'Indigo Books Author').replace(/['"]/g, ' ');
     const titleSafe = (book.title || 'Book').replace(/['"]/g, ' ');
     if (!cover) {
       cover = getFallbackCover(titleSafe, authorSafe);
     }
-    const bookUrl = book.url || (book.handle ? '/products/' + book.handle : '');
     const cleanP = window.cleanPrice(book.price, 299);
     const priceFormatted = '₹' + cleanP.toFixed(2);
-    const bookBinding = (book.binding || book.format || (book.type && book.type.toLowerCase().includes('hard') ? 'Hardcover' : 'Paperback') || 'Paperback').toUpperCase();
+    const bookBinding = (book.binding || book.format || 'Paperback').toUpperCase();
+    const bookIdSafe = book.id || book.handle || book.isbn;
 
+    const fallbackSvg = getFallbackCover(titleSafe, authorSafe);
     return `
-      <div class="catalog-card" data-book-id="${escapeHtml(book.id)}" data-title="${escapeHtml(book.title)}" data-author="${escapeHtml(book.author || book.vendor || '')}" data-price="${escapeHtml(String(cleanP))}" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s;">
-        <div class="catalog-thumb" onclick="handleBookAction('${escapeJs(book.id)}', '${escapeJs(bookUrl)}', event);" style="cursor: pointer; width: 100%; aspect-ratio: 2 / 3; background: #F8FAFC; border-radius: 6px; overflow: hidden; margin-bottom: 12px; position: relative;">
-          <img referrerpolicy="no-referrer" src="${cover}" alt="${escapeHtml(titleSafe)}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.onerror=null; this.src=getFallbackCover('${escapeJs(titleSafe)}', '${escapeJs(authorSafe)}');" />
+      <div class="v2-search-book-card" onclick="window.openSoloBookPage('${escapeJs(bookIdSafe)}');" style="background: #FFFFFF; border: 1px solid #EAE5DC; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(0,0,0,0.04);">
+        <div>
+          <div style="width: 100%; aspect-ratio: 2 / 3; background-color: #FAF7F0; background-image: url(&quot;${fallbackSvg}&quot;); background-size: cover; background-position: center; border-radius: 8px; overflow: hidden; margin-bottom: 14px; box-shadow: -4px 8px 18px rgba(0,0,0,0.18); position: relative;">
+            <img referrerpolicy="no-referrer" src="${cover}" alt="${escapeHtml(titleSafe)}" loading="lazy" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;" data-author="${escapeHtml(authorSafe)}" onerror="this.onerror=null; this.src=&quot;${fallbackSvg}&quot;; this.style.display='none'; window.handleBookCoverError && window.handleBookCoverError(this);" />
+            <span style="position: absolute; top: 8px; left: 8px; font-size: 9.5px; font-weight: 800; color: #E04F33; background: rgba(255,255,255,0.95); padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.1em; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.12);">
+              ${escapeHtml(bookBinding)}
+            </span>
+          </div>
+          <div style="margin-bottom: 6px;">
+            <span style="font-size: 9.5px; font-weight: 800; color: #E04F33; background: rgba(224, 79, 51, 0.08); padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.1em;">
+              ${escapeHtml(bookBinding)}
+            </span>
+          </div>
+          <h3 style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 17px; font-weight: 600; color: #121212; line-height: 1.25; margin: 0 0 4px; min-height: 42px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" title="${escapeHtml(book.title)}">
+            ${escapeHtml(book.title)}
+          </h3>
+          <div style="font-size: 12px; color: #666666; font-style: italic; margin-bottom: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            By ${escapeHtml(book.author || book.vendor || 'Distinguished Author')}
+          </div>
         </div>
-        <div style="font-size: 10px; font-weight: 800; color: #0066B3; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;">
-          ${escapeHtml(bookBinding)} &bull; <span style="color: #B45309;">IN STOCK</span>
-        </div>
-        <h3 style="font-family: 'Merriweather', Georgia, serif; font-size: 15px; font-weight: 700; color: #0F172A; line-height: 1.3; margin: 0 0 4px; min-height: 38px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-          <a href="javascript:void(0)" onclick="handleBookAction('${escapeJs(book.id)}', '${escapeJs(bookUrl)}', event); return false;" style="color: inherit; text-decoration: none;">${escapeHtml(book.title)}</a>
-        </h3>
-        <div style="font-size: 12px; color: #64748B; margin-bottom: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          ${escapeHtml(book.author || book.vendor || 'Indigo Books')}
-        </div>
-        <div style="display: flex; align-items: baseline; gap: 8px; margin-top: auto; margin-bottom: 14px;">
-          <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800; color: #0F172A; font-variant-numeric: lining-nums tabular-nums !important;">${priceFormatted}</span>
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <button type="button" class="btn-overview" onclick="handleBookAction('${escapeJs(book.id)}', '${escapeJs(bookUrl)}', event);" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 12px; background: #F1F5F9; color: #0F172A; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 12.5px; font-weight: 700; cursor: pointer;">
-            <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Details
-          </button>
-          <button type="button" class="btn-add-cart" onclick="addToCart('${escapeJs(book.id)}', '${escapeJs(book.title)}', ${cleanP}, '${escapeJs(cover)}', this, event)" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 12px; background: #0066B3; color: #FFFFFF; border: none; border-radius: 6px; font-size: 12.5px; font-weight: 700; cursor: pointer;">
-            <i data-lucide="shopping-bag" style="width: 14px; height: 14px;"></i> + Add
-          </button>
+
+        <div>
+          <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 700; color: #121212; margin-bottom: 12px;">
+            ${priceFormatted}
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="v2-card-preview-btn" onclick="event.stopPropagation(); window.openSoloBookPage('${escapeJs(bookIdSafe)}');" style="flex: 1; padding: 9px 12px; background: #FAF7F0; border: 1px solid #D5CFC4; border-radius: 8px; font-size: 12px; font-weight: 700; color: #121212; cursor: pointer; transition: all 0.2s ease;">
+              Preview &rarr;
+            </button>
+            <button type="button" class="v2-card-quick-btn" onclick="event.stopPropagation(); if (typeof window.addToCart === 'function') { window.addToCart('${escapeJs(bookIdSafe)}', '${escapeJs(book.title)}', ${cleanP}, '${escapeJs(cover)}'); } if (typeof window.toggleCartDrawer === 'function') { window.toggleCartDrawer(true); }" style="flex: 1; padding: 9px 12px; background: #121212; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; color: #FFFFFF; cursor: pointer; transition: all 0.2s ease;">
+              + Add
+            </button>
+          </div>
         </div>
       </div>
     `;
@@ -3569,8 +4394,26 @@ if (typeof window !== 'undefined') {
   window.addToCart = addToCart;
   window.openSearchResultsPage = openSearchResultsPage;
   window.closeSearchResultsPage = closeSearchResultsPage;
-  window.openDedicatedProductPage = openDedicatedProductPage;
-  window.openSoloBookPage = openDedicatedProductPage;
+  window.openDedicatedProductPage = function(bookId) {
+    if (typeof window.openSoloBookPage === 'function') {
+      window.openSoloBookPage(bookId);
+    }
+  };
+  window.closeDedicatedProductPage = function() {
+    if (typeof window.closeSoloBookPage === 'function') {
+      window.closeSoloBookPage();
+    }
+  };
+  window.openQuickOrderModal = function(bookId, qty) {
+    if (typeof openExpressPhoneCheckout === 'function') {
+      openExpressPhoneCheckout(bookId, qty);
+    }
+  };
+  window.openExpressModal = function(bookId, title, price) {
+    if (typeof openExpressPhoneCheckout === 'function') {
+      openExpressPhoneCheckout(bookId);
+    }
+  };
   window.resolveBookObject = resolveBookObject;
   window.proceedToCheckout = proceedToCheckout;
   window.checkoutViaWhatsApp = checkoutViaWhatsApp;
@@ -3600,4 +4443,15 @@ if (typeof window !== 'undefined') {
   window.updateCartQty = updateCartQty;
   window.renderPdpRecommendations = renderPdpRecommendations;
 }
+
+window.addEventListener('pageshow', function(event) {
+  try {
+    const savedCart = localStorage.getItem('indigo_cart');
+    if (savedCart) {
+      const parsed = JSON.parse(savedCart);
+      if (Array.isArray(parsed)) cart = parsed;
+    }
+  } catch (e) {}
+  if (typeof updateCartUI === 'function') updateCartUI();
+});
 """

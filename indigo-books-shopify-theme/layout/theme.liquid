@@ -1,36 +1,121 @@
 <!doctype html>
-<html class="no-js" lang="{{ request.locale.iso_code }}">
+<html class="no-js" lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="#0F172A">
     <meta name="referrer" content="no-referrer">
+    <meta http-equiv="content-language" content="en">
+    <meta name="google" content="notranslate">
     <link rel="canonical" href="{{ canonical_url }}">
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 
-    <!-- Official Vector SVG Favicon (Data URI: Zero 404 Console Errors) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='16' fill='%230066B3'/%3E%3Cpath d='M20 20h25v25H20zM55 20h25v25H55zM20 55h25v25H20zM55 55h25v25H55z' fill='none' stroke='%23ffffff' stroke-width='6'/%3E%3C/svg%3E">
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="-e_RVQPApfsjWvvXEfSgc-ttWxIqb9hqO7eUvZCF1ZI">
+    {%- if settings.google_site_verification != blank -%}
+      {%- if settings.google_site_verification contains '<meta' -%}
+        {{ settings.google_site_verification }}
+      {%- else -%}
+        <meta name="google-site-verification" content="{{ settings.google_site_verification | escape }}">
+      {%- endif -%}
+    {%- endif -%}
 
-    <title>{{ page_title | default: shop.name }}</title>
-    {% if page_description %}
-      <meta name="description" content="{{ page_description | escape }}">
-    {% endif %}
+    <!-- Google Search Verified Square Favicons & Web Manifest -->
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" sizes="192x192" href="{{ settings.favicon | image_url: width: 192, height: 192 }}">
+      <link rel="icon" type="image/png" sizes="96x96" href="{{ settings.favicon | image_url: width: 96, height: 96 }}">
+      <link rel="icon" type="image/png" sizes="48x48" href="{{ settings.favicon | image_url: width: 48, height: 48 }}">
+      <link rel="icon" type="image/png" sizes="32x32" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+      <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 48, height: 48 }}">
+      <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
+    {%- else -%}
+      <link rel="icon" type="image/png" sizes="192x192" href="{{ 'favicon-192x192.png' | asset_url }}">
+      <link rel="icon" type="image/png" sizes="96x96" href="{{ 'favicon-96x96.png' | asset_url }}">
+      <link rel="icon" type="image/png" sizes="48x48" href="{{ 'favicon-48x48.png' | asset_url }}">
+      <link rel="icon" type="image/png" sizes="32x32" href="{{ 'favicon-32x32.png' | asset_url }}">
+      <link rel="shortcut icon" href="{{ 'favicon-48x48.png' | asset_url }}">
+      <link rel="apple-touch-icon" href="{{ 'apple-touch-icon.png' | asset_url }}">
+    {%- endif -%}
 
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:site_name" content="{{ shop.name }}">
+    {%- assign page_title_clean = page_title | default: shop.name -%}
+    {%- if page_title_clean == 'My Store' or page_title_clean == blank -%}
+      {%- assign page_title_clean = 'Indigo Books India — Premier Online Bookstore Prayagraj' -%}
+    {%- endif -%}
+    <title>{{ page_title_clean }}</title>
+    <meta name="description" content="Discover India's premier online bookstore. 5,500+ curated titles in Hindi classics, Urdu poetry, law, history, philosophy, and bestsellers from Prayagraj.">
+
+    <!-- Open Graph & Schema.org Structured Data -->
+    <meta property="og:site_name" content="Indigo Books India">
     <meta property="og:url" content="{{ canonical_url }}">
-    <meta property="og:title" content="{{ page_title | default: shop.name }}">
+    <meta property="og:title" content="{{ page_title_clean }}">
     <meta property="og:type" content="website">
-    <meta property="og:description" content="{{ page_description | default: shop.description | escape }}">
+    <meta property="og:image" content="{{ 'indigo-books-logo.png' | asset_url }}">
+    <meta property="og:description" content="Discover India's premier online bookstore. 5,500+ curated titles in Hindi classics, Urdu poetry, law, history, philosophy, and bestsellers from Prayagraj.">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Indigo Books",
+      "alternateName": ["Indigo Books India", "IndigoBooks"],
+      "url": "https://indigobooks.shop/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://indigobooks.shop/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Indigo Books India",
+      "url": "https://indigobooks.shop/",
+      "logo": "{{ 'favicon-192x192.png' | asset_url }}",
+      "sameAs": [
+        "https://www.instagram.com/indigobooksindia",
+        "https://www.facebook.com/indigobooks"
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BookStore",
+      "name": "Indigo Books India",
+      "url": "https://indigobooks.shop/",
+      "logo": "{{ 'indigo-books-logo.png' | asset_url }}",
+      "image": "{{ 'indigo-books-logo.png' | asset_url }}",
+      "description": "Premier bookstore in Prayagraj offering Hindi literature, UPSC, Law, and Urdu poetry.",
+      "telephone": "+918933063306",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Prayagraj",
+        "addressRegion": "Uttar Pradesh",
+        "addressCountry": "IN"
+      }
+    }
+    </script>
 
     <!-- Google Fonts: Merriweather & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
 
+    <!-- Suppress Tailwind Production Warning BEFORE CDN Script Evaluation -->
+    <script>
+      (function() {
+        var origWarn = console.warn;
+        console.warn = function() {
+          if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com') !== -1) return;
+          origWarn.apply(console, arguments);
+        };
+      })();
+    </script>
     <!-- Tailwind CSS Engine -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com" defer="defer"></script>
 
     <!-- Global Unified Bookstore Stylesheets -->
     <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
@@ -254,19 +339,62 @@
         box-sizing: border-box !important;
       }
 
-      /* STICKY CREAM NAVBAR AT ROOT LEVEL */
+      /* STICKY CREAM NAVBAR AT ROOT LEVEL (MAX STACKING & OVERFLOW VISIBLE) */
       header,
       .site-header,
       .site-navbar,
       .main-navbar,
+      .navbar-inner,
+      .editorial-search-wrap,
       header > nav {
         position: sticky !important;
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
         width: 100% !important;
-        z-index: 99999 !important;
+        overflow: visible !important;
+        z-index: 2147483647 !important;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+      }
+
+      /* GUARANTEED FLOATING SEARCH DROPDOWN - FLOATS OVER ALL PAGES & MODALS */
+      .editorial-search-wrap {
+        position: relative !important;
+        flex: 1 1 340px !important;
+        max-width: 440px !important;
+        overflow: visible !important;
+        z-index: 2147483647 !important;
+      }
+
+      .editorial-search-results {
+        position: absolute !important;
+        top: calc(100% + 8px) !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        min-width: 320px !important;
+        max-width: 480px !important;
+        background: #FFFFFF !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(18, 18, 18, 0.14) !important;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35) !important;
+        max-height: 480px !important;
+        overflow-y: auto !important;
+        display: none;
+        z-index: 2147483647 !important;
+      }
+
+      .editorial-search-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        padding: 10px 16px !important;
+        cursor: pointer !important;
+        border-bottom: 1px solid #F5F5F5 !important;
+        transition: background 0.15s ease !important;
+      }
+      .editorial-search-item:hover {
+        background: #FAF8F5 !important;
       }
 
       /* REMOVE CARETS / VERTICAL BARS IN STATS BAR */
@@ -359,139 +487,675 @@
     </style>
 
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@latest" defer="defer"></script>
 
     <!-- Verified Shopify CDN Asset Map -->
     <script>
       window.SHOPIFY_ASSET_URL_ROOT = "{{ 'theme.css' | asset_url }}".replace(/theme\.css(\?.*)?$/, '');
       window.PODIUM_CDN_COVERS = {
         "podium-godan": "{{ 'hero-godan.jpg' | asset_url }}",
-        "hero-godan.jpg": "{{ 'hero-godan.jpg' | asset_url }}",
-        "assets/hero-godan.jpg": "{{ 'hero-godan.jpg' | asset_url }}",
         "godan": "{{ 'hero-godan.jpg' | asset_url }}",
         "godan-premchand": "{{ 'hero-godan.jpg' | asset_url }}",
-        
+        "hero-book-godan": "{{ 'hero-godan.jpg' | asset_url }}",
         "podium-raag-darbari": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
-        "hero-raag-darbari.jpg": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
-        "assets/hero-raag-darbari.jpg": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
         "raag-darbari": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
         "raag-darbari-shrilal-shukla": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
-
+        "hero-book-raag": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
         "podium-chitralekha": "{{ 'hero-chitralekha.jpg' | asset_url }}",
-        "hero-chitralekha.jpg": "{{ 'hero-chitralekha.jpg' | asset_url }}",
-        "assets/hero-chitralekha.jpg": "{{ 'hero-chitralekha.jpg' | asset_url }}",
         "chitralekha": "{{ 'hero-chitralekha.jpg' | asset_url }}",
         "chitralekha-bhagwaticharan-verma": "{{ 'hero-chitralekha.jpg' | asset_url }}",
-
+        "hero-book-chitralekha": "{{ 'hero-chitralekha.jpg' | asset_url }}",
         "podium-rashmirathi": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
-        "hero-rashmirathi.jpg": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
-        "assets/hero-rashmirathi.jpg": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
         "rashmirathi": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
         "rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
-
+        "hero-book-rashmirathi": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
         "podium-ishq-mishra": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
         "podium-kuchh-ishq": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
-        "hero-kuchh-ishq.jpg": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
-        "assets/hero-kuchh-ishq.jpg": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
         "kuchh-ishq": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
         "kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
-
+        "hero-book-kuchh-ishq": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
         "rekhta-kuchh-ishq": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
-        "rekhta-tarkash": "{{ 'book-tarkash.jpg' | asset_url }}",
-        "book-tarkash.jpg": "{{ 'book-tarkash.jpg' | asset_url }}",
-        "assets/book-tarkash.jpg": "{{ 'book-tarkash.jpg' | asset_url }}",
-        "rekhta-rashmirathi": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
-        "rekhta-dhuaan": "{{ 'hero-book-dhuaan.jpg' | asset_url }}",
-        "hero-book-dhuaan.jpg": "{{ 'hero-book-dhuaan.jpg' | asset_url }}",
-        "assets/hero-book-dhuaan.jpg": "{{ 'hero-book-dhuaan.jpg' | asset_url }}",
-        "rekhta-guzare-lamhe": "{{ 'book-guzare-lamhe.jpg' | asset_url }}",
-        "book-guzare-lamhe.jpg": "{{ 'book-guzare-lamhe.jpg' | asset_url }}",
-        "assets/book-guzare-lamhe.jpg": "{{ 'book-guzare-lamhe.jpg' | asset_url }}",
+        "hero-book-gypsy": "{{ 'hero-gypsy.jpg' | asset_url }}",
         "hindi-gypsy": "{{ 'hero-gypsy.jpg' | asset_url }}",
-        "hero-gypsy.jpg": "{{ 'hero-gypsy.jpg' | asset_url }}",
-        "assets/hero-gypsy.jpg": "{{ 'hero-gypsy.jpg' | asset_url }}",
         "gypsy-ila-chandra-joshi": "{{ 'hero-gypsy.jpg' | asset_url }}",
-
-        "book-highcourt.jpg": "{{ 'book-highcourt.jpg' | asset_url }}",
-        "book-samvidhan.jpg": "{{ 'book-samvidhan.jpg' | asset_url }}",
-        "book-sanhita.jpg": "{{ 'book-sanhita.jpg' | asset_url }}",
-        "book-kasauti.jpg": "{{ 'book-kasauti.jpg' | asset_url }}",
-        "book-shilp-vidhi.jpg": "{{ 'book-shilp-vidhi.jpg' | asset_url }}",
-        "book-anusandhan.jpg": "{{ 'book-anusandhan.jpg' | asset_url }}",
-        "book-badalata-desh.jpg": "{{ 'book-badalata-desh.jpg' | asset_url }}",
-        "book-nyay-sangharsh.jpg": "{{ 'book-nyay-sangharsh.jpg' | asset_url }}",
-        "book-soochana.jpg": "{{ 'book-soochana.jpg' | asset_url }}",
-        "book-azad.jpg": "{{ 'book-azad.jpg' | asset_url }}",
-        "vault-law-highcourt": "{{ 'book-highcourt.jpg' | asset_url }}",
+        "book-tarkash": "{{ 'book-tarkash.jpg' | asset_url }}",
+        "rekhta-tarkash": "{{ 'book-tarkash.jpg' | asset_url }}",
+        "book-aadha-gaon": "{{ 'book-aadha-gaon.jpg' | asset_url }}",
+        "aadha-gaon": "{{ 'book-aadha-gaon.jpg' | asset_url }}",
+        "book-mahabhoj": "{{ 'book-mahabhoj.jpg' | asset_url }}",
+        "mahabhoj": "{{ 'book-mahabhoj.jpg' | asset_url }}",
+        "book-shekhar": "{{ 'book-shekhar.jpg' | asset_url }}",
+        "shekhar": "{{ 'book-shekhar.jpg' | asset_url }}",
+        "book-gaban": "{{ 'book-gaban.jpg' | asset_url }}",
+        "gaban": "{{ 'book-gaban.jpg' | asset_url }}",
+        "book-nirmala": "{{ 'book-nirmala.jpg' | asset_url }}",
+        "nirmala": "{{ 'book-nirmala.jpg' | asset_url }}",
+        "hero-book-murakami": "{{ 'hero-book-murakami.jpg' | asset_url }}",
+        "book-murakami": "{{ 'hero-book-murakami.jpg' | asset_url }}",
+        "book-samvidhan": "{{ 'book-samvidhan.jpg' | asset_url }}",
         "vault-law-constitution": "{{ 'book-samvidhan.jpg' | asset_url }}",
+        "vault-law-highcourt": "{{ 'book-highcourt.jpg' | asset_url }}",
         "vault-law-ucc": "{{ 'book-sanhita.jpg' | asset_url }}",
         "vault-law-judiciary": "{{ 'book-kasauti.jpg' | asset_url }}",
-        "book-bench-bar.jpg": "{{ 'book-bench-bar.jpg' | asset_url }}",
+        "rekhta-rashmirathi": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
+        "rekhta-dhuaan": "{{ 'hero-book-dhuaan.jpg' | asset_url }}",
+        "rekhta-guzare-lamhe": "{{ 'book-guzare-lamhe.jpg' | asset_url }}",
+        "apple-touch-icon.png": "{{ 'apple-touch-icon.png' | asset_url }}",
+        "assets/apple-touch-icon.png": "{{ 'apple-touch-icon.png' | asset_url }}",
+        "./assets/apple-touch-icon.png": "{{ 'apple-touch-icon.png' | asset_url }}",
+        "apple-touch-icon": "{{ 'apple-touch-icon.png' | asset_url }}",
         "book-10-faisle.jpg": "{{ 'book-10-faisle.jpg' | asset_url }}",
-        "book-lawful-awful.jpg": "{{ 'book-lawful-awful.jpg' | asset_url }}",
-        "book-gyan-aur-karm.jpg": "{{ 'book-gyan-aur-karm.jpg' | asset_url }}",
-        "book-hindi-vyakaran.jpg": "{{ 'book-hindi-vyakaran.jpg' | asset_url }}",
-        "book-hindi-sahitya-itihas.jpg": "{{ 'book-hindi-sahitya-itihas.jpg' | asset_url }}",
-        "book-hindi-bhasha.jpg": "{{ 'book-hindi-bhasha.jpg' | asset_url }}",
-        "book-hadappa.jpg": "{{ 'book-hadappa.jpg' | asset_url }}",
-        "book-gyandan.jpg": "{{ 'book-gyandan.jpg' | asset_url }}",
-        "book-halant.jpg": "{{ 'book-halant.jpg' | asset_url }}",
-        "book-halyog.jpg": "{{ 'book-halyog.jpg' | asset_url }}",
-        "book-savarkar.jpg": "{{ 'book-savarkar.jpg' | asset_url }}",
-        "book-haashiye.jpg": "{{ 'book-haashiye.jpg' | asset_url }}",
-        "book-cheelwali-kothi.jpg": "{{ 'book-cheelwali-kothi.jpg' | asset_url }}",
-        "book-haadse.jpg": "{{ 'book-haadse.jpg' | asset_url }}",
+        "assets/book-10-faisle.jpg": "{{ 'book-10-faisle.jpg' | asset_url }}",
+        "./assets/book-10-faisle.jpg": "{{ 'book-10-faisle.jpg' | asset_url }}",
+        "book-10-faisle": "{{ 'book-10-faisle.jpg' | asset_url }}",
+        "book-a-astu-ka.jpg": "{{ 'book-a-astu-ka.jpg' | asset_url }}",
+        "assets/book-a-astu-ka.jpg": "{{ 'book-a-astu-ka.jpg' | asset_url }}",
+        "./assets/book-a-astu-ka.jpg": "{{ 'book-a-astu-ka.jpg' | asset_url }}",
+        "book-a-astu-ka": "{{ 'book-a-astu-ka.jpg' | asset_url }}",
         "book-aadha-gaon.jpg": "{{ 'book-aadha-gaon.jpg' | asset_url }}",
-        "book-mahabhoj.jpg": "{{ 'book-mahabhoj.jpg' | asset_url }}",
-        "book-shekhar.jpg": "{{ 'book-shekhar.jpg' | asset_url }}",
-        "book-halaq.jpg": "{{ 'book-halaq.jpg' | asset_url }}",
+        "assets/book-aadha-gaon.jpg": "{{ 'book-aadha-gaon.jpg' | asset_url }}",
+        "./assets/book-aadha-gaon.jpg": "{{ 'book-aadha-gaon.jpg' | asset_url }}",
+        "book-aadha-gaon": "{{ 'book-aadha-gaon.jpg' | asset_url }}",
+        "book-acotar.jpg": "{{ 'book-acotar.jpg' | asset_url }}",
+        "assets/book-acotar.jpg": "{{ 'book-acotar.jpg' | asset_url }}",
+        "./assets/book-acotar.jpg": "{{ 'book-acotar.jpg' | asset_url }}",
+        "book-acotar": "{{ 'book-acotar.jpg' | asset_url }}",
+        "book-alchemised.jpg": "{{ 'book-alchemised.jpg' | asset_url }}",
+        "assets/book-alchemised.jpg": "{{ 'book-alchemised.jpg' | asset_url }}",
+        "./assets/book-alchemised.jpg": "{{ 'book-alchemised.jpg' | asset_url }}",
+        "book-alchemised": "{{ 'book-alchemised.jpg' | asset_url }}",
+        "book-anil-naik.jpg": "{{ 'book-anil-naik.jpg' | asset_url }}",
+        "assets/book-anil-naik.jpg": "{{ 'book-anil-naik.jpg' | asset_url }}",
+        "./assets/book-anil-naik.jpg": "{{ 'book-anil-naik.jpg' | asset_url }}",
+        "book-anil-naik": "{{ 'book-anil-naik.jpg' | asset_url }}",
+        "book-anusandhan.jpg": "{{ 'book-anusandhan.jpg' | asset_url }}",
+        "assets/book-anusandhan.jpg": "{{ 'book-anusandhan.jpg' | asset_url }}",
+        "./assets/book-anusandhan.jpg": "{{ 'book-anusandhan.jpg' | asset_url }}",
+        "book-anusandhan": "{{ 'book-anusandhan.jpg' | asset_url }}",
+        "book-aurat-farosh.jpg": "{{ 'book-aurat-farosh.jpg' | asset_url }}",
+        "assets/book-aurat-farosh.jpg": "{{ 'book-aurat-farosh.jpg' | asset_url }}",
+        "./assets/book-aurat-farosh.jpg": "{{ 'book-aurat-farosh.jpg' | asset_url }}",
+        "book-aurat-farosh": "{{ 'book-aurat-farosh.jpg' | asset_url }}",
+        "book-azad.jpg": "{{ 'book-azad.jpg' | asset_url }}",
+        "assets/book-azad.jpg": "{{ 'book-azad.jpg' | asset_url }}",
+        "./assets/book-azad.jpg": "{{ 'book-azad.jpg' | asset_url }}",
+        "book-azad": "{{ 'book-azad.jpg' | asset_url }}",
+        "book-badalata-desh.jpg": "{{ 'book-badalata-desh.jpg' | asset_url }}",
+        "assets/book-badalata-desh.jpg": "{{ 'book-badalata-desh.jpg' | asset_url }}",
+        "./assets/book-badalata-desh.jpg": "{{ 'book-badalata-desh.jpg' | asset_url }}",
+        "book-badalata-desh": "{{ 'book-badalata-desh.jpg' | asset_url }}",
+        "book-bench-bar.jpg": "{{ 'book-bench-bar.jpg' | asset_url }}",
+        "assets/book-bench-bar.jpg": "{{ 'book-bench-bar.jpg' | asset_url }}",
+        "./assets/book-bench-bar.jpg": "{{ 'book-bench-bar.jpg' | asset_url }}",
+        "book-bench-bar": "{{ 'book-bench-bar.jpg' | asset_url }}",
+        "book-cheelwali-kothi.jpg": "{{ 'book-cheelwali-kothi.jpg' | asset_url }}",
+        "assets/book-cheelwali-kothi.jpg": "{{ 'book-cheelwali-kothi.jpg' | asset_url }}",
+        "./assets/book-cheelwali-kothi.jpg": "{{ 'book-cheelwali-kothi.jpg' | asset_url }}",
+        "book-cheelwali-kothi": "{{ 'book-cheelwali-kothi.jpg' | asset_url }}",
+        "book-gaban.jpg": "{{ 'book-gaban.jpg' | asset_url }}",
+        "assets/book-gaban.jpg": "{{ 'book-gaban.jpg' | asset_url }}",
+        "./assets/book-gaban.jpg": "{{ 'book-gaban.jpg' | asset_url }}",
+        "book-gaban": "{{ 'book-gaban.jpg' | asset_url }}",
+        "book-guzara-hua-zamana.jpg": "{{ 'book-guzara-hua-zamana.jpg' | asset_url }}",
+        "assets/book-guzara-hua-zamana.jpg": "{{ 'book-guzara-hua-zamana.jpg' | asset_url }}",
+        "./assets/book-guzara-hua-zamana.jpg": "{{ 'book-guzara-hua-zamana.jpg' | asset_url }}",
+        "book-guzara-hua-zamana": "{{ 'book-guzara-hua-zamana.jpg' | asset_url }}",
+        "book-guzare-lamhe.jpg": "{{ 'book-guzare-lamhe.jpg' | asset_url }}",
+        "assets/book-guzare-lamhe.jpg": "{{ 'book-guzare-lamhe.jpg' | asset_url }}",
+        "./assets/book-guzare-lamhe.jpg": "{{ 'book-guzare-lamhe.jpg' | asset_url }}",
+        "book-guzare-lamhe": "{{ 'book-guzare-lamhe.jpg' | asset_url }}",
+        "book-gyan-aur-karm.jpg": "{{ 'book-gyan-aur-karm.jpg' | asset_url }}",
+        "assets/book-gyan-aur-karm.jpg": "{{ 'book-gyan-aur-karm.jpg' | asset_url }}",
+        "./assets/book-gyan-aur-karm.jpg": "{{ 'book-gyan-aur-karm.jpg' | asset_url }}",
+        "book-gyan-aur-karm": "{{ 'book-gyan-aur-karm.jpg' | asset_url }}",
+        "book-gyandan.jpg": "{{ 'book-gyandan.jpg' | asset_url }}",
+        "assets/book-gyandan.jpg": "{{ 'book-gyandan.jpg' | asset_url }}",
+        "./assets/book-gyandan.jpg": "{{ 'book-gyandan.jpg' | asset_url }}",
+        "book-gyandan": "{{ 'book-gyandan.jpg' | asset_url }}",
         "book-gyarahaveen.jpg": "{{ 'book-gyarahaveen.jpg' | asset_url }}",
-        "book-guzara-hua-zamana.jpg": "{{ 'book-guzara-hua-zamana.jpg' | asset_url }}"
+        "assets/book-gyarahaveen.jpg": "{{ 'book-gyarahaveen.jpg' | asset_url }}",
+        "./assets/book-gyarahaveen.jpg": "{{ 'book-gyarahaveen.jpg' | asset_url }}",
+        "book-gyarahaveen": "{{ 'book-gyarahaveen.jpg' | asset_url }}",
+        "book-haadse.jpg": "{{ 'book-haadse.jpg' | asset_url }}",
+        "assets/book-haadse.jpg": "{{ 'book-haadse.jpg' | asset_url }}",
+        "./assets/book-haadse.jpg": "{{ 'book-haadse.jpg' | asset_url }}",
+        "book-haadse": "{{ 'book-haadse.jpg' | asset_url }}",
+        "book-haashiye.jpg": "{{ 'book-haashiye.jpg' | asset_url }}",
+        "assets/book-haashiye.jpg": "{{ 'book-haashiye.jpg' | asset_url }}",
+        "./assets/book-haashiye.jpg": "{{ 'book-haashiye.jpg' | asset_url }}",
+        "book-haashiye": "{{ 'book-haashiye.jpg' | asset_url }}",
+        "book-hadappa.jpg": "{{ 'book-hadappa.jpg' | asset_url }}",
+        "assets/book-hadappa.jpg": "{{ 'book-hadappa.jpg' | asset_url }}",
+        "./assets/book-hadappa.jpg": "{{ 'book-hadappa.jpg' | asset_url }}",
+        "book-hadappa": "{{ 'book-hadappa.jpg' | asset_url }}",
+        "book-halant.jpg": "{{ 'book-halant.jpg' | asset_url }}",
+        "assets/book-halant.jpg": "{{ 'book-halant.jpg' | asset_url }}",
+        "./assets/book-halant.jpg": "{{ 'book-halant.jpg' | asset_url }}",
+        "book-halant": "{{ 'book-halant.jpg' | asset_url }}",
+        "book-halaq.jpg": "{{ 'book-halaq.jpg' | asset_url }}",
+        "assets/book-halaq.jpg": "{{ 'book-halaq.jpg' | asset_url }}",
+        "./assets/book-halaq.jpg": "{{ 'book-halaq.jpg' | asset_url }}",
+        "book-halaq": "{{ 'book-halaq.jpg' | asset_url }}",
+        "book-halyog.jpg": "{{ 'book-halyog.jpg' | asset_url }}",
+        "assets/book-halyog.jpg": "{{ 'book-halyog.jpg' | asset_url }}",
+        "./assets/book-halyog.jpg": "{{ 'book-halyog.jpg' | asset_url }}",
+        "book-halyog": "{{ 'book-halyog.jpg' | asset_url }}",
+        "book-highcourt.jpg": "{{ 'book-highcourt.jpg' | asset_url }}",
+        "assets/book-highcourt.jpg": "{{ 'book-highcourt.jpg' | asset_url }}",
+        "./assets/book-highcourt.jpg": "{{ 'book-highcourt.jpg' | asset_url }}",
+        "book-highcourt": "{{ 'book-highcourt.jpg' | asset_url }}",
+        "book-hindi-bhasha.jpg": "{{ 'book-hindi-bhasha.jpg' | asset_url }}",
+        "assets/book-hindi-bhasha.jpg": "{{ 'book-hindi-bhasha.jpg' | asset_url }}",
+        "./assets/book-hindi-bhasha.jpg": "{{ 'book-hindi-bhasha.jpg' | asset_url }}",
+        "book-hindi-bhasha": "{{ 'book-hindi-bhasha.jpg' | asset_url }}",
+        "book-hindi-kavya.jpg": "{{ 'book-hindi-kavya.jpg' | asset_url }}",
+        "assets/book-hindi-kavya.jpg": "{{ 'book-hindi-kavya.jpg' | asset_url }}",
+        "./assets/book-hindi-kavya.jpg": "{{ 'book-hindi-kavya.jpg' | asset_url }}",
+        "book-hindi-kavya": "{{ 'book-hindi-kavya.jpg' | asset_url }}",
+        "book-hindi-sahitya-itihas.jpg": "{{ 'book-hindi-sahitya-itihas.jpg' | asset_url }}",
+        "assets/book-hindi-sahitya-itihas.jpg": "{{ 'book-hindi-sahitya-itihas.jpg' | asset_url }}",
+        "./assets/book-hindi-sahitya-itihas.jpg": "{{ 'book-hindi-sahitya-itihas.jpg' | asset_url }}",
+        "book-hindi-sahitya-itihas": "{{ 'book-hindi-sahitya-itihas.jpg' | asset_url }}",
+        "book-hindi-vyakaran.jpg": "{{ 'book-hindi-vyakaran.jpg' | asset_url }}",
+        "assets/book-hindi-vyakaran.jpg": "{{ 'book-hindi-vyakaran.jpg' | asset_url }}",
+        "./assets/book-hindi-vyakaran.jpg": "{{ 'book-hindi-vyakaran.jpg' | asset_url }}",
+        "book-hindi-vyakaran": "{{ 'book-hindi-vyakaran.jpg' | asset_url }}",
+        "book-jaane-jaan-lucknow.jpg": "{{ 'book-jaane-jaan-lucknow.jpg' | asset_url }}",
+        "assets/book-jaane-jaan-lucknow.jpg": "{{ 'book-jaane-jaan-lucknow.jpg' | asset_url }}",
+        "./assets/book-jaane-jaan-lucknow.jpg": "{{ 'book-jaane-jaan-lucknow.jpg' | asset_url }}",
+        "book-jaane-jaan-lucknow": "{{ 'book-jaane-jaan-lucknow.jpg' | asset_url }}",
+        "book-kabira-khada.jpg": "{{ 'book-kabira-khada.jpg' | asset_url }}",
+        "assets/book-kabira-khada.jpg": "{{ 'book-kabira-khada.jpg' | asset_url }}",
+        "./assets/book-kabira-khada.jpg": "{{ 'book-kabira-khada.jpg' | asset_url }}",
+        "book-kabira-khada": "{{ 'book-kabira-khada.jpg' | asset_url }}",
+        "book-kasauti.jpg": "{{ 'book-kasauti.jpg' | asset_url }}",
+        "assets/book-kasauti.jpg": "{{ 'book-kasauti.jpg' | asset_url }}",
+        "./assets/book-kasauti.jpg": "{{ 'book-kasauti.jpg' | asset_url }}",
+        "book-kasauti": "{{ 'book-kasauti.jpg' | asset_url }}",
+        "book-kyon-jaun-elia.jpg": "{{ 'book-kyon-jaun-elia.jpg' | asset_url }}",
+        "assets/book-kyon-jaun-elia.jpg": "{{ 'book-kyon-jaun-elia.jpg' | asset_url }}",
+        "./assets/book-kyon-jaun-elia.jpg": "{{ 'book-kyon-jaun-elia.jpg' | asset_url }}",
+        "book-kyon-jaun-elia": "{{ 'book-kyon-jaun-elia.jpg' | asset_url }}",
+        "book-lagbhag-single.jpg": "{{ 'book-lagbhag-single.jpg' | asset_url }}",
+        "assets/book-lagbhag-single.jpg": "{{ 'book-lagbhag-single.jpg' | asset_url }}",
+        "./assets/book-lagbhag-single.jpg": "{{ 'book-lagbhag-single.jpg' | asset_url }}",
+        "book-lagbhag-single": "{{ 'book-lagbhag-single.jpg' | asset_url }}",
+        "book-lawful-awful.jpg": "{{ 'book-lawful-awful.jpg' | asset_url }}",
+        "assets/book-lawful-awful.jpg": "{{ 'book-lawful-awful.jpg' | asset_url }}",
+        "./assets/book-lawful-awful.jpg": "{{ 'book-lawful-awful.jpg' | asset_url }}",
+        "book-lawful-awful": "{{ 'book-lawful-awful.jpg' | asset_url }}",
+        "book-lok-sahitya.jpg": "{{ 'book-lok-sahitya.jpg' | asset_url }}",
+        "assets/book-lok-sahitya.jpg": "{{ 'book-lok-sahitya.jpg' | asset_url }}",
+        "./assets/book-lok-sahitya.jpg": "{{ 'book-lok-sahitya.jpg' | asset_url }}",
+        "book-lok-sahitya": "{{ 'book-lok-sahitya.jpg' | asset_url }}",
+        "book-mahabhoj.jpg": "{{ 'book-mahabhoj.jpg' | asset_url }}",
+        "assets/book-mahabhoj.jpg": "{{ 'book-mahabhoj.jpg' | asset_url }}",
+        "./assets/book-mahabhoj.jpg": "{{ 'book-mahabhoj.jpg' | asset_url }}",
+        "book-mahabhoj": "{{ 'book-mahabhoj.jpg' | asset_url }}",
+        "book-medical-jurisprudence.jpg": "{{ 'book-medical-jurisprudence.jpg' | asset_url }}",
+        "assets/book-medical-jurisprudence.jpg": "{{ 'book-medical-jurisprudence.jpg' | asset_url }}",
+        "./assets/book-medical-jurisprudence.jpg": "{{ 'book-medical-jurisprudence.jpg' | asset_url }}",
+        "book-medical-jurisprudence": "{{ 'book-medical-jurisprudence.jpg' | asset_url }}",
+        "book-nar-nareeshwar.jpg": "{{ 'book-nar-nareeshwar.jpg' | asset_url }}",
+        "assets/book-nar-nareeshwar.jpg": "{{ 'book-nar-nareeshwar.jpg' | asset_url }}",
+        "./assets/book-nar-nareeshwar.jpg": "{{ 'book-nar-nareeshwar.jpg' | asset_url }}",
+        "book-nar-nareeshwar": "{{ 'book-nar-nareeshwar.jpg' | asset_url }}",
+        "book-nirmala.jpg": "{{ 'book-nirmala.jpg' | asset_url }}",
+        "assets/book-nirmala.jpg": "{{ 'book-nirmala.jpg' | asset_url }}",
+        "./assets/book-nirmala.jpg": "{{ 'book-nirmala.jpg' | asset_url }}",
+        "book-nirmala": "{{ 'book-nirmala.jpg' | asset_url }}",
+        "book-nyay-sangharsh.jpg": "{{ 'book-nyay-sangharsh.jpg' | asset_url }}",
+        "assets/book-nyay-sangharsh.jpg": "{{ 'book-nyay-sangharsh.jpg' | asset_url }}",
+        "./assets/book-nyay-sangharsh.jpg": "{{ 'book-nyay-sangharsh.jpg' | asset_url }}",
+        "book-nyay-sangharsh": "{{ 'book-nyay-sangharsh.jpg' | asset_url }}",
+        "book-patthar-alpatthar.jpg": "{{ 'book-patthar-alpatthar.jpg' | asset_url }}",
+        "assets/book-patthar-alpatthar.jpg": "{{ 'book-patthar-alpatthar.jpg' | asset_url }}",
+        "./assets/book-patthar-alpatthar.jpg": "{{ 'book-patthar-alpatthar.jpg' | asset_url }}",
+        "book-patthar-alpatthar": "{{ 'book-patthar-alpatthar.jpg' | asset_url }}",
+        "book-placeholder.jpg": "{{ 'book-placeholder.jpg' | asset_url }}",
+        "assets/book-placeholder.jpg": "{{ 'book-placeholder.jpg' | asset_url }}",
+        "./assets/book-placeholder.jpg": "{{ 'book-placeholder.jpg' | asset_url }}",
+        "book-placeholder": "{{ 'book-placeholder.jpg' | asset_url }}",
+        "book-placeholder.svg": "{{ 'book-placeholder.svg' | asset_url }}",
+        "assets/book-placeholder.svg": "{{ 'book-placeholder.svg' | asset_url }}",
+        "./assets/book-placeholder.svg": "{{ 'book-placeholder.svg' | asset_url }}",
+        "book-placeholder": "{{ 'book-placeholder.svg' | asset_url }}",
+        "book-ranjish-hi-sahi.jpg": "{{ 'book-ranjish-hi-sahi.jpg' | asset_url }}",
+        "assets/book-ranjish-hi-sahi.jpg": "{{ 'book-ranjish-hi-sahi.jpg' | asset_url }}",
+        "./assets/book-ranjish-hi-sahi.jpg": "{{ 'book-ranjish-hi-sahi.jpg' | asset_url }}",
+        "book-ranjish-hi-sahi": "{{ 'book-ranjish-hi-sahi.jpg' | asset_url }}",
+        "book-ratan-tata.jpg": "{{ 'book-ratan-tata.jpg' | asset_url }}",
+        "assets/book-ratan-tata.jpg": "{{ 'book-ratan-tata.jpg' | asset_url }}",
+        "./assets/book-ratan-tata.jpg": "{{ 'book-ratan-tata.jpg' | asset_url }}",
+        "book-ratan-tata": "{{ 'book-ratan-tata.jpg' | asset_url }}",
+        "book-samvidhan.jpg": "{{ 'book-samvidhan.jpg' | asset_url }}",
+        "assets/book-samvidhan.jpg": "{{ 'book-samvidhan.jpg' | asset_url }}",
+        "./assets/book-samvidhan.jpg": "{{ 'book-samvidhan.jpg' | asset_url }}",
+        "book-samvidhan": "{{ 'book-samvidhan.jpg' | asset_url }}",
+        "book-sanhita.jpg": "{{ 'book-sanhita.jpg' | asset_url }}",
+        "assets/book-sanhita.jpg": "{{ 'book-sanhita.jpg' | asset_url }}",
+        "./assets/book-sanhita.jpg": "{{ 'book-sanhita.jpg' | asset_url }}",
+        "book-sanhita": "{{ 'book-sanhita.jpg' | asset_url }}",
+        "book-savarkar.jpg": "{{ 'book-savarkar.jpg' | asset_url }}",
+        "assets/book-savarkar.jpg": "{{ 'book-savarkar.jpg' | asset_url }}",
+        "./assets/book-savarkar.jpg": "{{ 'book-savarkar.jpg' | asset_url }}",
+        "book-savarkar": "{{ 'book-savarkar.jpg' | asset_url }}",
+        "book-shekhar.jpg": "{{ 'book-shekhar.jpg' | asset_url }}",
+        "assets/book-shekhar.jpg": "{{ 'book-shekhar.jpg' | asset_url }}",
+        "./assets/book-shekhar.jpg": "{{ 'book-shekhar.jpg' | asset_url }}",
+        "book-shekhar": "{{ 'book-shekhar.jpg' | asset_url }}",
+        "book-shilp-vidhi.jpg": "{{ 'book-shilp-vidhi.jpg' | asset_url }}",
+        "assets/book-shilp-vidhi.jpg": "{{ 'book-shilp-vidhi.jpg' | asset_url }}",
+        "./assets/book-shilp-vidhi.jpg": "{{ 'book-shilp-vidhi.jpg' | asset_url }}",
+        "book-shilp-vidhi": "{{ 'book-shilp-vidhi.jpg' | asset_url }}",
+        "book-soochana.jpg": "{{ 'book-soochana.jpg' | asset_url }}",
+        "assets/book-soochana.jpg": "{{ 'book-soochana.jpg' | asset_url }}",
+        "./assets/book-soochana.jpg": "{{ 'book-soochana.jpg' | asset_url }}",
+        "book-soochana": "{{ 'book-soochana.jpg' | asset_url }}",
+        "book-tarkash.jpg": "{{ 'book-tarkash.jpg' | asset_url }}",
+        "assets/book-tarkash.jpg": "{{ 'book-tarkash.jpg' | asset_url }}",
+        "./assets/book-tarkash.jpg": "{{ 'book-tarkash.jpg' | asset_url }}",
+        "book-tarkash": "{{ 'book-tarkash.jpg' | asset_url }}",
+        "book-tumhare-shahar.jpg": "{{ 'book-tumhare-shahar.jpg' | asset_url }}",
+        "assets/book-tumhare-shahar.jpg": "{{ 'book-tumhare-shahar.jpg' | asset_url }}",
+        "./assets/book-tumhare-shahar.jpg": "{{ 'book-tumhare-shahar.jpg' | asset_url }}",
+        "book-tumhare-shahar": "{{ 'book-tumhare-shahar.jpg' | asset_url }}",
+        "favicon-192x192.png": "{{ 'favicon-192x192.png' | asset_url }}",
+        "assets/favicon-192x192.png": "{{ 'favicon-192x192.png' | asset_url }}",
+        "./assets/favicon-192x192.png": "{{ 'favicon-192x192.png' | asset_url }}",
+        "favicon-192x192": "{{ 'favicon-192x192.png' | asset_url }}",
+        "favicon-32x32.png": "{{ 'favicon-32x32.png' | asset_url }}",
+        "assets/favicon-32x32.png": "{{ 'favicon-32x32.png' | asset_url }}",
+        "./assets/favicon-32x32.png": "{{ 'favicon-32x32.png' | asset_url }}",
+        "favicon-32x32": "{{ 'favicon-32x32.png' | asset_url }}",
+        "favicon-48x48.png": "{{ 'favicon-48x48.png' | asset_url }}",
+        "assets/favicon-48x48.png": "{{ 'favicon-48x48.png' | asset_url }}",
+        "./assets/favicon-48x48.png": "{{ 'favicon-48x48.png' | asset_url }}",
+        "favicon-48x48": "{{ 'favicon-48x48.png' | asset_url }}",
+        "favicon-96x96.png": "{{ 'favicon-96x96.png' | asset_url }}",
+        "assets/favicon-96x96.png": "{{ 'favicon-96x96.png' | asset_url }}",
+        "./assets/favicon-96x96.png": "{{ 'favicon-96x96.png' | asset_url }}",
+        "favicon-96x96": "{{ 'favicon-96x96.png' | asset_url }}",
+        "hero-book-arundhati.jpg": "{{ 'hero-book-arundhati.jpg' | asset_url }}",
+        "assets/hero-book-arundhati.jpg": "{{ 'hero-book-arundhati.jpg' | asset_url }}",
+        "./assets/hero-book-arundhati.jpg": "{{ 'hero-book-arundhati.jpg' | asset_url }}",
+        "hero-book-arundhati": "{{ 'hero-book-arundhati.jpg' | asset_url }}",
+        "hero-book-darius.jpg": "{{ 'hero-book-darius.jpg' | asset_url }}",
+        "assets/hero-book-darius.jpg": "{{ 'hero-book-darius.jpg' | asset_url }}",
+        "./assets/hero-book-darius.jpg": "{{ 'hero-book-darius.jpg' | asset_url }}",
+        "hero-book-darius": "{{ 'hero-book-darius.jpg' | asset_url }}",
+        "hero-book-dhuaan.jpg": "{{ 'hero-book-dhuaan.jpg' | asset_url }}",
+        "assets/hero-book-dhuaan.jpg": "{{ 'hero-book-dhuaan.jpg' | asset_url }}",
+        "./assets/hero-book-dhuaan.jpg": "{{ 'hero-book-dhuaan.jpg' | asset_url }}",
+        "hero-book-dhuaan": "{{ 'hero-book-dhuaan.jpg' | asset_url }}",
+        "hero-book-dozakh.jpg": "{{ 'hero-book-dozakh.jpg' | asset_url }}",
+        "assets/hero-book-dozakh.jpg": "{{ 'hero-book-dozakh.jpg' | asset_url }}",
+        "./assets/hero-book-dozakh.jpg": "{{ 'hero-book-dozakh.jpg' | asset_url }}",
+        "hero-book-dozakh": "{{ 'hero-book-dozakh.jpg' | asset_url }}",
+        "hero-book-kasaibada.jpg": "{{ 'hero-book-kasaibada.jpg' | asset_url }}",
+        "assets/hero-book-kasaibada.jpg": "{{ 'hero-book-kasaibada.jpg' | asset_url }}",
+        "./assets/hero-book-kasaibada.jpg": "{{ 'hero-book-kasaibada.jpg' | asset_url }}",
+        "hero-book-kasaibada": "{{ 'hero-book-kasaibada.jpg' | asset_url }}",
+        "hero-book-kasaibada.webp": "{{ 'hero-book-kasaibada.webp' | asset_url }}",
+        "assets/hero-book-kasaibada.webp": "{{ 'hero-book-kasaibada.webp' | asset_url }}",
+        "./assets/hero-book-kasaibada.webp": "{{ 'hero-book-kasaibada.webp' | asset_url }}",
+        "hero-book-kasaibada": "{{ 'hero-book-kasaibada.webp' | asset_url }}",
+        "hero-book-murakami-cropped.jpg": "{{ 'hero-book-murakami-cropped.jpg' | asset_url }}",
+        "assets/hero-book-murakami-cropped.jpg": "{{ 'hero-book-murakami-cropped.jpg' | asset_url }}",
+        "./assets/hero-book-murakami-cropped.jpg": "{{ 'hero-book-murakami-cropped.jpg' | asset_url }}",
+        "hero-book-murakami-cropped": "{{ 'hero-book-murakami-cropped.jpg' | asset_url }}",
+        "hero-book-murakami.jpg": "{{ 'hero-book-murakami.jpg' | asset_url }}",
+        "assets/hero-book-murakami.jpg": "{{ 'hero-book-murakami.jpg' | asset_url }}",
+        "./assets/hero-book-murakami.jpg": "{{ 'hero-book-murakami.jpg' | asset_url }}",
+        "hero-book-murakami": "{{ 'hero-book-murakami.jpg' | asset_url }}",
+        "hero-book-psychology-money.jpg": "{{ 'hero-book-psychology-money.jpg' | asset_url }}",
+        "assets/hero-book-psychology-money.jpg": "{{ 'hero-book-psychology-money.jpg' | asset_url }}",
+        "./assets/hero-book-psychology-money.jpg": "{{ 'hero-book-psychology-money.jpg' | asset_url }}",
+        "hero-book-psychology-money": "{{ 'hero-book-psychology-money.jpg' | asset_url }}",
+        "hero-book-rumi.png": "{{ 'hero-book-rumi.png' | asset_url }}",
+        "assets/hero-book-rumi.png": "{{ 'hero-book-rumi.png' | asset_url }}",
+        "./assets/hero-book-rumi.png": "{{ 'hero-book-rumi.png' | asset_url }}",
+        "hero-book-rumi": "{{ 'hero-book-rumi.png' | asset_url }}",
+        "hero-book-sudha-murty.jpg": "{{ 'hero-book-sudha-murty.jpg' | asset_url }}",
+        "assets/hero-book-sudha-murty.jpg": "{{ 'hero-book-sudha-murty.jpg' | asset_url }}",
+        "./assets/hero-book-sudha-murty.jpg": "{{ 'hero-book-sudha-murty.jpg' | asset_url }}",
+        "hero-book-sudha-murty": "{{ 'hero-book-sudha-murty.jpg' | asset_url }}",
+        "hero-book-thanda-ghost.jpg": "{{ 'hero-book-thanda-ghost.jpg' | asset_url }}",
+        "assets/hero-book-thanda-ghost.jpg": "{{ 'hero-book-thanda-ghost.jpg' | asset_url }}",
+        "./assets/hero-book-thanda-ghost.jpg": "{{ 'hero-book-thanda-ghost.jpg' | asset_url }}",
+        "hero-book-thanda-ghost": "{{ 'hero-book-thanda-ghost.jpg' | asset_url }}",
+        "hero-book-ujli-raaten.jpg": "{{ 'hero-book-ujli-raaten.jpg' | asset_url }}",
+        "assets/hero-book-ujli-raaten.jpg": "{{ 'hero-book-ujli-raaten.jpg' | asset_url }}",
+        "./assets/hero-book-ujli-raaten.jpg": "{{ 'hero-book-ujli-raaten.jpg' | asset_url }}",
+        "hero-book-ujli-raaten": "{{ 'hero-book-ujli-raaten.jpg' | asset_url }}",
+        "hero-book-wimpy-kid.jpg": "{{ 'hero-book-wimpy-kid.jpg' | asset_url }}",
+        "assets/hero-book-wimpy-kid.jpg": "{{ 'hero-book-wimpy-kid.jpg' | asset_url }}",
+        "./assets/hero-book-wimpy-kid.jpg": "{{ 'hero-book-wimpy-kid.jpg' | asset_url }}",
+        "hero-book-wimpy-kid": "{{ 'hero-book-wimpy-kid.jpg' | asset_url }}",
+        "hero-chitralekha.jpg": "{{ 'hero-chitralekha.jpg' | asset_url }}",
+        "assets/hero-chitralekha.jpg": "{{ 'hero-chitralekha.jpg' | asset_url }}",
+        "./assets/hero-chitralekha.jpg": "{{ 'hero-chitralekha.jpg' | asset_url }}",
+        "hero-chitralekha": "{{ 'hero-chitralekha.jpg' | asset_url }}",
+        "hero-godan.jpg": "{{ 'hero-godan.jpg' | asset_url }}",
+        "assets/hero-godan.jpg": "{{ 'hero-godan.jpg' | asset_url }}",
+        "./assets/hero-godan.jpg": "{{ 'hero-godan.jpg' | asset_url }}",
+        "hero-godan": "{{ 'hero-godan.jpg' | asset_url }}",
+        "hero-gypsy.jpg": "{{ 'hero-gypsy.jpg' | asset_url }}",
+        "assets/hero-gypsy.jpg": "{{ 'hero-gypsy.jpg' | asset_url }}",
+        "./assets/hero-gypsy.jpg": "{{ 'hero-gypsy.jpg' | asset_url }}",
+        "hero-gypsy": "{{ 'hero-gypsy.jpg' | asset_url }}",
+        "hero-kuchh-ishq.jpg": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
+        "assets/hero-kuchh-ishq.jpg": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
+        "./assets/hero-kuchh-ishq.jpg": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
+        "hero-kuchh-ishq": "{{ 'hero-kuchh-ishq.jpg' | asset_url }}",
+        "hero-raag-darbari.jpg": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
+        "assets/hero-raag-darbari.jpg": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
+        "./assets/hero-raag-darbari.jpg": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
+        "hero-raag-darbari": "{{ 'hero-raag-darbari.jpg' | asset_url }}",
+        "hero-rashmirathi.jpg": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
+        "assets/hero-rashmirathi.jpg": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
+        "./assets/hero-rashmirathi.jpg": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
+        "hero-rashmirathi": "{{ 'hero-rashmirathi.jpg' | asset_url }}",
+        "icon-account.svg": "{{ 'icon-account.svg' | asset_url }}",
+        "assets/icon-account.svg": "{{ 'icon-account.svg' | asset_url }}",
+        "./assets/icon-account.svg": "{{ 'icon-account.svg' | asset_url }}",
+        "icon-account": "{{ 'icon-account.svg' | asset_url }}",
+        "icon-add-to-cart.svg": "{{ 'icon-add-to-cart.svg' | asset_url }}",
+        "assets/icon-add-to-cart.svg": "{{ 'icon-add-to-cart.svg' | asset_url }}",
+        "./assets/icon-add-to-cart.svg": "{{ 'icon-add-to-cart.svg' | asset_url }}",
+        "icon-add-to-cart": "{{ 'icon-add-to-cart.svg' | asset_url }}",
+        "icon-arrow.svg": "{{ 'icon-arrow.svg' | asset_url }}",
+        "assets/icon-arrow.svg": "{{ 'icon-arrow.svg' | asset_url }}",
+        "./assets/icon-arrow.svg": "{{ 'icon-arrow.svg' | asset_url }}",
+        "icon-arrow": "{{ 'icon-arrow.svg' | asset_url }}",
+        "icon-available.svg": "{{ 'icon-available.svg' | asset_url }}",
+        "assets/icon-available.svg": "{{ 'icon-available.svg' | asset_url }}",
+        "./assets/icon-available.svg": "{{ 'icon-available.svg' | asset_url }}",
+        "icon-available": "{{ 'icon-available.svg' | asset_url }}",
+        "icon-caret.svg": "{{ 'icon-caret.svg' | asset_url }}",
+        "assets/icon-caret.svg": "{{ 'icon-caret.svg' | asset_url }}",
+        "./assets/icon-caret.svg": "{{ 'icon-caret.svg' | asset_url }}",
+        "icon-caret": "{{ 'icon-caret.svg' | asset_url }}",
+        "icon-cart.svg": "{{ 'icon-cart.svg' | asset_url }}",
+        "assets/icon-cart.svg": "{{ 'icon-cart.svg' | asset_url }}",
+        "./assets/icon-cart.svg": "{{ 'icon-cart.svg' | asset_url }}",
+        "icon-cart": "{{ 'icon-cart.svg' | asset_url }}",
+        "icon-checkmark-burst.svg": "{{ 'icon-checkmark-burst.svg' | asset_url }}",
+        "assets/icon-checkmark-burst.svg": "{{ 'icon-checkmark-burst.svg' | asset_url }}",
+        "./assets/icon-checkmark-burst.svg": "{{ 'icon-checkmark-burst.svg' | asset_url }}",
+        "icon-checkmark-burst": "{{ 'icon-checkmark-burst.svg' | asset_url }}",
+        "icon-checkmark.svg": "{{ 'icon-checkmark.svg' | asset_url }}",
+        "assets/icon-checkmark.svg": "{{ 'icon-checkmark.svg' | asset_url }}",
+        "./assets/icon-checkmark.svg": "{{ 'icon-checkmark.svg' | asset_url }}",
+        "icon-checkmark": "{{ 'icon-checkmark.svg' | asset_url }}",
+        "icon-chevron-left.svg": "{{ 'icon-chevron-left.svg' | asset_url }}",
+        "assets/icon-chevron-left.svg": "{{ 'icon-chevron-left.svg' | asset_url }}",
+        "./assets/icon-chevron-left.svg": "{{ 'icon-chevron-left.svg' | asset_url }}",
+        "icon-chevron-left": "{{ 'icon-chevron-left.svg' | asset_url }}",
+        "icon-chevron-right.svg": "{{ 'icon-chevron-right.svg' | asset_url }}",
+        "assets/icon-chevron-right.svg": "{{ 'icon-chevron-right.svg' | asset_url }}",
+        "./assets/icon-chevron-right.svg": "{{ 'icon-chevron-right.svg' | asset_url }}",
+        "icon-chevron-right": "{{ 'icon-chevron-right.svg' | asset_url }}",
+        "icon-close-menu.svg": "{{ 'icon-close-menu.svg' | asset_url }}",
+        "assets/icon-close-menu.svg": "{{ 'icon-close-menu.svg' | asset_url }}",
+        "./assets/icon-close-menu.svg": "{{ 'icon-close-menu.svg' | asset_url }}",
+        "icon-close-menu": "{{ 'icon-close-menu.svg' | asset_url }}",
+        "icon-close.svg": "{{ 'icon-close.svg' | asset_url }}",
+        "assets/icon-close.svg": "{{ 'icon-close.svg' | asset_url }}",
+        "./assets/icon-close.svg": "{{ 'icon-close.svg' | asset_url }}",
+        "icon-close": "{{ 'icon-close.svg' | asset_url }}",
+        "icon-delete.svg": "{{ 'icon-delete.svg' | asset_url }}",
+        "assets/icon-delete.svg": "{{ 'icon-delete.svg' | asset_url }}",
+        "./assets/icon-delete.svg": "{{ 'icon-delete.svg' | asset_url }}",
+        "icon-delete": "{{ 'icon-delete.svg' | asset_url }}",
+        "icon-discount.svg": "{{ 'icon-discount.svg' | asset_url }}",
+        "assets/icon-discount.svg": "{{ 'icon-discount.svg' | asset_url }}",
+        "./assets/icon-discount.svg": "{{ 'icon-discount.svg' | asset_url }}",
+        "icon-discount": "{{ 'icon-discount.svg' | asset_url }}",
+        "icon-double-chevron.svg": "{{ 'icon-double-chevron.svg' | asset_url }}",
+        "assets/icon-double-chevron.svg": "{{ 'icon-double-chevron.svg' | asset_url }}",
+        "./assets/icon-double-chevron.svg": "{{ 'icon-double-chevron.svg' | asset_url }}",
+        "icon-double-chevron": "{{ 'icon-double-chevron.svg' | asset_url }}",
+        "icon-error.svg": "{{ 'icon-error.svg' | asset_url }}",
+        "assets/icon-error.svg": "{{ 'icon-error.svg' | asset_url }}",
+        "./assets/icon-error.svg": "{{ 'icon-error.svg' | asset_url }}",
+        "icon-error": "{{ 'icon-error.svg' | asset_url }}",
+        "icon-external.svg": "{{ 'icon-external.svg' | asset_url }}",
+        "assets/icon-external.svg": "{{ 'icon-external.svg' | asset_url }}",
+        "./assets/icon-external.svg": "{{ 'icon-external.svg' | asset_url }}",
+        "icon-external": "{{ 'icon-external.svg' | asset_url }}",
+        "icon-filter.svg": "{{ 'icon-filter.svg' | asset_url }}",
+        "assets/icon-filter.svg": "{{ 'icon-filter.svg' | asset_url }}",
+        "./assets/icon-filter.svg": "{{ 'icon-filter.svg' | asset_url }}",
+        "icon-filter": "{{ 'icon-filter.svg' | asset_url }}",
+        "icon-filters-close.svg": "{{ 'icon-filters-close.svg' | asset_url }}",
+        "assets/icon-filters-close.svg": "{{ 'icon-filters-close.svg' | asset_url }}",
+        "./assets/icon-filters-close.svg": "{{ 'icon-filters-close.svg' | asset_url }}",
+        "icon-filters-close": "{{ 'icon-filters-close.svg' | asset_url }}",
+        "icon-grid-default.svg": "{{ 'icon-grid-default.svg' | asset_url }}",
+        "assets/icon-grid-default.svg": "{{ 'icon-grid-default.svg' | asset_url }}",
+        "./assets/icon-grid-default.svg": "{{ 'icon-grid-default.svg' | asset_url }}",
+        "icon-grid-default": "{{ 'icon-grid-default.svg' | asset_url }}",
+        "icon-grid-dense.svg": "{{ 'icon-grid-dense.svg' | asset_url }}",
+        "assets/icon-grid-dense.svg": "{{ 'icon-grid-dense.svg' | asset_url }}",
+        "./assets/icon-grid-dense.svg": "{{ 'icon-grid-dense.svg' | asset_url }}",
+        "icon-grid-dense": "{{ 'icon-grid-dense.svg' | asset_url }}",
+        "icon-info.svg": "{{ 'icon-info.svg' | asset_url }}",
+        "assets/icon-info.svg": "{{ 'icon-info.svg' | asset_url }}",
+        "./assets/icon-info.svg": "{{ 'icon-info.svg' | asset_url }}",
+        "icon-info": "{{ 'icon-info.svg' | asset_url }}",
+        "icon-inventory.svg": "{{ 'icon-inventory.svg' | asset_url }}",
+        "assets/icon-inventory.svg": "{{ 'icon-inventory.svg' | asset_url }}",
+        "./assets/icon-inventory.svg": "{{ 'icon-inventory.svg' | asset_url }}",
+        "icon-inventory": "{{ 'icon-inventory.svg' | asset_url }}",
+        "icon-menu.svg": "{{ 'icon-menu.svg' | asset_url }}",
+        "assets/icon-menu.svg": "{{ 'icon-menu.svg' | asset_url }}",
+        "./assets/icon-menu.svg": "{{ 'icon-menu.svg' | asset_url }}",
+        "icon-menu": "{{ 'icon-menu.svg' | asset_url }}",
+        "icon-minus.svg": "{{ 'icon-minus.svg' | asset_url }}",
+        "assets/icon-minus.svg": "{{ 'icon-minus.svg' | asset_url }}",
+        "./assets/icon-minus.svg": "{{ 'icon-minus.svg' | asset_url }}",
+        "icon-minus": "{{ 'icon-minus.svg' | asset_url }}",
+        "icon-one-col-mobile.svg": "{{ 'icon-one-col-mobile.svg' | asset_url }}",
+        "assets/icon-one-col-mobile.svg": "{{ 'icon-one-col-mobile.svg' | asset_url }}",
+        "./assets/icon-one-col-mobile.svg": "{{ 'icon-one-col-mobile.svg' | asset_url }}",
+        "icon-one-col-mobile": "{{ 'icon-one-col-mobile.svg' | asset_url }}",
+        "icon-orders.svg": "{{ 'icon-orders.svg' | asset_url }}",
+        "assets/icon-orders.svg": "{{ 'icon-orders.svg' | asset_url }}",
+        "./assets/icon-orders.svg": "{{ 'icon-orders.svg' | asset_url }}",
+        "icon-orders": "{{ 'icon-orders.svg' | asset_url }}",
+        "icon-pause.svg": "{{ 'icon-pause.svg' | asset_url }}",
+        "assets/icon-pause.svg": "{{ 'icon-pause.svg' | asset_url }}",
+        "./assets/icon-pause.svg": "{{ 'icon-pause.svg' | asset_url }}",
+        "icon-pause": "{{ 'icon-pause.svg' | asset_url }}",
+        "icon-play.svg": "{{ 'icon-play.svg' | asset_url }}",
+        "assets/icon-play.svg": "{{ 'icon-play.svg' | asset_url }}",
+        "./assets/icon-play.svg": "{{ 'icon-play.svg' | asset_url }}",
+        "icon-play": "{{ 'icon-play.svg' | asset_url }}",
+        "icon-plus.svg": "{{ 'icon-plus.svg' | asset_url }}",
+        "assets/icon-plus.svg": "{{ 'icon-plus.svg' | asset_url }}",
+        "./assets/icon-plus.svg": "{{ 'icon-plus.svg' | asset_url }}",
+        "icon-plus": "{{ 'icon-plus.svg' | asset_url }}",
+        "icon-reset.svg": "{{ 'icon-reset.svg' | asset_url }}",
+        "assets/icon-reset.svg": "{{ 'icon-reset.svg' | asset_url }}",
+        "./assets/icon-reset.svg": "{{ 'icon-reset.svg' | asset_url }}",
+        "icon-reset": "{{ 'icon-reset.svg' | asset_url }}",
+        "icon-search.svg": "{{ 'icon-search.svg' | asset_url }}",
+        "assets/icon-search.svg": "{{ 'icon-search.svg' | asset_url }}",
+        "./assets/icon-search.svg": "{{ 'icon-search.svg' | asset_url }}",
+        "icon-search": "{{ 'icon-search.svg' | asset_url }}",
+        "icon-shopify.svg": "{{ 'icon-shopify.svg' | asset_url }}",
+        "assets/icon-shopify.svg": "{{ 'icon-shopify.svg' | asset_url }}",
+        "./assets/icon-shopify.svg": "{{ 'icon-shopify.svg' | asset_url }}",
+        "icon-shopify": "{{ 'icon-shopify.svg' | asset_url }}",
+        "icon-unavailable.svg": "{{ 'icon-unavailable.svg' | asset_url }}",
+        "assets/icon-unavailable.svg": "{{ 'icon-unavailable.svg' | asset_url }}",
+        "./assets/icon-unavailable.svg": "{{ 'icon-unavailable.svg' | asset_url }}",
+        "icon-unavailable": "{{ 'icon-unavailable.svg' | asset_url }}",
+        "icon-warning.svg": "{{ 'icon-warning.svg' | asset_url }}",
+        "assets/icon-warning.svg": "{{ 'icon-warning.svg' | asset_url }}",
+        "./assets/icon-warning.svg": "{{ 'icon-warning.svg' | asset_url }}",
+        "icon-warning": "{{ 'icon-warning.svg' | asset_url }}",
+        "indigo-books-logo.png": "{{ 'indigo-books-logo.png' | asset_url }}",
+        "assets/indigo-books-logo.png": "{{ 'indigo-books-logo.png' | asset_url }}",
+        "./assets/indigo-books-logo.png": "{{ 'indigo-books-logo.png' | asset_url }}",
+        "indigo-books-logo": "{{ 'indigo-books-logo.png' | asset_url }}",
+        "indigo-emblem.png": "{{ 'indigo-emblem.png' | asset_url }}",
+        "assets/indigo-emblem.png": "{{ 'indigo-emblem.png' | asset_url }}",
+        "./assets/indigo-emblem.png": "{{ 'indigo-emblem.png' | asset_url }}",
+        "indigo-emblem": "{{ 'indigo-emblem.png' | asset_url }}",
+        "indigo-emblem.svg": "{{ 'indigo-emblem.svg' | asset_url }}",
+        "assets/indigo-emblem.svg": "{{ 'indigo-emblem.svg' | asset_url }}",
+        "./assets/indigo-emblem.svg": "{{ 'indigo-emblem.svg' | asset_url }}",
+        "indigo-emblem": "{{ 'indigo-emblem.svg' | asset_url }}",
+        "logo.png": "{{ 'logo.png' | asset_url }}",
+        "assets/logo.png": "{{ 'logo.png' | asset_url }}",
+        "./assets/logo.png": "{{ 'logo.png' | asset_url }}",
+        "logo": "{{ 'logo.png' | asset_url }}",
+        "hero-godan.jpg": "{{ 'hero-godan.jpg' | asset_url }}"
       };
+
+      window.getFallbackCoverSvg = function(title, author) {
+        var t = (title || 'Indigo Books').replace(/<[^>]*>/g, '').substring(0, 32);
+        var a = (author || 'Indigo Classics').replace(/<[^>]*>/g, '').substring(0, 24);
+        var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" width="100%" height="100%">' +
+          '<defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2B1A17"/><stop offset="100%" stop-color="#140D0B"/></linearGradient></defs>' +
+          '<rect width="200" height="300" fill="url(#g)"/>' +
+          '<rect x="0" y="0" width="10" height="300" fill="rgba(255,255,255,0.12)"/>' +
+          '<rect x="16" y="16" width="168" height="268" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-dasharray="3 3"/>' +
+          '<circle cx="100" cy="76" r="28" fill="none" stroke="#D4AF37" stroke-width="1.2"/>' +
+          '<text x="100" y="82" fill="#D4AF37" font-family="serif" font-size="18" font-weight="bold" text-anchor="middle">IB</text>' +
+          '<text x="100" y="146" fill="#FAF8F5" font-family="serif" font-size="13" font-weight="bold" text-anchor="middle">' + t + '</text>' +
+          '<text x="100" y="176" fill="#D4AF37" font-family="sans-serif" font-size="10" text-anchor="middle">By ' + a + '</text>' +
+          '<text x="100" y="260" fill="#999999" font-family="sans-serif" font-size="8" letter-spacing="1.5" text-anchor="middle">INDIGO BOOKS INDIA</text>' +
+          '</svg>';
+        return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+      };
+
+      window.getCoverUrl = function(coverPath, defaultTitle) {
+        if (!coverPath) {
+          if (defaultTitle && window.getFallbackCoverSvg) {
+            return window.getFallbackCoverSvg(defaultTitle, '');
+          }
+          return (window.PODIUM_CDN_COVERS && (window.PODIUM_CDN_COVERS['hero-godan.jpg'] || window.PODIUM_CDN_COVERS['assets/hero-godan.jpg'])) ||
+                 (window.SHOPIFY_ASSET_URL_ROOT ? window.SHOPIFY_ASSET_URL_ROOT + 'hero-godan.jpg' : 'assets/hero-godan.jpg');
+        }
+        // If already absolute HTTP/HTTPS, protocol-relative '//', or data URI, return DIRECTLY without tampering
+        if (coverPath.indexOf('http://') === 0 || coverPath.indexOf('https://') === 0 || coverPath.indexOf('//') === 0 || coverPath.indexOf('data:') === 0) {
+          return coverPath;
+        }
+        var clean = coverPath.replace(/^(\.\/)?assets\//, '').replace(/^\//, '');
+        if (window.PODIUM_CDN_COVERS) {
+          if (window.PODIUM_CDN_COVERS[coverPath]) return window.PODIUM_CDN_COVERS[coverPath];
+          if (window.PODIUM_CDN_COVERS[clean]) return window.PODIUM_CDN_COVERS[clean];
+          if (window.PODIUM_CDN_COVERS['assets/' + clean]) return window.PODIUM_CDN_COVERS['assets/' + clean];
+          var baseName = clean.split('.')[0];
+          if (window.PODIUM_CDN_COVERS[baseName]) return window.PODIUM_CDN_COVERS[baseName];
+        }
+        if (window.SHOPIFY_ASSET_URL_ROOT) {
+          return window.SHOPIFY_ASSET_URL_ROOT + clean;
+        }
+        return 'assets/' + clean;
+      };
+
+      window.handleBookCoverError = function(img, title, author) {
+        if (!img) return;
+        img.onerror = null;
+        var bookTitle = title || img.getAttribute('data-title') || img.alt || 'Indigo Books';
+        var bookAuthor = author || img.getAttribute('data-author') || '';
+        var fallback = (typeof window.getFallbackCoverSvg === 'function') ? window.getFallbackCoverSvg(bookTitle, bookAuthor) : (typeof getFallbackCover === 'function' ? getFallbackCover(bookTitle, bookAuthor) : '');
+        if (img.parentElement) {
+          img.parentElement.style.backgroundImage = 'url("' + fallback + '")';
+          img.parentElement.style.backgroundSize = 'cover';
+          img.parentElement.style.backgroundPosition = 'center';
+        }
+        img.style.display = 'none';
+        img.src = fallback;
+      };
+
+      // Universal self-healing image onerror handler for Shopify CDN
+      document.addEventListener('error', function(e) {
+        if (e.target && e.target.tagName === 'IMG') {
+          var img = e.target;
+          var raw = img.getAttribute('src');
+          // Only resolve if it explicitly starts with local relative path 'assets/' or './assets/'
+          if (raw && (raw.indexOf('assets/') === 0 || raw.indexOf('./assets/') === 0)) {
+            var resolved = window.getCoverUrl(raw);
+            if (resolved && resolved !== raw && img.src !== resolved) {
+              img.src = resolved;
+              return;
+            }
+          }
+          // Never force Godan for a different book! Generate book's own SVG cover
+          img.onerror = null;
+          if (window.getFallbackCoverSvg) {
+            img.src = window.getFallbackCoverSvg(img.alt || 'Indigo Books India', '');
+          }
+        }
+      }, true);
+
     </script>
 
     {{ content_for_header }}
+
+    <!-- META ADS PIXEL & CONVERSIONS TRACKING -->
+    {%- render 'meta-pixel-events' -%}
+    <script src="{{ 'meta-ads-tracking.js' | asset_url }}" defer></script>
   </head>
   <body class="template-{{ template.name | handle }}">
     <!-- 1. GLOBAL STICKY CREAM NAVBAR -->
-    <header class="site-navbar">
+    <header class="site-navbar site-header">
     <div class="site-container navbar-inner">
-      
-      <!-- Brand Identity -->
-      <a href="#top" class="brand-link" onclick="window.returnToHome(event)" aria-label="Indigo Books India Homepage">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 354 352" width="40" height="40" class="indigo-emblem-svg shrink-0" style="width: 40px !important; height: 40px !important; max-width: 40px !important; max-height: 40px !important; min-width: 40px !important; min-height: 40px !important; display: inline-block !important; vertical-align: middle !important; flex-shrink: 0 !important; object-fit: contain !important;" fill="#0066B3" fill-rule="evenodd" aria-hidden="true"><path d="M 207 206 L 207 308 L 211 312 L 296 313 L 296 351 L 352 350 L 351 295 L 313 294 L 313 210 L 309 206 Z M 314 312 L 335 313 L 334 334 L 313 333 Z M 224 223 L 296 224 L 295 295 L 223 294 Z M 44 206 L 42 207 L 41 208 L 40 210 L 39 295 L 1 295 L 1 351 L 57 350 L 58 312 L 141 312 L 143 311 L 146 308 L 146 206 Z M 19 312 L 40 313 L 39 334 L 18 333 Z M 58 223 L 129 224 L 128 295 L 57 294 Z M 296 1 L 295 39 L 212 39 L 210 40 L 207 43 L 207 145 L 309 145 L 313 141 L 314 56 L 352 55 L 351 0 Z M 224 56 L 296 57 L 295 128 L 223 127 Z M 314 17 L 335 18 L 334 39 L 313 38 Z M 75 0 L 75 17 L 144 17 L 147 18 L 150 19 L 152 20 L 154 21 L 158 24 L 162 28 L 164 31 L 167 37 L 168 41 L 167 167 L 42 167 L 38 166 L 32 163 L 28 160 L 24 156 L 22 153 L 19 147 L 18 143 L 18 74 L 1 74 L 1 143 L 2 149 L 3 152 L 4 155 L 8 163 L 10 166 L 19 176 L 10 185 L 8 188 L 6 192 L 3 198 L 2 202 L 1 208 L 1 277 L 18 277 L 18 208 L 19 204 L 23 196 L 29 190 L 32 188 L 38 185 L 42 184 L 168 185 L 168 310 L 167 314 L 164 320 L 154 330 L 152 331 L 150 332 L 147 333 L 144 334 L 75 334 L 75 351 L 144 351 L 149 350 L 153 349 L 156 348 L 162 345 L 165 343 L 169 340 L 176 332 L 185 341 L 188 343 L 191 345 L 197 348 L 200 349 L 203 350 L 209 351 L 278 351 L 278 334 L 209 334 L 205 333 L 199 330 L 195 327 L 191 323 L 189 320 L 186 314 L 185 311 L 186 184 L 311 184 L 315 185 L 321 188 L 324 190 L 329 195 L 331 198 L 332 200 L 333 202 L 334 205 L 335 209 L 335 277 L 352 276 L 352 209 L 351 203 L 350 199 L 349 196 L 345 188 L 342 184 L 333 175 L 342 167 L 345 163 L 349 155 L 350 152 L 351 148 L 352 142 L 352 74 L 335 74 L 335 142 L 334 146 L 333 149 L 332 151 L 331 153 L 328 156 L 328 157 L 326 159 L 321 163 L 315 166 L 311 167 L 185 166 L 185 40 L 186 37 L 187 34 L 188 32 L 191 28 L 196 23 L 199 21 L 205 18 L 209 17 L 278 17 L 278 0 L 209 0 L 203 1 L 200 2 L 197 3 L 189 7 L 186 9 L 176 19 L 168 10 L 165 8 L 162 6 L 156 3 L 153 2 L 149 1 L 144 0 Z M 1 0 L 2 56 L 40 57 L 40 141 L 44 145 L 146 145 L 146 43 L 143 40 L 141 39 L 57 38 L 56 0 Z M 58 56 L 129 57 L 128 128 L 57 127 Z M 19 17 L 40 18 L 39 39 L 18 38 Z" /></svg>
-        <div class="brand-wordmark">
-          INDIGO BOOKS
-          <span class="brand-submark">PRAYAGRAJ • INDIA</span>
-        </div>
-      </a>
-
-      <!-- Navigation Tabs -->
-      <ul class="nav-links-wrap">
-        <li><a href="#top" class="nav-link-btn" onclick="window.returnToHome(event)">Home</a></li>
-        <li><button type="button" class="nav-link-btn" onclick="closeDedicatedProductPage(); scrollToCatalog('all')">Shop All (5,500+)</button></li>
-        <li><a href="#bestsellers-podium" class="nav-link-btn" onclick="closeDedicatedProductPage(); document.getElementById('bestsellers-podium').scrollIntoView({behavior: 'smooth'})">Best Sellers</a></li>
-        <li><button type="button" class="nav-link-btn" onclick="closeDedicatedProductPage(); scrollToCatalog('shayari')">Shayari &amp; Poetry</button></li>
-        <li><button type="button" class="nav-link-btn" onclick="closeDedicatedProductPage(); scrollToCatalog('novel')">Hindi Novels</button></li>
-        <li><button type="button" class="nav-link-btn" onclick="closeDedicatedProductPage(); scrollToVault('law')">Law Books</button></li>
-      </ul>
-
-      <!-- Right Actions -->
-      <div class="nav-actions">
-        <span class="india-badge"><span class="tiranga-dot"></span>India Centric</span>
-        <button type="button" class="nav-signin-btn" onclick="toggleLoginModal()">
-          <i data-lucide="user" style="width: 15px; height: 15px;"></i> <span class="nav-signin-text">Sign In</span>
+      <!-- Left: Hamburger Menu (Mobile) & Brand Logo -->
+      <div class="v2-nav-brand-group">
+        <button type="button" class="v2-hamburger-btn" id="v2MobileMenuBtn" aria-label="Open Navigation Menu" onclick="window.toggleMobileDrawer ? window.toggleMobileDrawer(true) : null;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
         </button>
-        <button type="button" class="nav-cart-btn" onclick="toggleCartDrawer(true)" aria-label="Open Shopping Cart">
-          <i data-lucide="shopping-bag" style="width: 16px; height: 16px;"></i>
-          <span>Cart (<span id="nav-cart-count">0</span>)<span class="nav-cart-price-wrap"><span class="nav-cart-price-divider"> • </span><span id="nav-cart-total" class="nav-cart-total-span">₹0.00</span></span></span>
-        </button>
-        <a href="https://wa.me/918933063306?text=Hello%20Indigo%20Books%20Prayagraj!%20I%20would%20like%20to%20order%20books." target="_blank" class="nav-whatsapp-btn">
-          <i data-lucide="message-circle" style="width: 16px; height: 16px;"></i>
-          <span>Order</span>
+        <a href="#top" class="brand-editorial-title" onclick="window.returnToHome ? window.returnToHome(event) : null;">
+          <img src="{{ 'indigo-books-logo.png' | asset_url }}" alt="Indigo Books" class="brand-logo-img" onerror="this.src='{{ 'logo.png' | asset_url }}'" />
+          <div class="brand-text-col">
+            <span class="brand-name">INDIGO BOOKS</span>
+            <span class="brand-editorial-subtitle">PRAYAGRAJ &bull; INDIA</span>
+          </div>
         </a>
+        <ul class="nav-editorial-links">
+          <li><a href="#shelf-popular">Popular Picks</a></li>
+          <li><a href="#shelf-hindi">Hindi Classics</a></li>
+          <li><a href="#shelf-poetry">Poetry &amp; Rekhta</a></li>
+          <li><a href="#shelf-law">Law &amp; Criticism</a></li>
+          <li><a href="#video2-bookstore-app" onclick="window.scrollToAppSection ? window.scrollToAppSection('shelf-popular') : null;">Archive (5,559)</a></li>
+        </ul>
       </div>
 
+      <!-- Center: 2-Character Predictive Live Search -->
+      <div class="editorial-search-wrap">
+        <svg class="editorial-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="editorialSearchInput" class="editorial-search-input" placeholder="Search 5,559 books, authors, ISBN..." autocomplete="off" />
+        <div id="editorialSearchResults" class="editorial-search-results"></div>
+      </div>
+
+      <!-- Right: Desktop Reading Bag & 1-Click Express Order -->
+      <div class="editorial-header-actions">
+        <button type="button" class="btn-reading-bag" onclick="window.toggleCartDrawer ? window.toggleCartDrawer() : null;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+          <span>Reading Bag (<span id="cartCount">0</span>)</span>
+        </button>
+        <button type="button" class="btn-1click-express" onclick="window.openQuickOrderModal ? window.openQuickOrderModal('podium-godan') : null;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E04F33" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          <span>1-Click Order</span>
+        </button>
+      </div>
+
+      <!-- Right: Mobile Header Quick Actions -->
+      <div class="v2-mobile-nav-actions">
+        <button type="button" class="v2-mobile-quick-btn" onclick="window.openQuickOrderModal ? window.openQuickOrderModal('podium-godan') : null;" aria-label="1-Click WhatsApp Order" title="1-Click Order">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E04F33" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        </button>
+        <button type="button" class="v2-mobile-bag-btn" onclick="window.toggleCartDrawer ? window.toggleCartDrawer() : null;" aria-label="Reading Bag">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+          <span class="v2-mobile-bag-badge" id="v2MobileBagCount">0</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -582,58 +1246,58 @@
 
     <!-- 5. GLOBAL SLIDE-OVER CART DRAWER -->
     <div id="cartDrawerOverlay" class="cart-overlay" onclick="toggleCartDrawer(false)"></div>
-  <aside id="cartDrawer" class="cart-drawer">
-    <div class="cart-drawer-header">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <i data-lucide="shopping-bag" style="width: 18px; height: 18px; color: #0066B3;"></i>
-        <h3 style="font-family: 'Merriweather', serif; font-size: 17px; font-weight: 700; color: #0F172A; margin: 0;">Reading Bag (<span id="cartItemCount">0</span>)</h3>
+  <aside id="cartDrawer" class="cart-drawer" style="background: #FFFFFF; box-shadow: -10px 0 40px rgba(0,0,0,0.18);">
+    <!-- Warm Editorial Cart Header -->
+    <div class="cart-drawer-header" style="background: #FAF7F0; padding: 20px 24px; border-bottom: 1px solid #EAE5DC; display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#121212" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+        <h3 style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 600; color: #121212; margin: 0;">Reading Bag (<span id="cartItemCount">0</span>)</h3>
       </div>
-      <button type="button" class="drawer-close-btn" onclick="toggleCartDrawer(false)" aria-label="Close Bag">
-        <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+      <button type="button" class="drawer-close-btn" onclick="toggleCartDrawer(false)" aria-label="Close Bag" style="background: none; border: none; cursor: pointer; color: #121212; padding: 4px; display: flex; align-items: center; justify-content: center;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
       </button>
     </div>
 
-    <!-- Free Delivery Progress Bar -->
-    <div style="background: #EFF6FF; padding: 12px 20px; border-bottom: 1px solid #DBEAFE;">
-      <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: #1E40AF; margin-bottom: 6px;">
+    <!-- Free Express Dispatch Progress Bar (Terracotta Accent) -->
+    <div style="background: #F4F1EA; padding: 12px 24px; border-bottom: 1px solid #EAE5DC;">
+      <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #555555; margin-bottom: 6px;">
         <span id="freeShippingText">Add ₹999 for Free Express Dispatch</span>
-        <span id="freeShippingPercent">0%</span>
+        <span id="freeShippingPercent" style="color: #E04F33; font-weight: 800;">0%</span>
       </div>
-      <div style="width: 100%; height: 6px; background: #BFDBFE; border-radius: 999px; overflow: hidden;">
-        <div id="freeShippingBar" style="width: 0%; height: 100%; background: #2563EB; transition: width 0.3s ease;"></div>
+      <div style="width: 100%; height: 5px; background: #EAE5DC; border-radius: 999px; overflow: hidden;">
+        <div id="freeShippingBar" style="width: 0%; height: 100%; background: #E04F33; transition: width 0.3s ease;"></div>
       </div>
     </div>
 
-    <div class="cart-drawer-body" id="cartItemsContainer">
+    <div class="cart-drawer-body" id="cartItemsContainer" style="background: #FAF8F5; flex: 1; overflow-y: auto; padding: 18px 24px;">
       <!-- Empty Bag Placeholder -->
-      <div style="text-align: center; padding: 60px 20px; color: #94A3B8;">
-        <i data-lucide="book-open" style="width: 48px; height: 48px; margin: 0 auto 12px; stroke-width: 1.5;"></i>
-        <h4 style="font-family: 'Merriweather', serif; font-size: 16px; color: #0F172A; margin-bottom: 6px;">Your reading bag is empty</h4>
-        <p style="font-size: 13px; color: #64748B;">Explore our 5,500+ curated books and add your next read.</p>
-        <button type="button" class="hero-shop-btn" style="margin-top: 16px;" onclick="toggleCartDrawer(false); scrollToCatalog('all');">
-          <span>Start Browsing &rarr;</span>
+      <div style="text-align: center; padding: 60px 20px; color: #888888;">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#D5CFC4" stroke-width="1.6" style="margin: 0 auto 14px; display: block;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+        <h4 style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 600; color: #121212; margin: 0 0 6px;">Your Reading Bag is Empty</h4>
+        <p style="font-size: 13px; color: #666666; margin: 0 0 18px; line-height: 1.5;">Explore our 5,559-book archive from Prayagraj and add your next read.</p>
+        <button type="button" class="hero-shop-btn" style="margin: 0 auto; display: inline-flex; align-items: center; justify-content: center; background: #121212; color: #FFFFFF; border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 700;" onclick="toggleCartDrawer(false); scrollToCatalog('all');">
+          <span>Browse Archive &rarr;</span>
         </button>
       </div>
     </div>
 
-    <div class="cart-drawer-footer" style="display: none;">
+    <!-- Cart Drawer Footer -->
+    <div class="cart-drawer-footer" style="display: none; background: #FAF7F0; padding: 20px 24px; border-top: 1px solid #EAE5DC;">
       <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px;">
-        <span style="font-size: 14px; font-weight: 600; color: #475569;">Subtotal:</span>
-        <span id="cartDrawerSubtotal" style="font-size: 22px; font-weight: 800; color: #0F172A; font-variant-numeric: lining-nums tabular-nums !important;">₹0.00</span>
+        <span style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #666666;">Subtotal:</span>
+        <span id="cartDrawerSubtotal" style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; font-weight: 700; color: #121212; font-variant-numeric: lining-nums tabular-nums !important;">₹0.00</span>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        <button type="button" class="btn-checkout" onclick="proceedToCheckout()">
-          <i data-lucide="credit-card" style="width: 16px; height: 16px;"></i>
-          <span>Proceed to Checkout</span>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button type="button" class="btn-checkout" id="CartDrawerCheckoutBtn" onclick="proceedToCheckout(); return false;" style="width: 100%; background: #121212; color: #FFFFFF; border: none; border-radius: 10px; padding: 14px; font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(18,18,18,0.2);">
+          <span>Proceed to Checkout &rarr;</span>
         </button>
-        <button type="button" class="btn-wa-checkout" onclick="checkoutViaWhatsApp()">
-          <i data-lucide="message-circle" style="width: 16px; height: 16px;"></i>
-          <span>Checkout via WhatsApp COD (+91 8933063306)</span>
+        <button type="button" class="btn-wa-checkout" onclick="checkoutViaWhatsApp()" style="width: 100%; background: #25D366; color: #FFFFFF; border: none; border-radius: 10px; padding: 12px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(37,211,102,0.2);">
+          <span>Order on WhatsApp COD (+91 8933063306)</span>
         </button>
       </div>
 
-      <div style="text-align: center; font-size: 11px; color: #94A3B8; margin-top: 12px;">
+      <div style="text-align: center; font-size: 11px; color: #777777; margin-top: 12px;">
         100% Genuine Publisher Editions &bull; Same-Day Prayagraj Hub Dispatch
       </div>
     </div>
@@ -702,7 +1366,7 @@
 
         <!-- 2 Action Buttons -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto;">
-          <button type="button" id="modalFullPageBtn" class="btn-overview" style="background: #0066B3; color: #FFFFFF; justify-content: center; padding: 12px 18px; font-size: 13.5px; font-weight: 700; border-radius: 8px;" onclick="window.closeAllIndigoModals(); window.openSoloBookPage(currentModalBookId)">
+          <button type="button" id="modalFullPageBtn" class="btn-overview" style="background: #121212; color: #FFFFFF; justify-content: center; padding: 12px 18px; font-size: 13.5px; font-weight: 700; border-radius: 8px;" onclick="window.closeAllIndigoModals(); window.openSoloBookPage(currentModalBookId)">
             <span>Open Full Book Page &rarr;</span>
           </button>
           <button type="button" id="modalAddToCartBtn" class="btn-add-cart" style="justify-content: center; padding: 12px 18px; font-size: 13.5px; font-weight: 700; border-radius: 8px;" onclick="window.addToCart(window.currentModalBook || window.currentModalBookId); window.closeAllIndigoModals();">
@@ -728,7 +1392,7 @@
 
       <!-- Modal Header -->
       <div style="text-align: center; margin-bottom: 20px;">
-        <div style="width: 52px; height: 52px; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: #0066B3;">
+        <div style="width: 52px; height: 52px; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: #E04F33;">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         </div>
         <h3 id="authModalTitle" style="font-family: 'Merriweather', serif; font-size: 20px; font-weight: 700; color: #0F172A; margin: 0 0 6px;">Sign in to Indigo Books</h3>
@@ -750,11 +1414,11 @@
         <div style="margin-bottom: 18px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <label style="font-size: 12px; font-weight: 700; color: #334155;">Password</label>
-            <a href="javascript:void(0)" onclick="alert('Password reset link has been dispatched to your registered email/phone.')" style="font-size: 11.5px; color: #0066B3; text-decoration: none; font-weight: 600;">Forgot?</a>
+            <a href="javascript:void(0)" onclick="alert('Password reset link has been dispatched to your registered email/phone.')" style="font-size: 11.5px; color: #E04F33; text-decoration: none; font-weight: 600;">Forgot?</a>
           </div>
           <input type="password" placeholder="Enter your password" required style="width: 100%; padding: 11px 14px; font-size: 13.5px; border: 1.5px solid #CBD5E1; border-radius: 8px; outline: none; box-sizing: border-box; background: #FFFFFF; color: #0F172A;" />
         </div>
-        <button type="submit" style="width: 100%; justify-content: center; margin-bottom: 14px; background: #0066B3; color: #FFFFFF; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 14px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(0, 102, 179, 0.25);">
+        <button type="submit" style="width: 100%; justify-content: center; margin-bottom: 14px; background: #121212; color: #FFFFFF; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 14px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(0, 102, 179, 0.25);">
           Sign In to Your Account
         </button>
       </form>
@@ -810,7 +1474,16 @@
         </button>
       </div>
 
-      <form id="expressPhoneCheckoutForm" onsubmit="submitExpressPhoneOrder(event)">
+      <form id="expressPhoneCheckoutForm" novalidate onsubmit="return submitExpressPhoneOrder(event)">
+        <!-- Book Preview (when launched from solo PDP or specific book) -->
+        <div id="checkoutBookPreview" style="display: none; align-items: center; gap: 12px; padding: 10px 12px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; margin-bottom: 14px;">
+          <img id="checkoutBookThumb" src="" alt="Book Cover" style="width: 40px; height: 56px; object-fit: cover; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);" />
+          <div style="flex: 1; min-width: 0;">
+            <div id="checkoutBookTitle" style="font-weight: 700; font-size: 13.5px; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+            <div id="checkoutBookMeta" style="font-size: 12px; color: #64748B; margin-top: 2px;"></div>
+          </div>
+        </div>
+
         <!-- Phone Number -->
         <div style="margin-bottom: 14px;">
           <label style="display: block; font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 6px;">
@@ -820,7 +1493,7 @@
             <span style="display: flex; align-items: center; padding: 0 12px; background: #F1F5F9; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px; font-weight: 600; color: #475569;">
               +91
             </span>
-            <input type="tel" id="checkoutPhone" placeholder="Enter 10-digit mobile number" required pattern="[6-9][0-9]9" maxlength="10" style="flex: 1; padding: 10px 14px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 14px;" />
+            <input type="tel" id="checkoutPhone" placeholder="Enter 10-digit mobile number" required maxlength="15" inputmode="numeric" style="flex: 1; padding: 10px 14px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 14px;" />
           </div>
         </div>
 
@@ -838,7 +1511,7 @@
             <label style="font-size: 12.5px; font-weight: 700; color: #334155;">
               Delivery Address (House / Street / Area)*
             </label>
-            <button type="button" onclick="useCheckoutGpsLocation()" style="background: none; border: none; color: #0066B3; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+            <button type="button" onclick="useCheckoutGpsLocation()" style="background: none; border: none; color: #E04F33; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
               <i data-lucide="locate" style="width: 13px; height: 13px;"></i> Auto-detect with GPS
             </button>
           </div>
@@ -853,7 +1526,7 @@
           </div>
           <div>
             <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">PIN Code*</label>
-            <input type="text" id="checkoutPincode" placeholder="6-digit PIN" maxlength="6" required pattern="[1-9][0-9]5" style="width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;" />
+            <input type="text" id="checkoutPincode" placeholder="6-digit PIN" maxlength="10" inputmode="numeric" required style="width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 13px;" />
           </div>
         </div>
 
@@ -864,11 +1537,11 @@
           </div>
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <label style="display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #0F172A; cursor: pointer;">
-              <input type="radio" name="checkoutPayment" value="cod" checked style="accent-color: #0066B3;" />
+              <input type="radio" name="checkoutPayment" value="cod" checked style="accent-color: #E04F33;" />
               <span>Cash on Delivery (COD) &bull; <span style="color: #16A34A; font-weight: 700;">₹0 Extra Fee</span></span>
             </label>
             <label style="display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #0F172A; cursor: pointer;">
-              <input type="radio" name="checkoutPayment" value="upi" style="accent-color: #0066B3;" />
+              <input type="radio" name="checkoutPayment" value="upi" style="accent-color: #E04F33;" />
               <span>Instant UPI / QR Code / Cards &bull; <span style="color: #64748B;">Secure Gateway</span></span>
             </label>
           </div>
@@ -880,7 +1553,7 @@
           <span id="checkoutOrderTotal" style="font-size: 20px; font-weight: 800; color: #0F172A;">₹299.00</span>
         </div>
 
-        <button type="submit" style="width: 100%; background: #0066B3; color: #FFFFFF; border: none; border-radius: 8px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(0,102,179,0.3);">
+        <button type="submit" style="width: 100%; background: #121212; color: #FFFFFF; border: none; border-radius: 8px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(18,18,18,0.25);">
           <span>Confirm &amp; Place Order &rarr;</span>
         </button>
       </form>
@@ -895,15 +1568,34 @@
       <div style="width: 54px; height: 54px; border-radius: 50%; background: #DCFCE7; color: #16A34A; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
         <i data-lucide="check" style="width: 32px; height: 32px;"></i>
       </div>
-      <div style="font-size: 11px; font-weight: 700; color: #16A34A; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 4px;">
+      <div id="orderConfirmBadge" style="font-size: 11px; font-weight: 700; color: #16A34A; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 4px;">
         ORDER CONFIRMED &bull; DISPATCH QUEUED
       </div>
-      <h3 style="font-family: 'Merriweather', serif; font-size: 22px; font-weight: 700; color: #0F172A; margin: 0 0 10px;">
+      <h3 id="orderConfirmHeading" style="font-family: 'Merriweather', serif; font-size: 22px; font-weight: 700; color: #0F172A; margin: 0 0 10px;">
         Thank You for Your Order!
       </h3>
       <p id="orderConfirmText" style="font-size: 14px; color: #475569; line-height: 1.6; margin: 0 0 20px;">
         Your books are being carefully packed with protective bookstore packaging at our Prayagraj Central Hub.
       </p>
+
+      <!-- Instant UPI Payment Action (Appears when payment is UPI / Online) -->
+      <div id="orderConfirmPayActionWrap" style="display: none; background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 10px; padding: 16px; margin-bottom: 20px; text-align: center;">
+        <div style="font-size: 12px; font-weight: 700; color: #166534; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">
+          INSTANT UPI PAYMENT (GPay &bull; PhonePe &bull; Paytm &bull; BHIM)
+        </div>
+        <div style="font-size: 13.5px; color: #14532D; margin-bottom: 12px;">
+          Tap the button below to pay directly in your UPI app, or scan the QR code:
+        </div>
+        <a id="orderConfirmUpiBtn" href="#" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; box-sizing: border-box; background: #16A34A; color: #FFFFFF; text-decoration: none; padding: 13px 16px; border-radius: 8px; font-weight: 700; font-size: 14px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(22,163,74,0.3);">
+          ⚡ Pay via UPI App (GPay / PhonePe / Paytm)
+        </a>
+        <div style="display: flex; justify-content: center; margin: 10px 0;">
+          <img id="orderConfirmUpiQr" src="" alt="UPI Payment QR" style="width: 150px; height: 150px; border-radius: 8px; border: 1px solid #CBD5E1; background: #FFF; padding: 6px;" />
+        </div>
+        <div style="font-size: 12px; color: #166534; margin-top: 6px;">
+          UPI ID: <strong style="font-family: monospace; font-size: 13px;">8933063306@paytm</strong>
+        </div>
+      </div>
       <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px; margin-bottom: 20px; text-align: left;">
         <div style="font-size: 12px; color: #64748B;">Order Reference:</div>
         <div id="orderConfirmId" style="font-family: monospace; font-size: 16px; font-weight: 700; color: #0F172A; margin-top: 2px;">#IND-893306</div>
@@ -926,33 +1618,44 @@
 // Dynamic Shopify Asset Root (Points JavaScript getAssetUrl to Shopify CDN)
 window.SHOPIFY_ASSET_URL_ROOT = "{{ 'theme.css' | asset_url }}".replace(/theme\.css(\?.*)?$/, '');
 
-// Dynamic Shopify Live Products Injection (Paginated 250 products from Shopify Admin)
+// Dynamic Shopify Live Products Injection (250 products from Shopify Admin with variants)
 window.SHOPIFY_LIVE_PRODUCTS = [
   {%- paginate collections.all.products by 250 -%}
-    {%- for product in collections.all.products -%}
-      {
-        id: {{ product.id | json }},
-        variantId: {{ product.selected_or_first_available_variant.id | default: product.variants.first.id | json }},
-        variant_id: {{ product.selected_or_first_available_variant.id | default: product.variants.first.id | json }},
-        title: {{ product.title | json }},
-        handle: {{ product.handle | json }},
-        author: {{ product.vendor | default: "Indigo Books" | json }},
-        vendor: {{ product.vendor | default: "Indigo Books" | json }},
-        type: {{ product.type | json }},
-        price: "₹{{ product.price | money_without_currency }}",
-        compare_at_price: "",
-        oldPrice: "",
-        priceNum: {{ product.price | divided_by: 100.0 }},
-        discount: "",
-        image: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
-        coverUrl: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
-        cover: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
-        format: {% if product.variants.first.title != 'Default Title' %}{{ product.variants.first.title | json }}{% else %}"Paperback"{% endif %},
-        url: {{ product.url | json }},
-        tags: {{ product.tags | json }},
-        description: {{ product.description | strip_html | truncate: 280 | json }}
-      }{%- unless forloop.last -%},{%- endunless -%}
-    {%- endfor -%}
+  {%- for product in collections.all.products -%}
+    {
+      id: {{ product.id | json }},
+      variantId: {{ product.selected_or_first_available_variant.id | default: product.variants.first.id | json }},
+      variant_id: {{ product.selected_or_first_available_variant.id | default: product.variants.first.id | json }},
+      title: {{ product.title | json }},
+      handle: {{ product.handle | json }},
+      author: {{ product.vendor | default: "Indigo Books" | json }},
+      vendor: {{ product.vendor | default: "Indigo Books" | json }},
+      type: {{ product.type | json }},
+      price: "₹{{ product.price | money_without_currency }}",
+      compare_at_price: "",
+      oldPrice: "",
+      priceNum: {{ product.price | divided_by: 100.0 }},
+      discount: "",
+      image: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
+      coverUrl: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
+      cover: "{% if product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}",
+      format: {% if product.variants.first.title != 'Default Title' %}{{ product.variants.first.title | json }}{% else %}"Paperback"{% endif %},
+      variants: [
+        {%- for v in product.variants -%}
+          {
+            id: {{ v.id | json }},
+            title: {{ v.title | json }},
+            price: {{ v.price | divided_by: 100.0 }},
+            available: {{ v.available | json }},
+            sku: {{ v.sku | json }}
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ],
+      url: {{ product.url | json }},
+      tags: {{ product.tags | json }},
+      description: {{ product.description | strip_html | truncate: 280 | json }}
+    }{%- unless forloop.last -%},{%- endunless -%}
+  {%- endfor -%}
   {%- endpaginate -%}
 ];
     </script>
@@ -973,1942 +1676,5 @@ window.SHOPIFY_LIVE_PRODUCTS = [
         }
       });
     </script>
-
-
-
-<style id="indigo-master-production-styles">
-  /* =========================================================================
-     1. UNIVERSAL 1320PX ALIGNMENT SPINE & ZERO-OVERFLOW SHIELD
-     ========================================================================= */
-  html, body {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-    position: relative !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  *, *:before, *:after {
-    box-sizing: border-box !important;
-  }
-
-  .navbar-inner, .ivh-container, .ihm-container, .stats-grid,
-  .podium-container, .rekhta-container, .voices-container,
-  .category-bento-showcase, .vault-container, .catalog-container,
-  .phs-container, .footer-container, .editorial-header, .catalog-filter-bar,
-  .trust-strip-grid, .trust-features-grid, .heritage-grid, .footer-grid,
-  .product-page-wrapper,
-  #bestsellers-podium > div, #mehfil-e-rekhta > div, #mehfil-rekhta > div,
-  #indian-voices-section > div, #category-bento-showcase > div,
-  #law-academic-vault > div, #shop-all-catalog > div {
-    width: 100% !important;
-    max-width: 1320px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    padding-left: 24px !important;
-    padding-right: 24px !important;
-    box-sizing: border-box !important;
-  }
-
-  @media (max-width: 640px) {
-    .navbar-inner, .site-container, .section-container, .ivh-container, .ihm-container,
-    .stats-grid, .podium-container, .rekhta-container, .voices-container,
-    .category-bento-showcase, .vault-container, .catalog-container, .phs-container,
-    .footer-container, .editorial-header, .catalog-filter-bar, .trust-strip-grid,
-    .trust-features-grid, .heritage-grid, .footer-grid, .product-page-wrapper,
-    #bestsellers-podium > div, #mehfil-e-rekhta > div, #mehfil-rekhta > div,
-    #indian-voices-section > div, #category-bento-showcase > div,
-    #law-academic-vault > div, #shop-all-catalog > div {
-      padding-left: 14px !important;
-      padding-right: 14px !important;
-      max-width: 100% !important;
-      overflow-x: hidden !important;
-    }
-  }
-
-  /* =========================================================================
-     2. UNCLIPPED RESPONSIVE HERO SEARCH PILL & PREDICTIVE DROPDOWN
-     ========================================================================= */
-  #indigo-video-hero form, #indigo-hero-master form,
-  .hero-search-wrap, .search-input-wrap, .search-input-group,
-  .ivh-search-box, .ihm-search-wrap, .catalog-search-wrap {
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    width: 100% !important;
-    max-width: 540px !important;
-    height: 52px !important;
-    background: #FFFFFF !important;
-    border-radius: 999px !important;
-    padding: 4px 6px 4px 14px !important;
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35) !important;
-    overflow: visible !important;
-    box-sizing: border-box !important;
-    z-index: 999999 !important;
-  }
-
-  #indigo-video-hero form select, #indigo-hero-master form select,
-  .search-category-select, #heroSearchCategory, #catalogSearchCategory,
-  .hero-search-wrap select {
-    flex: 0 0 auto !important;
-    width: 110px !important;
-    border: none !important;
-    border-right: 1px solid #CBD5E1 !important;
-    background: transparent !important;
-    color: #09132C !important;
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    padding: 0 8px 0 4px !important;
-    outline: none !important;
-    cursor: pointer !important;
-  }
-
-  #indigo-video-hero form input, #indigo-hero-master form input,
-  .hero-search-wrap input, #hero-search-input,
-  .catalog-search-wrap input, #catalog-search-input {
-    flex: 1 1 auto !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    height: 42px !important;
-    border: none !important;
-    background: transparent !important;
-    color: #09132C !important;
-    font-size: 14.5px !important;
-    padding: 0 10px !important;
-    outline: none !important;
-  }
-
-  #indigo-video-hero form button[type="submit"], #indigo-hero-master form button[type="submit"],
-  .hero-search-wrap button, .catalog-search-wrap button {
-    flex: 0 0 auto !important;
-    height: 40px !important;
-    padding: 0 20px !important;
-    border-radius: 999px !important;
-    background: #09132C !important;
-    color: #FFFFFF !important;
-    font-size: 13.5px !important;
-    font-weight: 700 !important;
-    border: none !important;
-    cursor: pointer !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  #hero-search-suggestions,
-  #catalog-search-suggestions,
-  #results-search-suggestions,
-  .search-suggestions-dropdown,
-  .indigo-live-suggest-box {
-    position: absolute !important;
-    top: calc(100% + 8px) !important;
-    left: 0 !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    max-height: 420px !important;
-    overflow-y: auto !important;
-    background: #FFFFFF !important;
-    border: 1px solid #CBD5E1 !important;
-    border-radius: 12px !important;
-    box-shadow: 0 24px 60px rgba(9, 19, 44, 0.45) !important;
-    z-index: 99999999 !important;
-    padding: 8px !important;
-    color: #09132C !important;
-    text-align: left !important;
-    box-sizing: border-box !important;
-  }
-  .search-suggestion-item:hover,
-  .indigo-suggest-row:hover {
-    background: #FEF3C7 !important;
-  }
-
-  /* Mobile Search Pill Fit on <= 640px */
-  @media (max-width: 640px) {
-    #indigo-video-hero form, #indigo-hero-master form,
-    .hero-search-wrap, .search-input-wrap, .search-input-group,
-    .ivh-search-box, .ihm-search-wrap, .catalog-search-wrap {
-      height: 46px !important;
-      padding: 3px 4px 3px 8px !important;
-      gap: 4px !important;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28) !important;
-      margin-bottom: 14px !important;
-      max-width: 100% !important;
-      width: 100% !important;
-    }
-    #indigo-video-hero form select, #indigo-hero-master form select,
-    .search-category-select, #heroSearchCategory, #catalogSearchCategory,
-    .hero-search-wrap select {
-      flex: 0 0 76px !important;
-      width: 76px !important;
-      max-width: 76px !important;
-      font-size: 11px !important;
-      padding: 0 4px 0 2px !important;
-      height: 36px !important;
-      text-overflow: ellipsis !important;
-    }
-    .hero-search-wrap svg,
-    .hero-search-wrap [data-lucide="search"],
-    .catalog-search-wrap svg {
-      width: 15px !important;
-      height: 15px !important;
-      margin-left: 2px !important;
-      flex-shrink: 0 !important;
-    }
-    #indigo-video-hero form input, #indigo-hero-master form input,
-    .hero-search-wrap input, #hero-search-input,
-    .catalog-search-wrap input, #catalog-search-input {
-      font-size: 12.5px !important;
-      padding: 0 6px !important;
-      height: 36px !important;
-      min-width: 0 !important;
-    }
-    #indigo-video-hero form button[type="submit"], #indigo-hero-master form button[type="submit"],
-    .hero-search-wrap button, .catalog-search-wrap button {
-      height: 36px !important;
-      padding: 0 12px !important;
-      font-size: 11.5px !important;
-      margin-right: 2px !important;
-    }
-  }
-
-  /* Suppress rogue Shopify predictive search empty overlay completely */
-  .predictive-search,
-  .predictive-search-empty,
-  .predictive-search-empty__message,
-  .predictive-search-suggestions,
-  .predictive-search-wa-prompt,
-  #predictive-search-results,
-  [data-predictive-search],
-  predictive-search [tabindex="-1"],
-  .predictive-search__results-groups-wrapper {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    height: 0 !important;
-    overflow: hidden !important;
-    z-index: -9999 !important;
-  }
-
-  /* =========================================================================
-     3. HERO SECTION MOBILE PERFECTION (ZERO OVERFLOW, STACKED CTAs, SCALED WHEEL)
-     ========================================================================= */
-  @media (max-width: 768px) {
-    #indigo-video-hero, #indigo-hero-master, .hero-section, .ivh-section {
-      overflow-x: clip !important;
-      overflow: hidden !important;
-      padding: 24px 0 36px 0 !important;
-      min-height: auto !important;
-      width: 100% !important;
-      max-width: 100% !important;
-    }
-    .hero-bg-clip {
-      overflow: hidden !important;
-      max-width: 100% !important;
-    }
-    .hero-bg-clip svg {
-      max-width: 100vw !important;
-    }
-    .hero-main-grid, .hero-inner-container {
-      grid-template-columns: 1fr !important;
-      gap: 24px !important;
-      width: 100% !important;
-      padding: 0 14px !important;
-    }
-    .hero-left-col, .ivh-left {
-      width: 100% !important;
-      max-width: 100% !important;
-      text-align: left !important;
-      padding: 0 !important;
-    }
-    .ivh-title, .hero-left-col h1 {
-      font-size: 26px !important;
-      line-height: 1.25 !important;
-      margin-bottom: 8px !important;
-      word-wrap: break-word !important;
-    }
-    .hero-left-col p, .ivh-left p {
-      font-size: 13px !important;
-      line-height: 1.45 !important;
-      margin-bottom: 14px !important;
-      color: #CBD5E1 !important;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .hero-cta-row {
-      display: flex !important;
-      flex-direction: column !important;
-      width: 100% !important;
-      gap: 10px !important;
-      margin-top: 14px !important;
-      box-sizing: border-box !important;
-    }
-    .hero-shop-btn, .hero-wa-cod-btn {
-      width: 100% !important;
-      height: 44px !important;
-      justify-content: center !important;
-      text-align: center !important;
-      font-size: 13.5px !important;
-      padding: 0 16px !important;
-      box-sizing: border-box !important;
-      border-radius: 8px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-    }
-
-    .hero-right-col, .ivh-right, .hero-stage-col {
-      width: 100% !important;
-      max-width: 100% !important;
-      overflow: hidden !important;
-      margin-top: 24px !important;
-      position: relative !important;
-      display: flex !important;
-      justify-content: center !important;
-      align-items: center !important;
-      min-height: 280px !important;
-      padding: 6px 0 !important;
-      box-sizing: border-box !important;
-    }
-    .hero-rangoli-wrapper, .hero-wheel-wrap, .hero-rangoli-bg {
-      width: 260px !important;
-      height: 260px !important;
-      max-width: 85vw !important;
-      max-height: 85vw !important;
-      left: 50% !important;
-      top: 50% !important;
-      transform: translate(-50%, -50%) !important;
-      position: absolute !important;
-      z-index: 5 !important;
-      pointer-events: none !important;
-    }
-    .hero-wheel-svg, .hero-rangoli-svg {
-      width: 260px !important;
-      height: 260px !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
-      display: block !important;
-    }
-    .hero-books-grid-video, .ivh-books-grid {
-      position: relative !important;
-      z-index: 25 !important;
-      display: grid !important;
-      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-      grid-template-rows: auto !important;
-      gap: 8px !important;
-      width: 100% !important;
-      max-width: 320px !important;
-      margin: 0 auto !important;
-      justify-content: center !important;
-      box-sizing: border-box !important;
-    }
-    .hero-video-book-card, .ivh-book-card {
-      width: 100% !important;
-      max-width: 98px !important;
-      padding: 6px !important;
-      border-radius: 8px !important;
-      box-sizing: border-box !important;
-    }
-    .hero-video-book-card .hero-book-thumb, .ivh-book-card .hero-book-thumb {
-      width: 100% !important;
-      height: 110px !important;
-      aspect-ratio: 2 / 3 !important;
-      border-radius: 4px !important;
-      overflow: hidden !important;
-      margin-bottom: 6px !important;
-    }
-    .hero-video-book-card .hero-book-thumb img, .ivh-book-card .hero-book-thumb img {
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: cover !important;
-    }
-    .hero-book-title {
-      font-size: 10.5px !important;
-      line-height: 1.2 !important;
-      white-space: nowrap !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-    }
-    .hero-book-author {
-      font-size: 9px !important;
-      white-space: nowrap !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-    }
-    .hero-book-price {
-      font-size: 10.5px !important;
-      font-weight: 700 !important;
-    }
-  }
-
-  /* =========================================================================
-     4. NAVBAR & CATEGORY PILLS HORIZONTAL SCROLL DISCIPLINE
-     ========================================================================= */
-  @media (max-width: 640px) {
-    .nav-links-wrap,
-    header .nav-links-wrap,
-    .navbar-links {
-      order: 3 !important;
-      width: 100% !important;
-      flex-basis: 100% !important;
-      display: flex !important;
-      align-items: center !important;
-      gap: 10px !important;
-      overflow-x: auto !important;
-      overflow-y: hidden !important;
-      white-space: nowrap !important;
-      padding: 6px 2px 6px 2px !important;
-      margin: 4px 0 0 0 !important;
-      border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
-      background-color: #FAF8F5 !important;
-      -webkit-overflow-scrolling: touch !important;
-      scrollbar-width: none !important;
-      box-sizing: border-box !important;
-    }
-    .nav-links-wrap::-webkit-scrollbar {
-      display: none !important;
-    }
-
-    .cat-pills-row,
-    .catalog-filter-pills,
-    .poet-pills-row {
-      display: flex !important;
-      flex-wrap: nowrap !important;
-      overflow-x: auto !important;
-      overflow-y: hidden !important;
-      white-space: nowrap !important;
-      -webkit-overflow-scrolling: touch !important;
-      scrollbar-width: none !important;
-      padding: 4px 2px 8px 2px !important;
-      gap: 8px !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-    }
-    .cat-pills-row::-webkit-scrollbar,
-    .poet-pills-row::-webkit-scrollbar {
-      display: none !important;
-    }
-    .cat-pill, .poet-pill {
-      flex-shrink: 0 !important;
-      font-size: 12px !important;
-      padding: 6px 14px !important;
-    }
-  }
-
-  /* =========================================================================
-     5. PODIUM 3D TURNTABLE & FLANKING BOOKS SCALING ON MOBILE
-     ========================================================================= */
-  @media (max-width: 480px) {
-    .podium-turntable-track {
-      height: 270px !important;
-      max-width: 100% !important;
-      overflow: hidden !important;
-    }
-    .flank-book {
-      width: 105px !important;
-      height: 155px !important;
-    }
-    .flank-left-2 { transform: translateX(-85px) scale(0.65) rotateY(28deg) !important; }
-    .flank-left-1 { transform: translateX(-48px) scale(0.8) rotateY(18deg) !important; }
-    .flank-right-1 { transform: translateX(48px) scale(0.8) rotateY(-18deg) !important; }
-    .flank-right-2 { transform: translateX(85px) scale(0.65) rotateY(-28deg) !important; }
-  }
-
-  /* =========================================================================
-     6. PDP AUTHOR SHELF EQUAL HEIGHT & PADDING ALIGNMENT
-     ========================================================================= */
-  .shelf-scroll-row {
-    display: flex !important;
-    gap: 16px !important;
-    overflow-x: auto !important;
-    padding: 12px 4px 20px 4px !important;
-    box-sizing: border-box !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: thin !important;
-  }
-  .shelf-book-card {
-    flex: 0 0 200px !important;
-    width: 200px !important;
-    max-width: 200px !important;
-    background: #FFFFFF !important;
-    border: 1px solid #E2E8F0 !important;
-    border-radius: 12px !important;
-    padding: 14px !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    height: 410px !important;
-    transition: transform 0.25s ease, box-shadow 0.25s ease !important;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
-  }
-  .shelf-book-card:hover {
-    transform: translateY(-4px) !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
-  }
-  .shelf-book-card .indigo-3d-book-stage {
-    width: 100% !important;
-    height: 240px !important;
-    aspect-ratio: 2 / 3 !important;
-    margin: 0 auto 12px auto !important;
-    position: relative !important;
-  }
-  .shelf-book-card .indigo-3d-cover-front img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    aspect-ratio: 2 / 3 !important;
-    border-radius: 6px !important;
-  }
-  @media (max-width: 640px) {
-    .shelf-book-card {
-      flex: 0 0 160px !important;
-      width: 160px !important;
-      max-width: 160px !important;
-      padding: 10px !important;
-      height: 350px !important;
-    }
-    .shelf-book-card .indigo-3d-book-stage {
-      height: 190px !important;
-      margin-bottom: 8px !important;
-    }
-    .shelf-book-card .card-book-title {
-      font-size: 13px !important;
-      height: 36px !important;
-      min-height: 36px !important;
-      max-height: 36px !important;
-    }
-  }
-
-  /* =========================================================================
-     7. MATHEMATICAL BOOK CARD ALIGNMENT
-     ========================================================================= */
-  .catalog-card, .vault-card, .rekhta-card, .indigo-book-card {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    height: 100% !important;
-    padding: 16px !important;
-    border-radius: 14px !important;
-    box-sizing: border-box !important;
-    position: relative !important;
-    background: #FFFFFF !important;
-    border: 1px solid #E2E8F0 !important;
-  }
-  .card-cover-frame, .indigo-3d-book-stage {
-    width: 100% !important;
-    aspect-ratio: 2 / 3 !important;
-    height: auto !important;
-    margin-bottom: 14px !important;
-    border-radius: 6px !important;
-    flex-shrink: 0 !important;
-    position: relative !important;
-  }
-  .card-book-title {
-    font-family: 'Merriweather', Georgia, serif !important;
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    line-height: 1.4 !important;
-    height: 42px !important;
-    min-height: 42px !important;
-    max-height: 42px !important;
-    margin: 0 0 4px 0 !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-  }
-  .card-bottom-footer {
-    margin-top: auto !important;
-    padding-top: 10px !important;
-    border-top: 1px solid rgba(148, 163, 184, 0.16) !important;
-    width: 100% !important;
-  }
-
-  /* =========================================================================
-     8. LAW & ACADEMIC VAULT DISCIPLINE
-     ========================================================================= */
-  #law-academic-vault {
-    width: 100% !important;
-    padding: 56px 0 !important;
-    box-sizing: border-box !important;
-  }
-  #law-academic-vault .site-container,
-  #law-academic-vault > div,
-  .vault-container {
-    max-width: 1320px !important;
-    width: 100% !important;
-    margin: 0 auto !important;
-    padding: 0 24px !important;
-    box-sizing: border-box !important;
-  }
-  .vault-layout {
-    display: grid !important;
-    grid-template-columns: 260px 1fr !important;
-    gap: 28px !important;
-    width: 100% !important;
-    align-items: start !important;
-    box-sizing: border-box !important;
-  }
-  .vault-cards-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 18px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  @media (max-width: 1100px) {
-    .vault-cards-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 16px !important;
-    }
-  }
-  @media (max-width: 900px) {
-    .vault-layout {
-      display: flex !important;
-      flex-direction: column !important;
-      width: 100% !important;
-      gap: 16px !important;
-      box-sizing: border-box !important;
-      padding: 0 !important;
-      margin: 0 !important;
-    }
-    .vault-nav-col {
-      display: flex !important;
-      flex-direction: row !important;
-      overflow-x: auto !important;
-      flex-wrap: nowrap !important;
-      gap: 8px !important;
-      width: 100% !important;
-      padding: 2px 2px 10px !important;
-      -webkit-overflow-scrolling: touch !important;
-      scrollbar-width: none !important;
-      box-sizing: border-box !important;
-    }
-    .vault-nav-col::-webkit-scrollbar {
-      display: none !important;
-    }
-    .vault-tab-btn {
-      flex-shrink: 0 !important;
-      padding: 8px 14px !important;
-      font-size: 12px !important;
-      border-radius: 9999px !important;
-      white-space: nowrap !important;
-      background: #FFFFFF !important;
-      border: 1px solid #CBD5E1 !important;
-      color: #334155 !important;
-    }
-    .vault-tab-btn.active {
-      background: #0F172A !important;
-      border-color: #0F172A !important;
-      color: #FFFFFF !important;
-    }
-    .vault-tab-btn i:last-child {
-      display: none !important;
-    }
-    .vault-concierge-card {
-      display: none !important; /* Eliminates the empty left gap completely on mobile */
-    }
-    .vault-cards-grid {
-      display: grid !important;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important; /* 2 COLUMNS ON MOBILE */
-      gap: 12px !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-      padding: 0 !important;
-      margin: 0 !important;
-    }
-    .vault-card {
-      width: 100% !important;
-      max-width: 100% !important;
-      padding: 12px 10px !important;
-      box-sizing: border-box !important;
-      border-radius: 10px !important;
-    }
-    .vault-card .indigo-3d-book-stage {
-      height: 200px !important;
-      width: 100% !important;
-      margin: 0 auto 10px !important;
-    }
-    .vault-card h3 {
-      font-size: 13px !important;
-      line-height: 1.3 !important;
-      margin-bottom: 4px !important;
-    }
-  }
-  .vault-card {
-    background: #FFFFFF !important;
-    border: 1px solid #E2E8F0 !important;
-    border-radius: 12px !important;
-    padding: 14px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    height: 100% !important;
-    box-sizing: border-box !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-  }
-  .vault-card-thumb {
-    width: 100% !important;
-    max-height: 280px !important;
-    aspect-ratio: 2 / 3 !important;
-    border-radius: 6px !important;
-    overflow: hidden !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: #F8FAFC !important;
-    margin-bottom: 12px !important;
-  }
-  .vault-card-thumb img {
-    width: 100% !important;
-    height: 100% !important;
-    max-height: 280px !important;
-    object-fit: cover !important;
-  }
-
-  /* =========================================================================
-     PRODUCT DETAILS PAGE (PDP) MOBILE & DESKTOP ALIGNMENT SHIELD
-     ========================================================================= */
-  #single-product-page-view {
-    min-height: auto !important;
-  }
-  .product-page-wrapper {
-    padding: 20px 20px 24px !important;
-  }
-  .product-pdp-grid {
-    display: grid !important;
-    grid-template-columns: 340px 1fr 310px !important;
-    gap: 20px !important;
-    align-items: start !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-bottom: 20px !important;
-    box-sizing: border-box !important;
-  }
-  .pdp-left-col {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  .pdp-trust-card {
-    margin: 0 !important;
-    padding: 16px 18px !important;
-  }
-  .pdp-center-col {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  .pdp-info-header-card {
-    background: #FFFFFF !important;
-    border: 1px solid #E2E8F0 !important;
-    border-bottom: none !important;
-    border-radius: 14px 14px 0 0 !important;
-    padding: 22px 24px 16px !important;
-    margin: 0 !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
-  }
-  .pdp-tabs-container {
-    background: #FFFFFF !important;
-    border: 1px solid #E2E8F0 !important;
-    border-top: 1px solid #F1F5F9 !important;
-    border-radius: 0 0 14px 14px !important;
-    padding: 0 24px 22px !important;
-    margin: 0 !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
-  }
-  .pdp-tab-nav {
-    display: flex !important;
-    gap: 12px !important;
-    border-bottom: 2px solid #E2E8F0 !important;
-    margin: 10px 0 14px !important;
-  }
-  .pdp-right-col {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-  .pdp-buy-box {
-    padding: 20px !important;
-  }
-  .pdp-recommendations-sec {
-    margin-top: 24px !important;
-    padding-top: 20px !important;
-    border-top: 1px solid #E2E8F0 !important;
-  }
-
-  @media (max-width: 1100px) {
-    .product-pdp-grid {
-      grid-template-columns: 300px 1fr 280px !important;
-      gap: 16px !important;
-    }
-  }
-
-  @media (max-width: 900px) {
-    .product-page-wrapper {
-      padding: 12px 14px 40px !important;
-      max-width: 100vw !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-      overflow-x: hidden !important;
-    }
-    .product-breadcrumb-bar {
-      display: flex !important;
-      flex-wrap: wrap !important;
-      justify-content: space-between !important;
-      align-items: center !important;
-      gap: 8px !important;
-      padding: 8px 0 14px !important;
-      margin-bottom: 16px !important;
-      font-size: 11.5px !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-    }
-    .product-breadcrumb-bar .breadcrumb-nav {
-      flex: 1 1 100% !important;
-      line-height: 1.4 !important;
-      word-break: break-word !important;
-    }
-    .btn-back-to-store {
-      padding: 6px 12px !important;
-      font-size: 12px !important;
-      width: auto !important;
-    }
-
-    /* FULL-WIDTH RESPONSIVE FLOW ON MOBILE (ZERO SQUEEZED COLUMNS) */
-    .product-pdp-grid {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 16px !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-    }
-    .pdp-left-col,
-    .pdp-center-col,
-    .pdp-right-col {
-      display: contents !important;
-    }
-
-    /* 1. Cover Card */
-    .pdp-cover-card {
-      order: 1 !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      margin: 0 !important;
-      padding: 18px 14px !important;
-      background: #FFFFFF !important;
-      border: 1px solid #E2E8F0 !important;
-      border-radius: 14px !important;
-      box-sizing: border-box !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
-      text-align: center !important;
-    }
-    .pdp-cover-card .indigo-3d-book-stage {
-      max-width: 240px !important;
-      height: 240px !important;
-      margin: 0 auto 14px !important;
-    }
-    .pdp-look-inside-btn {
-      width: 100% !important;
-      padding: 10px 14px !important;
-      font-size: 12.5px !important;
-    }
-
-    /* 2. Book Info Header Card */
-    .pdp-info-header-card {
-      order: 2 !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      background: #FFFFFF !important;
-      border: 1px solid #E2E8F0 !important;
-      border-radius: 14px !important;
-      padding: 20px 16px !important;
-      box-sizing: border-box !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
-    }
-    .pdp-book-title {
-      font-size: 22px !important;
-      line-height: 1.3 !important;
-      margin: 0 0 10px !important;
-      word-break: break-word !important;
-    }
-    .pdp-author-pill-wrap {
-      margin-bottom: 12px !important;
-    }
-    .pdp-price-wrap {
-      margin-bottom: 12px !important;
-    }
-    .pdp-selling-price {
-      font-size: 26px !important;
-    }
-    .pdp-variant-selector-box {
-      padding: 12px !important;
-      margin: 12px 0 !important;
-      border-radius: 10px !important;
-    }
-    .pdp-variant-buttons {
-      gap: 8px !important;
-    }
-    .pdp-variant-btn {
-      padding: 8px 12px !important;
-      font-size: 12px !important;
-    }
-
-    /* 3. Buy Box */
-    .pdp-buy-box {
-      order: 3 !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      margin: 0 !important;
-      padding: 20px 16px !important;
-      border-radius: 14px !important;
-      box-sizing: border-box !important;
-      background: #FFFFFF !important;
-      border: 1px solid #E2E8F0 !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
-    }
-    .pdp-bb-price {
-      font-size: 26px !important;
-      margin-bottom: 12px !important;
-    }
-
-    /* 4. Description & Technical Specs Tabs (100% FULL WIDTH!) */
-    .pdp-tabs-container {
-      order: 4 !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      margin: 0 !important;
-      background: #FFFFFF !important;
-      border: 1px solid #E2E8F0 !important;
-      border-radius: 14px !important;
-      padding: 16px !important;
-      box-sizing: border-box !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
-    }
-    .pdp-tech-table {
-      width: 100% !important;
-      border-collapse: collapse !important;
-    }
-    .pdp-tech-table th {
-      width: 36% !important;
-      padding: 10px 10px !important;
-      font-size: 12px !important;
-      white-space: nowrap !important;
-      background: #F8FAFC !important;
-      color: #64748B !important;
-      font-weight: 600 !important;
-      border-bottom: 1px solid #F1F5F9 !important;
-    }
-    .pdp-tech-table td {
-      width: 64% !important;
-      padding: 10px 10px !important;
-      font-size: 12.5px !important;
-      color: #0F172A !important;
-      font-weight: 500 !important;
-      border-bottom: 1px solid #F1F5F9 !important;
-      word-break: normal !important;
-      line-height: 1.4 !important;
-    }
-
-    /* 5. Trust Perks Card */
-    .pdp-trust-card {
-      order: 5 !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      background: #FFFFFF !important;
-      border: 1px solid #E2E8F0 !important;
-      border-radius: 14px !important;
-      padding: 18px 16px !important;
-      box-sizing: border-box !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
-      margin: 0 !important;
-    }
-    .pdp-perks-checklist {
-      list-style: none !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 12px !important;
-    }
-    .pdp-perks-checklist li {
-      display: flex !important;
-      align-items: flex-start !important;
-      gap: 10px !important;
-      font-size: 12.5px !important;
-      line-height: 1.4 !important;
-      color: #334155 !important;
-    }
-  }
-
-  /* AUTH MODAL STYLING (CRISP SOLID WHITE CARD WITH HIGH CONTRAST) */
-  .modal-card,
-  #loginModalOverlay .modal-card,
-  #indigo-signin-modal .modal-card {
-    background: #FFFFFF !important;
-    color: #0F172A !important;
-    border-radius: 16px !important;
-    width: 100% !important;
-    max-width: 440px !important;
-    max-height: 90vh !important;
-    overflow-y: auto !important;
-    padding: 32px 28px !important;
-    box-sizing: border-box !important;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45) !important;
-    border: 1px solid #E2E8F0 !important;
-    position: relative !important;
-    z-index: 1000001 !important;
-    margin: auto !important;
-  }
-
-
-  /* =========================================================================
-     FOOTER & FLOATING WHATSAPP BUTTON MOBILE ALIGNMENT SHIELD
-     ========================================================================= */
-  .wa-tooltip {
-    display: none !important;
-  }
-  @media (min-width: 901px) {
-    .floating-wa-btn:hover .wa-tooltip,
-    .whatsapp-float-btn:hover .wa-tooltip {
-      display: block !important;
-      position: absolute !important;
-      right: 64px !important;
-      background: #0F172A !important;
-      color: #FFFFFF !important;
-      padding: 6px 12px !important;
-      border-radius: 6px !important;
-      font-size: 12px !important;
-      white-space: nowrap !important;
-      font-weight: 600 !important;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
-      pointer-events: none !important;
-    }
-  }
-
-  @media (max-width: 900px) {
-    .site-footer {
-      padding: 36px 16px 84px !important; /* Extra bottom clearance so button never covers text */
-      text-align: left !important;
-      box-sizing: border-box !important;
-      width: 100% !important;
-      max-width: 100vw !important;
-      overflow-x: hidden !important;
-    }
-    .footer-grid {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 28px !important;
-      margin-bottom: 32px !important;
-      padding: 0 !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-    }
-    .footer-col h4 {
-      margin-bottom: 12px !important;
-      font-size: 14px !important;
-    }
-    .footer-links-list {
-      gap: 8px !important;
-    }
-    .footer-links-list a {
-      font-size: 13px !important;
-    }
-    .footer-bottom-bar {
-      flex-direction: column !important;
-      gap: 10px !important;
-      text-align: center !important;
-      padding-top: 20px !important;
-      font-size: 11px !important;
-      line-height: 1.5 !important;
-    }
-
-    /* Floating WhatsApp Button on Mobile: Compact circle, NO overflowing text */
-    .whatsapp-float-btn,
-    .floating-wa-btn,
-    .floating-whatsapp-btn {
-      position: fixed !important;
-      bottom: 16px !important;
-      right: 16px !important;
-      width: 48px !important;
-      height: 48px !important;
-      border-radius: 50% !important;
-      background: #25D366 !important;
-      box-shadow: 0 4px 16px rgba(37, 211, 102, 0.5) !important;
-      z-index: 99999 !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      padding: 0 !important;
-      overflow: hidden !important;
-    }
-    .whatsapp-float-btn .wa-tooltip,
-    .floating-wa-btn .wa-tooltip,
-    .floating-whatsapp-btn .wa-tooltip {
-      display: none !important; /* NEVER spill or overflow text on mobile screen */
-    }
-    .whatsapp-float-btn i,
-    .whatsapp-float-btn svg,
-    .floating-wa-btn i,
-    .floating-wa-btn svg {
-      width: 26px !important;
-      height: 26px !important;
-      display: block !important;
-      margin: 0 !important;
-    }
-  }
-
-
-  /* Universal 3D Book Opening Animation */
-  .indigo-3d-book-stage:hover .indigo-3d-cover-leaf,
-  .vault-card:hover .indigo-3d-cover-leaf,
-  .podium-center-book:hover .podium-cover-leaf,
-  .indigo-3d-book-stage.opened .indigo-3d-cover-leaf {
-    transform: rotateY(-128deg) !important;
-    box-shadow: -14px 18px 28px rgba(0,0,0,0.35) !important;
-  }
-
-</style>
-
-<script id="indigo-master-production-script">
-(function() {
-  /* ==========================================================================
-     1. VERIFIED CSV DATA FOR CORE BOOKS (Zero Fake Discounts/Reviews)
-     ========================================================================== */
-  var HERO_BOOKS_CSV = [
-    {
-      id: 'godan-premchand',
-      handle: 'godan-premchand',
-      matchKey: 'godan',
-      title: 'Godan (गोदान)',
-      author: 'Premchand',
-      vendor: 'Lokbharti Prakashan',
-      category: 'Fiction : Novel',
-      binding: 'Paperback',
-      price: 299,
-      isbn: '9789389742152',
-      pages: '312p',
-      dimensions: '21.5 × 14 × 1 cm', qty: 100,
-      year: '4th (1936)',
-      language: 'Hindi',
-      image: 'https://images.rajkamalprakashan.com/products/2026/08/07/d18d896b-e17d-4c03-b26c-0525c9675e05-godan-text-book.jpg',
-      description: 'Munshi Premchand’s immortal masterpiece depicting the life, struggles, and resilience of Indian peasantry.'
-    },
-    {
-      id: 'raag-darbari-shrilal-shukla',
-      handle: 'raag-darbari-shrilal-shukla',
-      matchKey: 'raag',
-      title: 'Raag Darbari (राग दरबारी)',
-      author: 'Shrilal Shukla',
-      vendor: 'Rajkamal Prakashan',
-      category: 'Fiction : Novel',
-      binding: 'Paperback',
-      price: 499,
-      isbn: '9788126713967',
-      pages: '423p',
-      dimensions: '21.5 × 14 × 2 cm', qty: 100,
-      year: '55th (1983)',
-      language: 'Hindi',
-      image: 'https://images.rajkamalprakashan.com/products/--1776279294489.jpg',
-      description: 'Sahitya Akademi Award-winning satirical masterpiece by Shrilal Shukla exposing rural politics in Shivpalganj.'
-    },
-    {
-      id: 'chitralekha-bhagwaticharan-verma',
-      handle: 'chitralekha-bhagwaticharan-verma',
-      matchKey: 'chitralekha',
-      title: 'Chitralekha (चित्रलेखा)',
-      author: 'Bhagwaticharan Verma',
-      vendor: 'Rajkamal Prakashan',
-      category: 'Fiction : Novel',
-      binding: 'Paperback',
-      price: 299,
-      isbn: '9788126715855',
-      pages: '200p',
-      dimensions: '21.5 × 14 × 1 cm', qty: 100,
-      year: '32nd (1993)',
-      language: 'Hindi',
-      image: 'https://images.rajkamalprakashan.com/products/--1776278166396.jpg',
-      description: 'A timeless philosophical novel exploring sin, virtue, love, and asceticism.'
-    },
-    {
-      id: 'rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar',
-      handle: 'rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar',
-      matchKey: 'rashmirathi',
-      title: 'Rashmirathi : Dinkar Granthmala',
-      author: "Ramdhari Singh 'Dinkar'",
-      vendor: 'Lokbharti Prakashan',
-      category: 'Poetry',
-      binding: 'Paperback',
-      price: 299,
-      isbn: '9788180313639',
-      pages: '192p',
-      dimensions: '21.5 × 14 × 1 cm', qty: 100,
-      year: '46th (1952)',
-      language: 'Hindi',
-      image: 'https://images.rajkamalprakashan.com/products/--1776278887188.jpg',
-      description: 'Rashtrakavi Ramdhari Singh Dinkar’s epic poetic saga celebrating the valor and dignity of Karna.'
-    },
-    {
-      id: 'kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra',
-      handle: 'kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra',
-      matchKey: 'kuchh',
-      title: 'Kuchh Ishq Kiya Kuchh Kaam Kiya',
-      author: 'Piyush Mishra',
-      vendor: 'Rajkamal Prakashan',
-      category: 'Poetry/Shayari',
-      binding: 'Paperback',
-      price: 250,
-      isbn: '9788126728435',
-      pages: '147p',
-      dimensions: '21.5 × 14 × 1 cm', qty: 4005,
-      year: '5th (2016)',
-      language: 'Hindi',
-      image: 'https://images.rajkamalprakashan.com/products/--1776279062739.jpg',
-      description: 'Raw, heartfelt poetry, theatre songs, and ghazals by Piyush Mishra capturing youth and revolution.'
-    },
-    {
-      id: 'gypsy-ila-chandra-joshi',
-      handle: 'gypsy-ila-chandra-joshi',
-      matchKey: 'gypsy',
-      title: 'Gypsy (जिप्सी)',
-      author: 'Ila Chandra Joshi',
-      vendor: 'Lokbharti Prakashan',
-      category: 'Fiction : Novel',
-      binding: 'Paperback',
-      price: 499,
-      isbn: '9789352210053',
-      pages: '375p',
-      dimensions: '21.5 × 14 × 2 cm', qty: 100,
-      year: '1st (2015)',
-      language: 'Hindi',
-      image: 'https://images.rajkamalprakashan.com/products/--1776282566523.jpeg',
-      description: 'Ila Chandra Joshi’s landmark psychological Hindi novel exploring human consciousness.'
-    }
-  ];
-
-  /* ==========================================================================
-     2. FORCE-CLOSE & UNSTICK OVERVIEW MODALS
-     ========================================================================== */
-  window.forceCloseOverviewAndModals = function() {
-    var selectors = ['#overviewModalOverlay', '#indigo-overview-modal', '#overview-modal', '#indigo-order-success-modal', '.indigo-modal-overlay'];
-    selectors.forEach(function(sel) {
-      document.querySelectorAll(sel).forEach(function(el) {
-        el.classList.remove('is-active', 'active', 'open', 'show');
-        el.style.setProperty('display', 'none', 'important');
-        el.style.removeProperty('opacity');
-        el.style.removeProperty('pointer-events');
-        el.style.opacity = '';
-        el.style.pointerEvents = '';
-      });
-    });
-    document.body.style.overflow = '';
-  };
-  window.closeOverviewModal = window.forceCloseOverviewAndModals;
-  window.closeAllIndigoModals = window.forceCloseOverviewAndModals;
-
-  window.forceOpenSoloPageWithBook = function(b) {
-    if (typeof window.openDedicatedProductPage === 'function') {
-      window.openDedicatedProductPage(b);
-    }
-  };
-
-  document.addEventListener('click', function(e) {
-    var btn = e.target.closest('button, a, span');
-    if (btn) {
-      var t = (btn.textContent || '').trim();
-      var parentModal = btn.closest('[style*="position: fixed"], [class*="modal"]');
-      if (parentModal && (t === '✕' || t === '×' || t === 'X' || btn.classList.contains('close'))) {
-        e.preventDefault();
-        window.forceCloseOverviewAndModals();
-        return;
-      }
-      if (t.indexOf('Open Full Book Page') !== -1 || t.indexOf('Full Page') !== -1) {
-        e.preventDefault();
-        var bObj = window.CURRENT_OVERVIEW_BOOK || window.currentModalBook || (window.currentModalBookId && typeof window.resolveBookObject === 'function' ? window.resolveBookObject(window.currentModalBookId) : null) || HERO_BOOKS_CSV[0];
-        window.forceCloseOverviewAndModals();
-        window.forceOpenSoloPageWithBook(bObj);
-        return;
-      }
-    }
-  }, true);
-
-  /* Home Button and Logo Navigation to Homepage */
-  document.addEventListener('click', function(e) {
-    var brand = e.target.closest('.brand-link, .brand-wordmark, [aria-label*="Homepage"]');
-    if (brand) {
-      e.preventDefault();
-      if (typeof window.returnToHome === 'function') {
-        window.returnToHome(e);
-        return;
-      }
-    }
-    var homeBtn = e.target.closest('a, button');
-    if (homeBtn && (homeBtn.textContent || '').trim().toLowerCase() === 'home') {
-      e.preventDefault();
-      if (typeof window.returnToHome === 'function') {
-        window.returnToHome(e);
-        return;
-      }
-    }
-  });
-
-  /* ==========================================================================
-     3. WIRE "BROWSE ALL 5,500+ BOOKS" & "SHOP ALL" BUTTONS
-     ========================================================================== */
-  document.addEventListener('click', function(e) {
-    var btn = e.target.closest('a, button');
-    if (!btn) return;
-    var txt = (btn.textContent || '').trim().toLowerCase();
-    if (txt.indexOf('browse all') !== -1 || txt.indexOf('shop all') !== -1 || txt.indexOf('all books (5,500') !== -1) {
-      e.preventDefault();
-      if (typeof window.closeDedicatedProductPage === 'function') window.closeDedicatedProductPage();
-      if (typeof window.closeSearchResultsView === 'function') window.closeSearchResultsView();
-      if (typeof window.closeAllIndigoModals === 'function') window.closeAllIndigoModals();
-
-      window.CATALOG_VISIBLE_LIMIT = (window.CATALOG_VISIBLE_LIMIT || 12) + 24;
-      if (typeof window.filterCatalog === 'function') window.filterCatalog('all');
-      if (typeof window.renderCatalog === 'function') window.renderCatalog();
-
-      var catSec = document.getElementById('shop-all-catalog') || document.querySelector('[id*="catalog"]');
-      if (catSec) catSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  });
-
-  function initMaster() {
-    // Ensure solo product page is wired directly to full engine
-    if (typeof openDedicatedProductPage === 'function') {
-      window.openSoloBookPage = openDedicatedProductPage;
-    }
-    // Wire 2-character debounced search inputs
-    ['hero-search-input', 'catalog-search-input', 'results-search-input'].forEach(function(id) {
-      var input = document.getElementById(id);
-      if (input && !input.getAttribute('data-wired')) {
-        input.setAttribute('data-wired', 'true');
-        var target = id.startsWith('hero') ? 'hero' : (id.startsWith('results') ? 'results' : 'catalog');
-        input.addEventListener('input', function(e) {
-          if (typeof window.handleSearchInput === 'function') {
-            window.handleSearchInput(e.target.value, target);
-          }
-        });
-        input.addEventListener('focus', function(e) {
-          if (e.target.value.trim().length >= 2 && typeof window.handleSearchInput === 'function') {
-            window.handleSearchInput(e.target.value, target);
-          }
-        });
-      }
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMaster);
-  } else {
-    initMaster();
-  }
-  setTimeout(initMaster, 500);
-})();
-</script>
-
-<style id="indigo-futuristic-cyber-theme">
-  /* ==========================================================================
-     FUTURE ARCHIVE CYBER-THEME DESIGN SYSTEM (Obsidian & Neon Glassmorphism)
-     ========================================================================== */
-  :root {
-    --cyber-bg: #030712;
-    --cyber-surface: rgba(15, 23, 42, 0.75);
-    --cyber-surface-hover: rgba(30, 41, 59, 0.85);
-    --cyber-border: rgba(0, 245, 255, 0.22);
-    --cyber-border-glow: rgba(0, 245, 255, 0.6);
-    --cyber-cyan: #00F5FF;
-    --cyber-gold: #FFD700;
-    --cyber-violet: #A855F7;
-    --cyber-text: #F8FAFC;
-    --cyber-muted: #94A3B8;
-  }
-
-  /* Global Page Background & Typography */
-  html, body {
-    background-color: var(--cyber-bg) !important;
-    color: var(--cyber-text) !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-    overflow-x: hidden !important;
-  }
-
-  /* Animated Starfield / Cyber Grid Background Effect */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: 
-      radial-gradient(circle at 20% 30%, rgba(0, 245, 255, 0.04) 0%, transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.04) 0%, transparent 40%),
-      linear-gradient(to right, rgba(255,255,255,0.015) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.015) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
-    z-index: -1;
-    pointer-events: none;
-  }
-
-  /* Master 1320px Alignment Spine */
-  .navbar-inner, .ivh-container, .ihm-container, .stats-grid,
-  .podium-container, .rekhta-container, .voices-container,
-  .category-bento-showcase, .vault-container, .catalog-container,
-  .phs-container, .footer-container,
-  #bestsellers-podium > div, #mehfil-e-rekhta > div,
-  #indian-voices-section > div, #law-academic-vault > div, #shop-all-catalog > div {
-    width: 100% !important;
-    max-width: 1320px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    padding-left: 28px !important;
-    padding-right: 28px !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Cyberpunk Glassmorphism Navigation Bar */
-  nav, .navbar, header {
-    background: rgba(3, 7, 18, 0.88) !important;
-    backdrop-filter: blur(16px) !important;
-    border-bottom: 1px solid var(--cyber-border) !important;
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 1000 !important;
-  }
-
-  /* Futuristic Glowing Hero Section */
-  #indigo-video-hero, #indigo-hero-master, .ivh-section {
-    background: radial-gradient(circle at 50% 20%, rgba(15, 23, 42, 0.9) 0%, var(--cyber-bg) 80%) !important;
-    border-bottom: 1px solid var(--cyber-border) !important;
-    position: relative !important;
-    overflow: visible !important;
-  }
-
-  /* Unclipped Cyber Search Pill & Live Dropdown */
-  #indigo-video-hero form, #indigo-hero-master form, .ivh-search-box, .ihm-search-wrap {
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    width: 100% !important;
-    max-width: 580px !important;
-    height: 54px !important;
-    background: rgba(15, 23, 42, 0.9) !important;
-    backdrop-filter: blur(12px) !important;
-    border: 1.5px solid var(--cyber-border) !important;
-    border-radius: 999px !important;
-    padding: 4px 6px 4px 16px !important;
-    box-shadow: 0 0 25px rgba(0, 245, 255, 0.15) !important;
-    overflow: visible !important;
-    box-sizing: border-box !important;
-    z-index: 9999 !important;
-    transition: all 0.3s ease !important;
-  }
-  #indigo-video-hero form:focus-within, #indigo-hero-master form:focus-within {
-    border-color: var(--cyber-cyan) !important;
-    box-shadow: 0 0 35px rgba(0, 245, 255, 0.35) !important;
-  }
-  #indigo-video-hero form select, #indigo-hero-master form select {
-    flex: 0 0 auto !important;
-    width: 120px !important;
-    border: none !important;
-    border-right: 1px solid rgba(255,255,255,0.12) !important;
-    background: transparent !important;
-    color: var(--cyber-text) !important;
-    font-size: 13.5px !important;
-    font-weight: 600 !important;
-    padding: 0 10px 0 4px !important;
-    outline: none !important;
-    cursor: pointer !important;
-  }
-  #indigo-video-hero form input, #indigo-hero-master form input {
-    flex: 1 1 auto !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    height: 42px !important;
-    border: none !important;
-    background: transparent !important;
-    color: var(--cyber-text) !important;
-    font-size: 15px !important;
-    padding: 0 12px !important;
-    outline: none !important;
-  }
-  #indigo-video-hero form button[type="submit"], #indigo-hero-master form button[type="submit"] {
-    flex: 0 0 auto !important;
-    height: 42px !important;
-    padding: 0 24px !important;
-    border-radius: 999px !important;
-    background: linear-gradient(135deg, #00F5FF 0%, #3B82F6 100%) !important;
-    color: #030712 !important;
-    font-size: 14px !important;
-    font-weight: 800 !important;
-    border: none !important;
-    cursor: pointer !important;
-    box-shadow: 0 0 15px rgba(0, 245, 255, 0.4) !important;
-  }
-
-  /* Neural Live Suggestion Dropdown */
-  .indigo-live-suggest-box {
-    position: absolute !important;
-    top: calc(100% + 12px) !important;
-    left: 0 !important;
-    width: 100% !important;
-    min-width: 380px !important;
-    max-height: 440px !important;
-    overflow-y: auto !important;
-    background: rgba(3, 7, 18, 0.95) !important;
-    backdrop-filter: blur(20px) !important;
-    border: 1px solid var(--cyber-cyan) !important;
-    border-radius: 16px !important;
-    box-shadow: 0 25px 60px rgba(0, 245, 255, 0.25) !important;
-    z-index: 9999999 !important;
-    padding: 10px !important;
-    color: var(--cyber-text) !important;
-    text-align: left !important;
-  }
-
-  /* Mathematical Holographic Book Card Grid */
-  .catalog-card, .vault-card, .rekhta-card, .indigo-book-card, .bento-horiz-card, .bento-left-spotlight {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    height: 100% !important;
-    padding: 20px !important;
-    border-radius: 16px !important;
-    box-sizing: border-box !important;
-    position: relative !important;
-    background: rgba(15, 23, 42, 0.65) !important;
-    backdrop-filter: blur(12px) !important;
-    border: 1px solid var(--cyber-border) !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
-    transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1) !important;
-  }
-  .catalog-card:hover, .vault-card:hover, .rekhta-card:hover, .indigo-book-card:hover {
-    border-color: var(--cyber-cyan) !important;
-    box-shadow: 0 0 30px rgba(0, 245, 255, 0.25) !important;
-    transform: translateY(-5px) !important;
-  }
-  .card-cover-frame, .indigo-3d-book-stage {
-    width: 100% !important;
-    aspect-ratio: 2 / 3 !important;
-    height: auto !important;
-    margin-bottom: 16px !important;
-    border-radius: 8px !important;
-    flex-shrink: 0 !important;
-    position: relative !important;
-  }
-  .card-book-title {
-    font-family: 'Merriweather', Georgia, serif !important;
-    font-size: 15.5px !important;
-    font-weight: 700 !important;
-    line-height: 1.4 !important;
-    height: 44px !important;
-    min-height: 44px !important;
-    max-height: 44px !important;
-    margin: 0 0 6px 0 !important;
-    color: var(--cyber-text) !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-  }
-  .card-bottom-footer {
-    margin-top: auto !important;
-    padding-top: 14px !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-    width: 100% !important;
-  }
-
-  /* Holographic Product Details Page (PDP) & Glass Cards */
-  #single-product-page-view, #indigo-solo-product-view {
-    background: var(--cyber-bg) !important;
-    color: var(--cyber-text) !important;
-  }
-  .pdp-cover-card, .pdp-info-header-card, .pdp-tabs-container, .pdp-buy-box, .pdp-trust-card {
-    background: rgba(15, 23, 42, 0.8) !important;
-    backdrop-filter: blur(16px) !important;
-    border: 1px solid var(--cyber-border) !important;
-    color: var(--cyber-text) !important;
-  }
-  .pdp-book-title {
-    color: #FFFFFF !important;
-  }
-  .pdp-selling-price {
-    color: var(--cyber-cyan) !important;
-    text-shadow: 0 0 12px rgba(0, 245, 255, 0.4) !important;
-  }
-  .pdp-genre-pill {
-    background: rgba(0, 245, 255, 0.12) !important;
-    color: var(--cyber-cyan) !important;
-    border: 1px solid rgba(0, 245, 255, 0.3) !important;
-  }
-  .pdp-tab-btn.active {
-    color: var(--cyber-cyan) !important;
-    border-bottom: 2px solid var(--cyber-cyan) !important;
-  }
-  .pdp-tech-table th {
-    background: rgba(30, 41, 59, 0.6) !important;
-    color: var(--cyber-muted) !important;
-  }
-  .pdp-tech-table td {
-    color: var(--cyber-text) !important;
-  }
-</style>
-
-<script id="indigo-futuristic-cyber-script">
-(function() {
-  /* ==========================================================================
-     1. VERIFIED CSV DATASET (Zero Fake Discounts, Zero Fake Reviews)
-     ========================================================================== */
-  var HERO_BOOKS_CSV = [
-    {
-      id: 'godan-premchand',
-      handle: 'godan-premchand',
-      matchKey: 'godan',
-      title: 'Godan (गोदान)',
-      author: 'Premchand',
-      vendor: 'Lokbharti Prakashan',
-      category: 'Fiction : Novel',
-      binding: 'Paperback',
-      price: 299,
-      isbn: '9789389742152',
-      pages: '312p',
-      weight: '270 g',
-      year: '4th (1936)',
-      language: 'Hindi',
-      image: 'https://images.rajkamalprakashan.com/products/2026/08/07/d18d896b-e17d-4c03-b26c-0525c9675e05-godan-text-book.jpg',
-      description: 'Munshi Premchand’s immortal masterpiece depicting the life, struggles, and resilience of Indian peasantry.'
-    },
-    {
-      id: 'raag-darbari-shrilal-shukla',
-      handle: 'raag-darbari-shrilal-shukla',
-      matchKey: 'raag',
-      title: 'Raag Darbari (राग दरबारी)',
-      author: 'Shrilal Shukla',
-      vendor: 'Rajkamal Prakashan',
-      category: 'Fiction : Novel',
-      binding: 'Paperback',
-      price: 499,
-      isbn: '9788126713967',
-      pages: '423p',
-      weight: '490 g',
-      year: '55th (1983)',
-      language: 'Hindi',
-      image: 'https://images.rajkamalprakashan.com/products/--1776279294489.jpg',
-      description: 'Sahitya Akademi Award-winning satirical masterpiece by Shrilal Shukla exposing rural politics in Shivpalganj.'
-    },
-    {
-      id: 'chitralekha-bhagwaticharan-verma',
-      handle: 'chitralekha-bhagwaticharan-verma',
-      matchKey: 'chitralekha',
-      title: 'Chitralekha (चित्रलेखा)',
-      author: 'Bhagwaticharan Verma',
-      vendor: 'Rajkamal Prakashan',
-      category: 'Fiction : Novel',
-      binding: 'Paperback',
-      price: 299,
-      isbn: '9788126715855',
-      pages: '200p',
-      weight: '225 g',
-      year: '32nd (1993)',
-      language: 'Hindi',
-      image: 'https://images.rajkamalprakashan.com/products/--1776278166396.jpg',
-      description: 'A timeless philosophical novel exploring sin, virtue, love, and asceticism.'
-    },
-    {
-      id: 'rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar',
-      handle: 'rashmirathi-dinkar-granthmala-ramdhari-singh-dinkar',
-      matchKey: 'rashmirathi',
-      title: 'Rashmirathi : Dinkar Granthmala',
-      author: "Ramdhari Singh 'Dinkar'",
-      vendor: 'Lokbharti Prakashan',
-      category: 'Poetry',
-      binding: 'Paperback',
-      price: 299,
-      isbn: '9788180313639',
-      pages: '192p',
-      weight: '216 g',
-      year: '46th (1952)',
-      language: 'Hindi',
-      image: 'https://images.rajkamalprakashan.com/products/--1776278887188.jpg',
-      description: 'Rashtrakavi Ramdhari Singh Dinkar’s epic poetic saga celebrating the valor and dignity of Karna.'
-    },
-    {
-      id: 'kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra',
-      handle: 'kuchh-ishq-kiya-kuchh-kaam-kiya-piyush-mishra',
-      matchKey: 'kuchh',
-      title: 'Kuchh Ishq Kiya Kuchh Kaam Kiya',
-      author: 'Piyush Mishra',
-      vendor: 'Rajkamal Prakashan',
-      category: 'Poetry/Shayari',
-      binding: 'Paperback',
-      price: 250,
-      isbn: '9788126728435',
-      pages: '147p',
-      weight: '160 g',
-      year: '5th (2016)',
-      language: 'Hindi',
-      image: 'https://images.rajkamalprakashan.com/products/--1776279062739.jpg',
-      description: 'Raw, heartfelt poetry, theatre songs, and ghazals by Piyush Mishra capturing youth and revolution.'
-    },
-    {
-      id: 'gypsy-ila-chandra-joshi',
-      handle: 'gypsy-ila-chandra-joshi',
-      matchKey: 'gypsy',
-      title: 'Gypsy (जिप्सी)',
-      author: 'Ila Chandra Joshi',
-      vendor: 'Lokbharti Prakashan',
-      category: 'Fiction : Novel',
-      binding: 'Paperback',
-      price: 499,
-      isbn: '9789352210053',
-      pages: '375p',
-      weight: '400 g',
-      year: '1st (2015)',
-      language: 'Hindi',
-      image: 'https://images.rajkamalprakashan.com/products/--1776282566523.jpeg',
-      description: 'Ila Chandra Joshi’s landmark psychological Hindi novel exploring human consciousness.'
-    }
-  ];
-
-  /* ==========================================================================
-     2. 2-CHARACTER DEBOUNCED PREDICTIVE SEARCH ENGINE
-     ========================================================================== */
-  function getMasterBookPool() {
-    return [].concat(HERO_BOOKS_CSV)
-      .concat(window.MASTER_BOOKS || [])
-      .concat(window.SHOPIFY_LIVE_PRODUCTS || [])
-      .concat(window.CATALOG_BOOKS || []);
-  }
-
-  function fuzzyTokenScore(haystack, token) {
-    if (!haystack || !token) return 0;
-    if (haystack.indexOf(token) !== -1) return 100;
-    if (token.length >= 4 && haystack.indexOf(token.slice(0, -1)) !== -1) return 75;
-    return 0;
-  }
-
-  window.searchIndigoBooks = function(rawQuery) {
-    var q = String(rawQuery || '').trim().toLowerCase();
-    if (!q) return [];
-    var tokens = q.split(/\s+/).filter(Boolean);
-    var pool = getMasterBookPool();
-    var scored = [];
-
-    pool.forEach(function(b) {
-      var title = String(b.title || '').toLowerCase();
-      var author = String(b.author || '').toLowerCase();
-      var vendor = String(b.vendor || '').toLowerCase();
-      var isbn = String(b.isbn || '').toLowerCase();
-      var combined = title + ' ' + author + ' ' + vendor + ' ' + isbn;
-
-      var totalScore = 0;
-      var matchedAll = true;
-
-      tokens.forEach(function(tok) {
-        var sTitle = fuzzyTokenScore(title, tok);
-        var sAuthor = fuzzyTokenScore(author, tok) * 1.2;
-        var sIsbn = isbn.indexOf(tok) !== -1 ? 130 : 0;
-        var best = Math.max(sTitle, sAuthor, sIsbn, fuzzyTokenScore(combined, tok));
-        if (best === 0) matchedAll = false;
-        else totalScore += best;
-      });
-
-      if (matchedAll && totalScore > 0) scored.push({ book: b, score: totalScore });
-    });
-
-    scored.sort(function(a, b) { return b.score - a.score; });
-    var seen = {};
-    return scored.map(function(x) { return x.book; }).filter(function(b) {
-      var k = (b.title + '-' + b.author).toLowerCase();
-      if (seen[k]) return false;
-      seen[k] = true;
-      return true;
-    });
-  };
-
-  /* ==========================================================================
-     3. BULLETPROOF MODAL UNSTICKING & SOLO PAGE ROUTER
-     ========================================================================== */
-  window.forceCloseOverviewAndModals = function() {
-    document.querySelectorAll('#indigo-overview-modal, #overview-modal, #indigo-order-success-modal, .indigo-modal-overlay, [id*="overview"]').forEach(function(el) {
-      el.classList.remove('is-active', 'active', 'open', 'show');
-      el.style.setProperty('display', 'none', 'important');
-      el.style.setProperty('opacity', '0', 'important');
-      el.style.setProperty('pointer-events', 'none', 'important');
-    });
-    document.body.style.overflow = '';
-  };
-  window.closeOverviewModal = window.forceCloseOverviewAndModals;
-  window.closeAllIndigoModals = window.forceCloseOverviewAndModals;
-
-  window.findBookInMasterPool = function(bookOrId, imgSrcHint, triggerEl) {
-    var pool = getMasterBookPool();
-    if (bookOrId && typeof bookOrId === 'object' && bookOrId.title && bookOrId.title !== 'Selected Book') return bookOrId;
-
-    var q = String(bookOrId || '').trim().toLowerCase();
-    if (q && q !== 'selected book') {
-      var match = pool.find(function(b) {
-        if (!b || !b.title || b.title === 'Selected Book') return false;
-        return (b.id && b.id.toLowerCase() === q) || (b.title && b.title.toLowerCase().indexOf(q) !== -1) || (b.author && b.author.toLowerCase().indexOf(q) !== -1);
-      });
-      if (match) return match;
-    }
-
-    if (triggerEl) {
-      var card = triggerEl.closest('[data-book-id], [data-title], .ihm-book-item, .ivh-book-card, .catalog-card, .vault-card, .rekhta-card');
-      if (card) {
-        var heroGrid = card.closest('#hero-books-3x2, #ivh-books-grid, .ihm-books-grid-3x2');
-        if (heroGrid) {
-          var idx = Array.from(heroGrid.children).indexOf(card);
-          if (idx >= 0 && idx < HERO_BOOKS_CSV.length) return Object.assign({}, HERO_BOOKS_CSV[idx]);
-        }
-        var cTitle = card.getAttribute('data-title') || (card.querySelector('h3, h4, .card-title, .book-title') ? card.querySelector('h3, h4, .card-title, .book-title').textContent.trim() : '');
-        var found = pool.find(function(b) { return b && b.title && cTitle && b.title.toLowerCase().indexOf(cTitle.toLowerCase()) !== -1; });
-        if (found) return found;
-      }
-    }
-    return HERO_BOOKS_CSV[0];
-  };
-
-  window.forceOpenSoloPageWithBook = function(book) {
-    if (!book) return;
-    window.CURRENT_SOLO_BOOK = book;
-
-    document.querySelectorAll('.indigo-live-suggest-box').forEach(function(d) { d.style.setProperty('display', 'none', 'important'); });
-    document.querySelectorAll('#indigo-search-results-view').forEach(function(sr) { sr.style.setProperty('display', 'none', 'important'); });
-
-    var soloView = document.getElementById('indigo-solo-product-view') || document.getElementById('single-product-page-view');
-    if (soloView) soloView.style.setProperty('display', 'block', 'important');
-
-    var realCover = book.image || HERO_BOOKS_CSV[0].image;
-    var cleanPrice = parseFloat(String(book.price || 299).replace(/[^0-9.]/g, '')) || 299;
-
-    document.querySelectorAll('h1, h2, .solo-book-title').forEach(function(el) {
-      if ((el.textContent || '').trim() === 'Selected Book' || el.id.indexOf('title') !== -1) {
-        el.textContent = book.title;
-      }
-    });
-
-    document.querySelectorAll('img').forEach(function(img) {
-      var src = img.getAttribute('src') || '';
-      if (!src || src.indexOf('Selected%20Book') !== -1) {
-        img.src = realCover;
-      }
-    });
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  window.openSoloBookPage = function(bookOrId, triggerEl) {
-    var resolved = window.findBookInMasterPool(bookOrId, '', triggerEl) || HERO_BOOKS_CSV[0];
-    window.forceOpenSoloPageWithBook(resolved);
-  };
-
-  /* ==========================================================================
-     4. UNIVERSAL SEARCH LISTENER (Fires at >= 2 chars)
-     ========================================================================== */
-  function attachUniversalSearchListeners() {
-    var inputs = document.querySelectorAll('input[placeholder*="Search"], input[placeholder*="search"], #hero-search-input, #liveSearchInput');
-    inputs.forEach(function(input) {
-      if (input.dataset.indigoSearchBound === '1') return;
-      input.dataset.indigoSearchBound = '1';
-
-      var form = input.closest('form') || input.parentElement;
-      form.style.setProperty('position', 'relative', 'important');
-      form.style.setProperty('overflow', 'visible', 'important');
-
-      var box = form.querySelector('.indigo-live-suggest-box');
-      if (!box) {
-        box = document.createElement('div');
-        box.className = 'indigo-live-suggest-box';
-        box.style.display = 'none';
-        form.appendChild(box);
-      }
-
-      var timer = null;
-      input.addEventListener('input', function() {
-        clearTimeout(timer);
-        var val = (input.value || '').trim();
-        if (val.length < 2) {
-          box.style.display = 'none';
-          return;
-        }
-        timer = setTimeout(function() {
-          var matches = window.searchIndigoBooks(val).slice(0, 8);
-          if (matches.length === 0) {
-            box.innerHTML = '<div style="padding:14px;text-align:center;color:#94A3B8;font-size:13.5px;">No neural matches for "<b>' + val + '</b>".</div>';
-            box.style.display = 'block';
-            return;
-          }
-          var html = '';
-          matches.forEach(function(b) {
-            var p = parseFloat(String(b.price || 299).replace(/[^0-9.]/g, '')) || 299;
-            var safeId = String(b.id || b.title).replace(/'/g, "\\'");
-            html += '<div class="indigo-suggest-row" data-book-id="' + safeId + '" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;border-radius:8px;" onmouseover="this.style.background=\'rgba(0,245,255,0.1)\'" onmouseout="this.style.background=\'transparent\'">' +
-              '<img src="' + b.image + '" style="width:40px;height:58px;object-fit:cover;border-radius:4px;flex-shrink:0;border:1px solid var(--cyber-border);" />' +
-              '<div style="flex:1;min-width:0;">' +
-                '<div style="font-size:14px;font-weight:700;color:var(--cyber-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + b.title + '</div>' +
-                '<div style="font-size:12px;color:var(--cyber-muted);">by <b style="color:var(--cyber-cyan);">' + b.author + '</b></div>' +
-              '</div>' +
-              '<div style="font-size:14.5px;font-weight:800;color:var(--cyber-gold);min-width:75px;text-align:right;">₹' + p.toFixed(2) + '</div>' +
-            '</div>';
-          });
-          box.innerHTML = html;
-          box.style.display = 'block';
-
-          box.querySelectorAll('.indigo-suggest-row').forEach(function(row) {
-            row.addEventListener('click', function(e) {
-              e.stopPropagation();
-              box.style.display = 'none';
-              window.openSoloBookPage(this.getAttribute('data-book-id'), this);
-            });
-          });
-        }, 200);
-      });
-    });
-  }
-
-  /* ==========================================================================
-     5. WIRE "BROWSE ALL 5,500+ BOOKS" & CATALOG EXPANSION
-     ========================================================================== */
-  document.addEventListener('click', function(e) {
-    var btn = e.target.closest('a, button');
-    if (!btn) return;
-    var txt = (btn.textContent || '').trim().toLowerCase();
-    if (txt.indexOf('browse all') !== -1 || txt.indexOf('shop all') !== -1 || txt.indexOf('all books (5,500') !== -1) {
-      e.preventDefault();
-      window.forceCloseOverviewAndModals();
-      if (typeof window.closeSoloBookPage === 'function') window.closeSoloBookPage();
-
-      window.CATALOG_VISIBLE_LIMIT = (window.CATALOG_VISIBLE_LIMIT || 12) + 24;
-      if (typeof window.filterCatalog === 'function') window.filterCatalog('all');
-      if (typeof window.renderCatalog === 'function') window.renderCatalog();
-
-      var catSec = document.getElementById('shop-all-catalog') || document.querySelector('[id*="catalog"]');
-      if (catSec) catSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  });
-
-  function initMaster() {
-    attachUniversalSearchListeners();
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMaster);
-  } else {
-    initMaster();
-  }
-  setTimeout(initMaster, 500);
-})();
-</script>
   </body>
 </html>

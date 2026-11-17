@@ -1,0 +1,11 @@
+<div class="text-block rte" {{ block.shopify_attributes }}>
+  {{ block.settings.text | default: '<p>Curated literature and timeless wisdom for passionate readers.</p>' }}
+</div>
+{% schema %}
+{
+  "name": "Text",
+  "settings": [
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Curated literature and timeless wisdom for passionate readers.</p>" }
+  ]
+}
+{% endschema %}

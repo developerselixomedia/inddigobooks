@@ -1,0 +1,10 @@
+<div class="blog-post-card-block" {{ block.shopify_attributes }}>
+  {%- if article != blank -%}
+    <a href="{{ article.url }}">
+      {%- if article.image -%}
+        <img src="{{ article.image | image_url: width: 400 }}" alt="{{ article.title | escape }}" loading="lazy">
+      {%- endif -%}
+      <h4>{{ article.title }}</h4>
+    </a>
+  {%- endif -%}
+</div>

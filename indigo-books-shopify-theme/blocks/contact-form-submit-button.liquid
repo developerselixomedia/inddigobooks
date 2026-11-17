@@ -1,0 +1,11 @@
+<button type="submit" class="btn btn--primary" {{ block.shopify_attributes }}>
+  {{ block.settings.label | default: 'Send Inquiry' }}
+</button>
+{% schema %}
+{
+  "name": "Submit Button",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Button Label", "default": "Send Inquiry" }
+  ]
+}
+{% endschema %}

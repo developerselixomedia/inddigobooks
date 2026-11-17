@@ -1,0 +1,9 @@
+<div class="email-signup-block" {{ block.shopify_attributes }}>
+  {% form 'customer' %}
+    <input type="email" name="contact[email]" placeholder="Get exclusive book offers..." required class="newsletter-input">
+    <button type="submit" class="btn btn--primary">Join Book Club</button>
+  {% endform %}
+</div>
+{% schema %}
+{ "name": "Email Signup", "settings": [] }
+{% endschema %}
